@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Sandbox.Services;
 using Sandbox.ViewModels;
 using Sandbox.Views;
 
@@ -17,9 +18,11 @@ namespace Sandbox
     {
       if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
       {
+        var db = new Database();
+
         desktop.MainWindow = new MainWindow
         {
-          DataContext = new MainWindowViewModel(),
+          DataContext = new MainWindowViewModel(db),
         };
       }
 
