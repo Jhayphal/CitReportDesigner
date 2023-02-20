@@ -6,6 +6,6 @@
 
     public readonly Fonts Fonts = new();
 
-    public float Height => (Options?.OfType<BlockHeightOption>().FirstOrDefault()?.Height).GetValueOrDefault();
+    public float Height => (Options?.OfType<BlkHOption>().FirstOrDefault()?.Height).GetValueOrDefault();
   }
 }

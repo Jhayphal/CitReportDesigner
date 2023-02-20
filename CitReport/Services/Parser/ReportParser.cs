@@ -11,16 +11,16 @@ namespace CitReport.Services.Parser
     private readonly IEnumerable<IInstructionParser> parsers = new List<IInstructionParser>
     {
       new MetadataParser(),
-
+      new ReportDefinitionParser(),
 
       new CodeBehindParser()
     };
 
     private ParserContext context;
 
-    public Report Parse(StreamReader reader)
+    public Report Parse(StreamReader reader, IErrorProvider errorProvider)
     {
-      context = new ParserContext();
+      context = new ParserContext(errorProvider);
       
       string current;
       while ((current = reader.ReadLine()) != null)
@@ -45,15 +45,20 @@ namespace CitReport.Services.Parser
 
   internal class ParserContext
   {
-    public ParserContext()
+    public ParserContext(IErrorProvider errorProvider)
     {
+      ErrorProvider = errorProvider;
       Report = new Report();
       Context = CodeContext.CodeBehind;
     }
 
     public Report Report { get; }
+    
     public CodeContext Context { get; set; }
+
     public object CurrentItem { get; set; }
+
+    public IErrorProvider ErrorProvider { get; }
   }
 
   internal enum CodeContext
@@ -148,6 +153,108 @@ namespace CitReport.Services.Parser
       if (context.CurrentItem is Report report)
       {
         report.CodeBehind.Add(new Expression { Value = current });
+      }
+    }
+  }
+
+  internal class OptionsParser
+  {
+    public IEnumerable<Option> Parse(string current, IErrorProvider errorProvider)
+    {
+      var result = new List<Option>();
+      var tokenizer = new Tokenizer(current);
+
+      foreach (var option in tokenizer.GetTokens().Chunk(2))
+      {
+        var optionName = option[0];
+
+        if (option.Length < 2)
+        {
+          errorProvider.AddError($"Option '{optionName}' has not value.");
+          break;
+        }
+
+        if (!Options.Map.TryGetValue(optionName.ToLower(), out var optionType))
+        {
+          errorProvider.AddError($"Unsupported option '{optionName}'.");
+          optionType = typeof(Option);
+        }
+
+        var optionValue = Activator.CreateInstance(optionType) as Option;
+        if (optionValue == null)
+        {
+          errorProvider.AddError($"Type '{optionType.FullName}' does not inherit Option type.");
+        }
+        else
+        {
+          optionValue.Name = optionName;
+          optionValue.Value = option[2];
+          result.Add(optionValue);
+        }
+      }
+
+      return result;
+    }
+  }
+
+  internal class Tokenizer
+  {
+    private readonly string text;
+    private readonly StringBuilder builder = new(); 
+    private int position;
+
+    public Tokenizer(string text)
+    {
+      this.text = text;
+    }
+
+    public IEnumerable<string> GetTokens()
+    {
+      while (position < text.Length)
+      {
+        while (position < text.Length && char.IsWhiteSpace(text[position]))
+        {
+          ++position;
+        }
+
+        if (position >= text.Length)
+        {
+          yield break;
+        }
+
+        while (position < text.Length && text[position] != '(')
+        {
+          builder.Append(text[position]);
+        }
+
+        var token = builder.ToString();
+        builder.Clear();
+
+        yield return token;
+
+        int brackects = 1;
+
+        while (++position < text.Length && brackects > 0)
+        {
+          if (text[position] == '(')
+          {
+            ++brackects;
+          }
+          else if (text[position] == ')')
+          {
+            --brackects;
+          }
+
+          if (brackects > 0)
+          {
+            builder.Append(text[position]);
+          }
+        }
+
+        token = builder.ToString();
+        builder.Clear();
+
+        yield return token;
       }
     }
   }
