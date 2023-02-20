@@ -6,6 +6,7 @@
     {
       new MetadataParser(),
       new ReportDefinitionParser(),
+      new BodyBlockParser(),
 
       new CodeBehindParser()
     };
@@ -32,6 +33,7 @@
         if (parser.CanParse(current, context.Context))
         {
           parser.Parse(context, current);
+          break;
         }
       }
     }
@@ -92,6 +94,33 @@
     public const string AfterStart = "/AFTER START ";
     public const string AfterEnd = "/AFTER END ";
     public const string Do = "/DO ";
+    public const string Blk = "/BLK ";
+  }
+
+  internal class BodyBlockParser : IInstructionParser
+  {
+    private readonly OptionsParser optionsParser = new();
+
+    public bool CanParse(string current, CodeContext context) => current.StartsWith(Instructions.Blk, StringComparison.OrdinalIgnoreCase);
+
+    public void Parse(ParserContext context, string current)
+    {
+      var block = new BodyBlock();
+
+      var parts = current.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+      if (parts.Length > 1)
+        block.Code = parts[1];
+
+      if (parts.Length > 2)
+      {
+        var options = string.Join(" ", parts.Skip(2));
+        block.Options.AddRange(optionsParser.Parse(options, context.ErrorProvider));
+      }
+
+      context.Report.BodyBlocks.Add(block);
+      context.CurrentItem = block;
+    }
   }
 
   internal class ReportDefinitionParser : IInstructionParser
@@ -112,7 +141,13 @@
           context.Report.ReportDefinition.Code = parts[1];
 
         if (parts.Length > 2)
-          context.Report.ReportDefinition.Options.AddRange(parts.Skip(2).Select(x => new Option { Value = x }));
+        {
+          var options = string.Join(" ", parts.Skip(2));
+          var optionsParser = new OptionsParser();
+          context.Report.ReportDefinition.Options.AddRange(optionsParser.Parse(options, context.ErrorProvider));
+        }
+
+        context.CurrentItem = context.Report.ReportDefinition;
       }
       else
       {
