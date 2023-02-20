@@ -15,7 +15,7 @@
 
     public static readonly Dictionary<string, Type> Map = new Dictionary<string, Type>
     {
-      { BlkH, typeof(BlkHOption) },
+      { BlkH, typeof(Options) },
       { New_Linebreak, typeof(New_LinebreakOption) },
       { Cond, typeof(CondOption) },
       { TCond, typeof(TCondOption) },
@@ -28,9 +28,11 @@
     };
   }
 
-  public interface IErrorProvider
+  public class Option
   {
-    void AddError(string message);
+    public string Name { get; set; }
+
+    public virtual string Value { get; set; }
   }
 
   public class BlkHOption : Option
