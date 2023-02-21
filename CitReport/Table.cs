@@ -51,5 +51,17 @@
     public float GetRowHeight(int index) => this.rows[index];
 
     public Cell GetCell(int column, int row) => cells[row * columns.Count + column];
+
+    /// <summary>
+    /// Merge cells by text range, if required.
+    /// </summary>
+    /// <param name="leftUpper">Like A3.</param>
+    /// <param name="rightBottom">Like B8.</param>
+    /// <returns>Merged cell.</returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public Cell Merge(CellPosition leftUpper, CellPosition rightBottom)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

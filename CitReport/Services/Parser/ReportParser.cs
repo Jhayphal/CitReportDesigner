@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace CitReport.Services.Parser
+﻿namespace CitReport.Services.Parser
 {
   internal sealed class ReportParser
   {
@@ -42,7 +40,7 @@ namespace CitReport.Services.Parser
     }
   }
 
-  internal class ParserContext
+  internal sealed class ParserContext
   {
     public ParserContext(IErrorProvider errorProvider)
     {
@@ -53,25 +51,29 @@ namespace CitReport.Services.Parser
 
     public Report Report { get; }
     
-    public CodeContext Context { get; set; }
+    public CodeContext Context { get; private set; }
 
-    public object CurrentItem { get; set; }
+    public BodyBlock CurrentBlock { get; private set; }
 
     public IErrorProvider ErrorProvider { get; }
-  }
 
-  internal enum CodeContext
-  {
-    CodeBehind,
-    ReportDefinition,
-    Block
-  }
+    public readonly Queue<IMultilanguageValueStorage> Fields = new();
 
-  internal interface IInstructionParser
-  {
-    bool CanParse(string current, CodeContext context);
+    public void SetContext(CodeContext context)
+    {
+      Context = context;
+    }
 
-    void Parse(ParserContext context, string current);
+    public void SetBlockAsCurrent(BodyBlock current)
+    {
+      if (Fields.Count > 0)
+      {
+        ErrorProvider.AddError($"{Fields.Count} fields has not values.");
+        Fields.Clear();
+      }
+
+      CurrentBlock = current;
+    }
   }
 
   internal class MetadataParser : IInstructionParser
@@ -80,12 +82,9 @@ namespace CitReport.Services.Parser
 
     public void Parse(ParserContext context, string current)
     {
-      var metadata = context.CurrentItem switch
-      {
-        Report report => report.Metadata,
-        BodyBlock bodyBlock => bodyBlock.Metadata,
-        _ => throw new NotSupportedException(context.CurrentItem.GetType().FullName)
-      };
+      var metadata = context.CurrentBlock == null
+        ? context.Report.Metadata
+        : context.CurrentBlock.Metadata;
 
       metadata.Add(new Metadata { Value = current[3..^3] });
     }
@@ -98,128 +97,105 @@ namespace CitReport.Services.Parser
     public const string AfterEnd = "/AFTER END ";
     public const string Do = "/DO ";
     public const string Blk = "/BLK ";
-    public const string Fl = "{/FL";
-    public const string Tc = "{/TC";
-    public const string Tr = "{/TR";
-    public const string Ts = "{/TS";
-    public const string Tsg = "{/TSG";
+    public const string Fl = "/FL";
+    public const string Tc = "/TC";
+    public const string Tr = "/TR";
+    public const string Ts = "/TS";
+    public const string Tsg = "/TSG";
   }
 
-  internal class TableParser : IInstructionParser
+  internal class TableParser : BlockInstructionParser
   {
     private float[] columns;
     private float[] rows;
     private Table table;
 
-    private readonly BlockInstructionTokenizer tokenizer = new();
+    private readonly string[] supportedInstructions = new string[] 
+    { 
+      Instructions.Tc, 
+      Instructions.Tr, 
+      Instructions.Ts 
+    };
 
-    public bool CanParse(string current, CodeContext context)
-      => context == CodeContext.Block
-        && IsInstructionSupported(Instructions.Tc, Instructions.Tr, Instructions.Ts);
-
-    private bool IsInstructionSupported(string current, params string[] instructions)
-      => instructions.Any(x => current.StartsWith(current, StringComparison.OrdinalIgnoreCase));
-
-    public void Parse(ParserContext context, string current)
+    private readonly string[] fieldInstructions = new string[]
     {
-      if (current.StartsWith(Instructions.Tc, StringComparison.OrdinalIgnoreCase))
+      Instructions.Ts,
+      Instructions.Tsg
+    };
+
+    protected override CodeContext ActualContext => CodeContext.Block;
+
+    protected override IEnumerable<string> SupportedInstructions => throw new NotImplementedException();
+
+    public override void Parse(ParserContext context, string current)
+    {
+      if (IsInstructionSupported(current, Instructions.Tc))
       {
         columns = ParseArray(Instructions.Tc, current);
         CreateTableIfRequired(context);
       }
-      else if (current.StartsWith(Instructions.Tr, StringComparison.OrdinalIgnoreCase))
+      else if (IsInstructionSupported(current, Instructions.Tr))
       {
         rows = ParseArray(Instructions.Tr, current);
         CreateTableIfRequired(context);
       }
       else if (table != null)
       {
-        if (current.StartsWith(Instructions.Ts, StringComparison.OrdinalIgnoreCase))
+        if (IsInstructionSupported(current, fieldInstructions))
         {
           ParseCell(context, current);
         }
       }
+      else
+      {
+        context.ErrorProvider.AddError($"Unexpected table instruction outside table definition.");
+      }
     }
 
+    /// <summary>
+    /// Parse table cell.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="current"></param>
+    /// <remarks>For example, {/TS, A2:A2, , FONT1}Field ___</remarks>
     private void ParseCell(ParserContext context, string current)
     {
-      var cell = new Cell(table);
-
-      var enumerator = tokenizer.GetTokens(current).GetEnumerator();
-      var token = string.Empty;
-      while (TryMoveEnumerator(context, current, enumerator))
+      var tokens = Tokenizer.GetTokens(current).ToList();
+      var endDefinitionIndex = tokens.IndexOf("}");
+      if (endDefinitionIndex < 0 || tokens.Count < 11)
       {
-        token = enumerator.Current;
-
-        if (!string.IsNullOrWhiteSpace(token) && token != "{")
-        {
-          break;
-        }
-      }
-      
-      if (enumerator.Current == null)
-      {
+        context.ErrorProvider.AddError($"Unfinished instruction: '{current}'.");
         return;
       }
 
-      if (string.Equals(token, Instructions.Ts, StringComparison.OrdinalIgnoreCase))
+      var canGrow = string.Equals(tokens[1], "/TSG", StringComparison.OrdinalIgnoreCase);
+      var languageSpecifed = tokens[2] == ":";
+      var language = languageSpecifed ? tokens[3] : string.Empty;
+      var offset = languageSpecifed ? 2 : 0;
+      var cellPositionLeftUpper = CellPosition.FromString(tokens[3 + offset].Trim());
+      var cellPositionRightBottom = CellPosition.FromString(tokens[5 + offset].Trim());
+      Cell cell = table.Merge(cellPositionLeftUpper, cellPositionRightBottom);
+      cell.CanGrow = canGrow;
+      var displayValueIndex = endDefinitionIndex + 1;
+      var displayValue = displayValueIndex >= tokens.Count
+        ? string.Empty
+        : tokens[displayValueIndex];
+      cell.DisplayValue[language] = displayValue;
+
+      if (displayValue.Contains('_'))
       {
-        cell.MayGrow = false;
+        context.Fields.Enqueue(cell);
       }
-      else if (string.Equals(token, Instructions.Tsg, StringComparison.OrdinalIgnoreCase))
+
+      var fontAlias = tokens[9 + offset].Trim();
+      if (context.CurrentBlock.Fonts.TryGetValue(fontAlias, out var fontInfo))
       {
-        cell.MayGrow = true;
+        cell.Font = fontInfo;
       }
       else
       {
-        context.ErrorProvider.AddError($"Unexpected instruction: '{token}'.");
-        return;
+        context.ErrorProvider.AddError($"Undefined font '{fontAlias}'.");
       }
-
-      if (!TryMoveEnumerator(context, current, enumerator))
-      {
-        return;
-      }
-
-      var language = string.Empty;
-      token = enumerator.Current;
-      if (token == ":")
-      {
-        if (!TryMoveEnumerator(context, current, enumerator))
-        {
-          return;
-        }
-
-        token = enumerator.Current;
-        language = token;
-
-        if (!TryMoveEnumerator(context, current, enumerator))
-        {
-          return;
-        }
-      }
-
-      if (token != ",")
-      {
-        context.ErrorProvider.AddError($"Unexpected instruction: '{token}'.");
-        return;
-      }
-
-      if (!TryMoveEnumerator(context, current, enumerator))
-      {
-        return;
-      }
-    }
-
-    private bool TryMoveEnumerator(ParserContext context, string current, IEnumerator<string> enumerator)
-    {
-      if (!enumerator.MoveNext())
-      {
-        context.ErrorProvider.AddError($"Unfinished instruction: '{current}'.");
-        return false;
-      }
-
-      return true;
     }
 
     private void CreateTableIfRequired(ParserContext context)
@@ -252,171 +228,48 @@ namespace CitReport.Services.Parser
         .ToArray();
   }
 
-  internal class BlockInstructionTokenizer
+  internal sealed class FontParser : BlockInstructionParser
   {
-    private static readonly HashSet<char> breakers = new() { '{', ',', ':', '}' };
+    private readonly string[] supportedInstructions = new string[] { Instructions.Fl };
 
-    public IEnumerable<string> GetTokens(string current)
+    protected override CodeContext ActualContext => CodeContext.Block;
+
+    protected override IEnumerable<string> SupportedInstructions => supportedInstructions;
+
+    /// <summary>
+    /// Parse font.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="current"></param>
+    /// <remarks>{/FL, FONT1, Times New Roman, 10, B}</remarks>
+    public override void Parse(ParserContext context, string current)
     {
-      if (current == null)
+      var parts = Tokenizer.GetTokens(current)
+        .Select(x => x.Trim())
+        .ToList();
+
+      if (parts.Count < 8)
       {
-        yield break;
-      }
-
-      var builder = new StringBuilder();
-      var position = 0;
-
-      do
-      {
-        while (position < current.Length && !breakers.Contains(current[position]))
-        {
-          builder.Append(current[position++]);
-        }
-
-        if (builder.Length > 0)
-        {
-          var result = builder.ToString();
-          builder.Clear();
-          yield return result;
-        }
-
-        if (position < current.Length)
-        {
-          yield return current[position++].ToString();
-        }
-      }
-      while (position < current.Length);
-    }
-  }
-
-  internal class FontParser : IInstructionParser
-  {
-    public bool CanParse(string current, CodeContext context)
-      => context == CodeContext.Block && current.StartsWith(Instructions.Fl, StringComparison.OrdinalIgnoreCase);
-
-    public void Parse(ParserContext context, string current)
-    {
-      if (context.CurrentItem is not BodyBlock block)
-      {
-        context.ErrorProvider.AddError($"Font cannot be implemented in context '{context.Context}'.");
+        context.ErrorProvider.AddError($"Unfinished instruction: '{current}'.");
         return;
       }
 
-      var parts = current.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-      var font = new FontInfo();
+      var alias = parts[3];
 
-      if (parts.Length > 1)
+      var font = new FontInfo
       {
-        font.Alias = parts[1];
-      }
+        Family = parts[5],
+        Size = float.TryParse(parts[7], out var size) ? size : 0
+      };
 
-      if (parts.Length > 2)
+      if (parts.Count > 9)
       {
-        font.Family = parts[2];
-      }
-
-      if (parts.Length > 3)
-      {
-        font.Size = float.TryParse(parts[3], out var size) ? size : 0;
-      }
-
-      if (parts.Length > 4)
-      {
-        font.Style = string.Equals(parts[4], "B", StringComparison.OrdinalIgnoreCase)
+        font.Style = string.Equals(parts[9], "B", StringComparison.OrdinalIgnoreCase)
           ? FontStyle.Bold
           : FontStyle.Regular;
       }
 
-      block.Fonts.Add(font);
-    }
-  }
-
-  internal class BodyBlockParser : IInstructionParser
-  {
-    private readonly OptionsParser optionsParser = new();
-
-    public bool CanParse(string current, CodeContext context) => current.StartsWith(Instructions.Blk, StringComparison.OrdinalIgnoreCase);
-
-    public void Parse(ParserContext context, string current)
-    {
-      var block = new BodyBlock();
-
-      var parts = current.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-      if (parts.Length > 1)
-        block.Code = parts[1];
-
-      if (parts.Length > 2)
-      {
-        var options = string.Join(" ", parts.Skip(2));
-        block.Options.AddRange(optionsParser.Parse(options, context.ErrorProvider));
-      }
-
-      context.Report.BodyBlocks.Add(block);
-      context.CurrentItem = block;
-    }
-  }
-
-  internal class ReportDefinitionParser : IInstructionParser
-  {
-    public bool CanParse(string current, CodeContext context)
-      => current.StartsWith(Instructions.Report, StringComparison.OrdinalIgnoreCase)
-        || current.StartsWith(Instructions.AfterStart, StringComparison.OrdinalIgnoreCase)
-        || current.StartsWith(Instructions.AfterEnd, StringComparison.OrdinalIgnoreCase)
-        || current.StartsWith(Instructions.Do, StringComparison.OrdinalIgnoreCase);
-
-    public void Parse(ParserContext context, string current)
-    {
-      if (current.StartsWith(Instructions.Report, StringComparison.OrdinalIgnoreCase))
-      {
-        var parts = current.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-        if (parts.Length > 1)
-          context.Report.ReportDefinition.Code = parts[1];
-
-        if (parts.Length > 2)
-        {
-          var options = string.Join(" ", parts.Skip(2));
-          var optionsParser = new OptionsParser();
-          context.Report.ReportDefinition.Options.AddRange(optionsParser.Parse(options, context.ErrorProvider));
-        }
-
-        context.CurrentItem = context.Report.ReportDefinition;
-      }
-      else
-      {
-        var _ = TryParse(current, Instructions.AfterStart, context.Report.ReportDefinition.AfterStartActions)
-          || TryParse(current, Instructions.AfterEnd, context.Report.ReportDefinition.AfterEndActions)
-          || TryParse(current, Instructions.Do, context.Report.ReportDefinition.DoActions);
-      }
-    }
-
-    private static bool TryParse(string current, string instruction, List<Expression> destination)
-    {
-      if (current.StartsWith(instruction, StringComparison.OrdinalIgnoreCase))
-      {
-        destination.Add(new Expression
-        {
-          Value = current[Instructions.AfterStart.Length..].TrimStart()
-        });
-
-        return true;
-      }
-
-      return false;
-    }
-  }
-
-  internal class CodeBehindParser : IInstructionParser
-  {
-    public bool CanParse(string current, CodeContext context) => context == CodeContext.CodeBehind;
-
-    public void Parse(ParserContext context, string current)
-    {
-      if (context.CurrentItem is Report report)
-      {
-        report.CodeBehind.Add(new Expression { Value = current });
-      }
+      context.CurrentBlock.Fonts.Add(alias, font);
     }
   }
 }
