@@ -1,4 +1,6 @@
-﻿namespace CitReport.Services.Parser
+﻿using System.Drawing;
+
+namespace CitReport.Services.Parser
 {
   internal sealed class ReportParser
   {
@@ -102,6 +104,7 @@
     public const string Tr = "/TR";
     public const string Ts = "/TS";
     public const string Tsg = "/TSG";
+    public const string Ct = "/CT";
   }
 
   internal class TableParser : BlockInstructionParser
@@ -109,6 +112,8 @@
     private float[] columns;
     private float[] rows;
     private Table table;
+    private Color foregroundColor = Color.Black;
+    private Color backgroundColor = Color.White;
 
     private readonly string[] supportedInstructions = new string[] 
     { 
@@ -145,11 +150,32 @@
         {
           ParseCell(context, current);
         }
+        else if (IsInstructionSupported(current, Instructions.Ct))
+        {
+          ParseForegroundColor(context, current);
+        }
       }
       else
       {
         context.ErrorProvider.AddError($"Unexpected table instruction outside table definition.");
       }
+    }
+
+    /// <summary>
+    /// Parse text color.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="current"></param>
+    /// <remarks>{/CT, 0, 128, 128}</remarks>
+    private void ParseForegroundColor(ParserContext context, string current)
+    {
+      var tokens = Tokenizer.GetTokens(current)
+        .Select(x => x.Trim())
+        .Where(x => byte.TryParse(x, out _))
+        .Select(x => byte.Parse(x))
+        .ToArray();
+
+      foregroundColor = Color.FromArgb(tokens[0], tokens[1], tokens[2]);
     }
 
     /// <summary>
@@ -160,7 +186,9 @@
     /// <remarks>For example, {/TS, A2:A2, , FONT1}Field ___</remarks>
     private void ParseCell(ParserContext context, string current)
     {
-      var tokens = Tokenizer.GetTokens(current).ToList();
+      var tokens = Tokenizer.GetTokens(current)
+        .Select(x => x.Trim())
+        .ToList();
       var endDefinitionIndex = tokens.IndexOf("}");
       if (endDefinitionIndex < 0 || tokens.Count < 11)
       {
@@ -196,6 +224,9 @@
       {
         context.ErrorProvider.AddError($"Undefined font '{fontAlias}'.");
       }
+
+      cell.ForegroundColor = foregroundColor;
+      cell.BackgroundColor = backgroundColor;
     }
 
     private void CreateTableIfRequired(ParserContext context)

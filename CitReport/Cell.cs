@@ -20,6 +20,10 @@ namespace CitReport
 
     public FontInfo Font { get; set; }
 
+    public Color ForeColor { get; set; }
+
+    public Color BackgroundColor { get; set; }
+
     public HorizontalAlignment HorizontalAlignment { get; set; }
 
     public VerticalAlignment VerticalAlignment { get; set; }
