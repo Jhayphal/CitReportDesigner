@@ -27,6 +27,8 @@
 
     public float Height => Table.GetRowHeight(Row);
 
+    public bool MayGrow { get; set; }
+
     public void AddChild(Cell cell)
     {
       children.Add(cell);

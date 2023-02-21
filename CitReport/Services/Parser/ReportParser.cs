@@ -1,4 +1,6 @@
-﻿namespace CitReport.Services.Parser
+﻿using System.Text;
+
+namespace CitReport.Services.Parser
 {
   internal sealed class ReportParser
   {
@@ -7,7 +9,8 @@
       new MetadataParser(),
       new ReportDefinitionParser(),
       new BodyBlockParser(),
-
+      new FontParser(),
+      
       new CodeBehindParser()
     };
 
@@ -95,6 +98,237 @@
     public const string AfterEnd = "/AFTER END ";
     public const string Do = "/DO ";
     public const string Blk = "/BLK ";
+    public const string Fl = "{/FL";
+    public const string Tc = "{/TC";
+    public const string Tr = "{/TR";
+    public const string Ts = "{/TS";
+    public const string Tsg = "{/TSG";
+  }
+
+  internal class TableParser : IInstructionParser
+  {
+    private float[] columns;
+    private float[] rows;
+    private Table table;
+
+    private readonly BlockInstructionTokenizer tokenizer = new();
+
+    public bool CanParse(string current, CodeContext context)
+      => context == CodeContext.Block
+        && IsInstructionSupported(Instructions.Tc, Instructions.Tr, Instructions.Ts);
+
+    private bool IsInstructionSupported(string current, params string[] instructions)
+      => instructions.Any(x => current.StartsWith(current, StringComparison.OrdinalIgnoreCase));
+
+    public void Parse(ParserContext context, string current)
+    {
+      if (current.StartsWith(Instructions.Tc, StringComparison.OrdinalIgnoreCase))
+      {
+        columns = ParseArray(Instructions.Tc, current);
+        CreateTableIfRequired(context);
+      }
+      else if (current.StartsWith(Instructions.Tr, StringComparison.OrdinalIgnoreCase))
+      {
+        rows = ParseArray(Instructions.Tr, current);
+        CreateTableIfRequired(context);
+      }
+      else if (table != null)
+      {
+        if (current.StartsWith(Instructions.Ts, StringComparison.OrdinalIgnoreCase))
+        {
+          ParseCell(context, current);
+        }
+      }
+    }
+
+    private void ParseCell(ParserContext context, string current)
+    {
+      var cell = new Cell(table);
+
+      var enumerator = tokenizer.GetTokens(current).GetEnumerator();
+      var token = string.Empty;
+      while (TryMoveEnumerator(context, current, enumerator))
+      {
+        token = enumerator.Current;
+
+        if (!string.IsNullOrWhiteSpace(token) && token != "{")
+        {
+          break;
+        }
+      }
+      
+      if (enumerator.Current == null)
+      {
+        return;
+      }
+
+      if (string.Equals(token, Instructions.Ts, StringComparison.OrdinalIgnoreCase))
+      {
+        cell.MayGrow = false;
+      }
+      else if (string.Equals(token, Instructions.Tsg, StringComparison.OrdinalIgnoreCase))
+      {
+        cell.MayGrow = true;
+      }
+      else
+      {
+        context.ErrorProvider.AddError($"Unexpected instruction: '{token}'.");
+        return;
+      }
+
+      if (!TryMoveEnumerator(context, current, enumerator))
+      {
+        return;
+      }
+
+      var language = string.Empty;
+      token = enumerator.Current;
+      if (token == ":")
+      {
+        if (!TryMoveEnumerator(context, current, enumerator))
+        {
+          return;
+        }
+
+        token = enumerator.Current;
+        language = token;
+
+        if (!TryMoveEnumerator(context, current, enumerator))
+        {
+          return;
+        }
+      }
+
+      if (token != ",")
+      {
+        context.ErrorProvider.AddError($"Unexpected instruction: '{token}'.");
+        return;
+      }
+
+      if (!TryMoveEnumerator(context, current, enumerator))
+      {
+        return;
+      }
+    }
+
+    private bool TryMoveEnumerator(ParserContext context, string current, IEnumerator<string> enumerator)
+    {
+      if (!enumerator.MoveNext())
+      {
+        context.ErrorProvider.AddError($"Unfinished instruction: '{current}'.");
+        return false;
+      }
+
+      return true;
+    }
+
+    private void CreateTableIfRequired(ParserContext context)
+    {
+      table = null;
+
+      if (columns != null && rows != null)
+      {
+        if (columns.Length == 0)
+        {
+          context.ErrorProvider.AddError("Table has not columns.");
+        }
+
+        if (rows.Length == 0)
+        {
+          context.ErrorProvider.AddError("Table has not rows.");
+        }
+
+        table = new Table(columns, rows);
+        columns = null;
+        rows = null;
+      }
+    }
+
+    private float[] ParseArray(string instruction, string current)
+      => current[instruction.Length..].TrimEnd('}')
+        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+        .Where(x => float.TryParse(x, out var _))
+        .Select(float.Parse)
+        .ToArray();
+  }
+
+  internal class BlockInstructionTokenizer
+  {
+    private static readonly HashSet<char> breakers = new() { '{', ',', ':', '}' };
+
+    public IEnumerable<string> GetTokens(string current)
+    {
+      if (current == null)
+      {
+        yield break;
+      }
+
+      var builder = new StringBuilder();
+      var position = 0;
+
+      do
+      {
+        while (position < current.Length && !breakers.Contains(current[position]))
+        {
+          builder.Append(current[position++]);
+        }
+
+        if (builder.Length > 0)
+        {
+          var result = builder.ToString();
+          builder.Clear();
+          yield return result;
+        }
+
+        if (position < current.Length)
+        {
+          yield return current[position++].ToString();
+        }
+      }
+      while (position < current.Length);
+    }
+  }
+
+  internal class FontParser : IInstructionParser
+  {
+    public bool CanParse(string current, CodeContext context)
+      => context == CodeContext.Block && current.StartsWith(Instructions.Fl, StringComparison.OrdinalIgnoreCase);
+
+    public void Parse(ParserContext context, string current)
+    {
+      if (context.CurrentItem is not BodyBlock block)
+      {
+        context.ErrorProvider.AddError($"Font cannot be implemented in context '{context.Context}'.");
+        return;
+      }
+
+      var parts = current.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+      var font = new FontInfo();
+
+      if (parts.Length > 1)
+      {
+        font.Alias = parts[1];
+      }
+
+      if (parts.Length > 2)
+      {
+        font.Family = parts[2];
+      }
+
+      if (parts.Length > 3)
+      {
+        font.Size = float.TryParse(parts[3], out var size) ? size : 0;
+      }
+
+      if (parts.Length > 4)
+      {
+        font.Style = string.Equals(parts[4], "B", StringComparison.OrdinalIgnoreCase)
+          ? FontStyle.Bold
+          : FontStyle.Regular;
+      }
+
+      block.Fonts.Add(font);
+    }
   }
 
   internal class BodyBlockParser : IInstructionParser

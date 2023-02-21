@@ -2,7 +2,7 @@
 {
   public class FontInfo
   {
-    public int Id { get; set; }
+    public string Alias { get; set; }
 
     public string Family { get; set; }
 
