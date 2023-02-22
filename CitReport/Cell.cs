@@ -68,7 +68,7 @@ namespace CitReport
       Parent = cell;
     }
 
-    public bool RemoveChild(Cell cell) => children.Remove(cell);
+    private bool RemoveChild(Cell cell) => children.Remove(cell);
 
     public void Break()
     {

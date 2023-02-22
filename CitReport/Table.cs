@@ -1,6 +1,8 @@
-﻿namespace CitReport
+﻿using System.Collections;
+
+namespace CitReport
 {
-  public class Table
+  public sealed class Table : IEnumerable<Cell>
   {
     private readonly List<Cell> cells;
     private readonly List<float> columns;
@@ -28,6 +30,11 @@
 
     public int RowsCount => rows.Count;
 
+    public IEnumerator<Cell> GetEnumerator()
+      => GetRange(new CellPosition(0, 0), new CellPosition(ColumnsCount, RowsCount)).GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
     public int GetCellRowIndex(Cell cell)
     {
       var index = cells.IndexOf(cell);
@@ -54,17 +61,13 @@
 
     public float GetRowHeight(int index) => this.rows[index];
 
-    public Cell GetCell(int column, int row) => cells[row * columns.Count + column];
-
-    public Cell GetCell(CellPosition position) => GetCell(position.X, position.Y);
-
-    public Cell GetMergedCell(int column, int row)
+    public Cell GetCell(int column, int row)
     {
-      var cell = GetCell(column, row);
+      var cell = GetCellDirect(column, row);
       return cell.Parent ?? cell;
     }
 
-    public Cell GetMergedCell(CellPosition position) => GetMergedCell(position.X, position.Y);
+    public Cell GetCell(CellPosition position) => GetCell(position.X, position.Y);
 
     /// <summary>
     /// Merge cells by text range, if required.
@@ -77,12 +80,12 @@
     {
       if (leftUpper == rightBottom)
       {
-        return GetCell(leftUpper);
+        return GetCellDirect(leftUpper);
       }
 
-      var leftCornerCell = GetCell(Math.Min(leftUpper.X, rightBottom.X), Math.Max(rightBottom.Y, leftUpper.Y));
+      var leftCornerCell = GetCellDirect(Math.Min(leftUpper.X, rightBottom.X), Math.Max(rightBottom.Y, leftUpper.Y));
 
-      var other = GetRange(leftUpper, rightBottom).Where(x => x != leftCornerCell);
+      var other = GetRangeDirect(leftUpper, rightBottom).Where(x => x != leftCornerCell);
       foreach (var cell in other)
       {
         if (cell.IsMerged)
@@ -97,10 +100,13 @@
     }
 
     public IEnumerable<Cell> GetRange(CellPosition leftUpper, CellPosition rightBottom)
+      => GetRangeDirect(leftUpper, rightBottom).Where(x => x.Parent == null);
+
+    private IEnumerable<Cell> GetRangeDirect(CellPosition leftUpper, CellPosition rightBottom)
     {
       if (leftUpper == rightBottom)
       {
-        yield return GetCell(leftUpper);
+        yield return GetCellDirect(leftUpper);
       }
       else
       {
@@ -118,10 +124,14 @@
         {
           for (; x < xMax; ++x)
           {
-            yield return GetCell(x, y);
+            yield return GetCellDirect(x, y);
           }
         }
       }
     }
+
+    private Cell GetCellDirect(int column, int row) => cells[row * columns.Count + column];
+
+    private Cell GetCellDirect(CellPosition position) => GetCellDirect(position.X, position.Y);
   }
 }
