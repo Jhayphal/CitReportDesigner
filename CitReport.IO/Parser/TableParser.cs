@@ -10,11 +10,11 @@ public class TableParser : BlockInstructionParser
   private Color foregroundColor = Color.Black;
   private Color backgroundColor = Color.White;
 
-  private readonly string[] supportedInstructions = new string[] 
-  { 
-    Instructions.Tc, 
-    Instructions.Tr, 
-    Instructions.Ts 
+  private readonly string[] supportedInstructions = new string[]
+  {
+    Instructions.Tc,
+    Instructions.Tr,
+    Instructions.Ts
   };
 
   private readonly string[] fieldInstructions = new string[]
