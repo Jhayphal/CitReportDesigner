@@ -20,7 +20,7 @@ namespace CitReport
 
     public FontInfo Font { get; set; }
 
-    public Color ForeColor { get; set; }
+    public Color ForegroundColor { get; set; }
 
     public Color BackgroundColor { get; set; }
 
