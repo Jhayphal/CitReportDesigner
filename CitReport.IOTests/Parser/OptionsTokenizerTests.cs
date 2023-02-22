@@ -12,7 +12,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = Array.Empty<string>();
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
 
@@ -23,7 +23,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = Array.Empty<string>();
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -33,7 +33,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = Array.Empty<string>();
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -43,7 +43,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = new string[] { "Details", string.Empty };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -53,7 +53,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = new string[] { "Details", string.Empty };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -63,7 +63,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = new string[] { "Details", " " };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -73,7 +73,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = new string[] { "BlkH", "100" };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -83,7 +83,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = new string[] { "Cond", string.Empty, "Totals", string.Empty, "Details", string.Empty };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -93,7 +93,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = new string[] { "Cond", "100 > 1", "BlkH", "30" };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -103,7 +103,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens().ToArray();
       var expected = new string[] { "BREAK", "IIF(x > 1, 2, 4)" };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
   }
 }

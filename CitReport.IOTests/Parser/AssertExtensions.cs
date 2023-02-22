@@ -4,20 +4,20 @@ namespace CitReport.IO.Parser.Tests
 {
   public static class AssertExtensions
   {
-    public static void AreEquals<T>(this T[] values, T[] other)
+    public static void AreEquals<T>(this T[] expected, T[] actual)
     {
-      if (values == null || other == null)
+      if (expected == null || actual == null)
       {
-        Assert.IsTrue(ReferenceEquals(values, other));
+        Assert.IsTrue(ReferenceEquals(expected, actual));
 
         return;
       }
 
-      Assert.AreEqual(values.Length, other.Length);
+      Assert.AreEqual(expected.Length, actual.Length);
 
-      for (int i = 0; i < values.Length; ++i)
+      for (int i = 0; i < expected.Length; ++i)
       {
-        Assert.AreEqual(values[i], other[i]);
+        Assert.AreEqual(expected[i], actual[i]);
       }
     }
   }

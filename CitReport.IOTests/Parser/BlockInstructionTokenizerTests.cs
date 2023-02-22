@@ -12,7 +12,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens(null).ToArray();
       var expected = Array.Empty<string>();
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -22,7 +22,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens(string.Empty).ToArray();
       var expected = Array.Empty<string>();
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -32,7 +32,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens("    ").ToArray();
       var expected = new string[] { "    " };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -42,7 +42,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens($"{{{Instructions.Ct}, 0, 54, 255}}").ToArray();
       var expected = new string[] { "{", Instructions.Ct, ",", " 0", ",", " 54", ",", " 255", "}" };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
 
     [TestMethod()]
@@ -52,7 +52,7 @@ namespace CitReport.IO.Parser.Tests
       var actual = tokenizer.GetTokens($"{{{Instructions.Ts}, B1:B1, , FONT1}}SOM ___").ToArray();
       var expected = new string[] { "{", Instructions.Ts, ",", " B1", ":", "B1", ",", " ", ",", " FONT1", "}", "SOM ___" };
 
-      actual.AreEquals(expected);
+      expected.AreEquals(actual);
     }
   }
 }

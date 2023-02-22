@@ -1,7 +1,20 @@
-﻿namespace CitReport.IO.Parser;
+﻿using System.ComponentModel;
+using System.Reflection;
+
+namespace CitReport.IO.Parser;
 
 public class OptionsParser
 {
+  private static readonly Dictionary<string, Type> options = Assembly.GetAssembly(typeof(Option)).GetTypes()
+    .Where(t => t != typeof(Option) && typeof(Option).IsAssignableFrom(t))
+    .Select(t => new 
+    { 
+      Name = t.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName?.ToLower(), 
+      Type = t 
+    })
+    .Where(x => !string.IsNullOrWhiteSpace(x.Name))
+    .ToDictionary(x => x.Name, x => x.Type);
+
   public IEnumerable<Option> Parse(string current, IErrorProvider errorProvider)
   {
     var result = new List<Option>();
@@ -17,7 +30,7 @@ public class OptionsParser
         break;
       }
 
-      if (!Options.Map.TryGetValue(optionName.ToLower(), out var optionType))
+      if (!options.TryGetValue(optionName.ToLower(), out var optionType))
       {
         errorProvider.AddError($"Unsupported option '{optionName}'.");
         optionType = typeof(Option);
@@ -31,7 +44,7 @@ public class OptionsParser
       else
       {
         optionValue.Name = optionName;
-        optionValue.Value = option[2];
+        optionValue.Value = option[1];
         result.Add(optionValue);
       }
     }

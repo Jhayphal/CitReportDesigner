@@ -1,40 +1,31 @@
-﻿namespace CitReport;
+﻿using System.ComponentModel;
+using System.Reflection;
 
-public static class Options
+namespace CitReport;
+
+public class Option : IEquatable<Option>
 {
-  public const string BlkH = "blkh";
-  public const string New_Linebreak = "new_linebreak";
-  public const string Cond = "cond";
-  public const string TCond = "tcond";
-  public const string Uf = "uf";
-  public const string Details = "details";
-  public const string Break = "break";
-  public const string Ctl = "ctl";
-  public const string Skipper = "skipper";
-  public const string Totals = "totals";
-
-  public static readonly Dictionary<string, Type> Map = new Dictionary<string, Type>
+  public Option()
   {
-    { BlkH, typeof(Options) },
-    { New_Linebreak, typeof(New_LinebreakOption) },
-    { Cond, typeof(CondOption) },
-    { TCond, typeof(TCondOption) },
-    { Uf, typeof(UfOption) },
-    { Details, typeof(DetailsOption) },
-    { Break, typeof(BreakOption) },
-    { Ctl, typeof(CtlOption) },
-    { Skipper, typeof(SkipperOption) },
-    { Totals, typeof(TotalsOption) }
-  };
-}
+    Name = GetType().GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? string.Empty;
+  }
 
-public class Option
-{
   public string Name { get; set; }
 
-  public virtual string Value { get; set; }
+  public virtual string Value { get; set; } = string.Empty;
+
+  public override bool Equals(object obj) => Equals(obj as Option);
+
+  public bool Equals(Option other)
+    => other != null && other.GetType() == GetType() && other.Name == Name && other.Value == Value;
+
+  public override int GetHashCode()
+    => (GetType().Name + (Name ?? string.Empty) + (Value ?? string.Empty)).GetHashCode();
+
+  public override string ToString() => $"{Name}({Value})";
 }
 
+[DisplayName("BlkH")]
 public class BlkHOption : Option
 {
   public override string Value
@@ -46,20 +37,29 @@ public class BlkHOption : Option
   public float Height { get; set; }
 }
 
+[DisplayName("New_Linebreak")]
 public class New_LinebreakOption : Option { }
 
+[DisplayName("Cond")]
 public class CondOption : Option { }
 
+[DisplayName("TCond")]
 public class TCondOption : Option { }
 
+[DisplayName("UF")]
 public class UfOption : Option { }
 
+[DisplayName("Details")]
 public class DetailsOption : Option { }
 
+[DisplayName("Break")]
 public class BreakOption : Option { }
 
+[DisplayName("Ctl")]
 public class CtlOption : Option { }
 
+[DisplayName("Skipper")]
 public class SkipperOption : Option { }
 
+[DisplayName("Totals")]
 public class TotalsOption : Option { }
