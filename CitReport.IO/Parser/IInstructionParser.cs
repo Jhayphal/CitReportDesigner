@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal interface IInstructionParser
+public interface IInstructionParser
 {
   bool CanParse(string current, CodeContext context);
 

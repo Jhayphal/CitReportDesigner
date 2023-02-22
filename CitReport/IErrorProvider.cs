@@ -1,7 +1,6 @@
-﻿namespace CitReport
+﻿namespace CitReport;
+
+public interface IErrorProvider
 {
-  public interface IErrorProvider
-  {
-    void AddError(string message);
-  }
+  void AddError(string message);
 }

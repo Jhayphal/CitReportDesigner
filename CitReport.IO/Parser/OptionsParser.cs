@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal class OptionsParser
+public class OptionsParser
 {
   public IEnumerable<Option> Parse(string current, IErrorProvider errorProvider)
   {

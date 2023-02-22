@@ -1,9 +1,8 @@
-﻿namespace CitReport
+﻿namespace CitReport;
+
+public enum VerticalAlignment
 {
-  public enum VerticalAlignment
-  {
-    Top,
-    Center,
-    Bottom
-  }
+  Top,
+  Center,
+  Bottom
 }

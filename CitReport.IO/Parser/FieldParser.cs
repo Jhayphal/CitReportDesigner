@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal class FieldParser : IInstructionParser
+public class FieldParser : IInstructionParser
 {
   public bool CanParse(string current, CodeContext context) => context == CodeContext.Block
     && current.Length > 0

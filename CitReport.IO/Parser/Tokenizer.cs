@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace CitReport.IO;
+namespace CitReport.IO.Parser;
 
-internal class Tokenizer
+public class Tokenizer
 {
   private readonly string text;
   private readonly StringBuilder builder = new(); 

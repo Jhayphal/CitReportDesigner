@@ -1,7 +1,6 @@
-﻿namespace CitReport
+﻿namespace CitReport;
+
+public class Expression
 {
-  public class Expression
-  {
-    public string Value { get; set; }
-  }
+  public string Value { get; set; }
 }

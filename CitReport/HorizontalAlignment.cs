@@ -1,9 +1,8 @@
-﻿namespace CitReport
+﻿namespace CitReport;
+
+public enum HorizontalAlignment
 {
-  public enum HorizontalAlignment
-  {
-    Left,
-    Center,
-    Right
-  }
+  Left,
+  Center,
+  Right
 }

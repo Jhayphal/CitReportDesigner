@@ -1,9 +1,9 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
 /// <summary>
 /// For instruction started with '{'
 /// </summary>
-internal abstract class BlockInstructionParser : IInstructionParser
+public abstract class BlockInstructionParser : IInstructionParser
 {
   protected readonly BlockInstructionTokenizer Tokenizer = new();
 

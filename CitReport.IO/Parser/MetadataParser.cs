@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal class MetadataParser : IInstructionParser
+public class MetadataParser : IInstructionParser
 {
   public bool CanParse(string current, CodeContext context) => current.StartsWith("{/*");
 

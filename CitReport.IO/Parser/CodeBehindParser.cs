@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal class CodeBehindParser : IInstructionParser
+public class CodeBehindParser : IInstructionParser
 {
   public bool CanParse(string current, CodeContext context) => context == CodeContext.CodeBehind;
 

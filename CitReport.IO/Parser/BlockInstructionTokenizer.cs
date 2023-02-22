@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace CitReport.IO;
+namespace CitReport.IO.Parser;
 
-internal class BlockInstructionTokenizer
+public class BlockInstructionTokenizer
 {
   private static readonly HashSet<char> breakers = new() { '{', ',', ':', '}' };
 

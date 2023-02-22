@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal sealed class FontParser : BlockInstructionParser
+public sealed class FontParser : BlockInstructionParser
 {
   private readonly string[] supportedInstructions = new string[] { Instructions.Fl };
 

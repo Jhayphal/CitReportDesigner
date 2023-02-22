@@ -1,9 +1,8 @@
-﻿namespace CitReport
-{
-  public interface IMultilanguageValueStorage
-  {
-    void SetValue(string language, string value);
+﻿namespace CitReport;
 
-    string GetValue(string language);
-  }
+public interface IMultilanguageValueStorage
+{
+  void SetValue(string language, string value);
+
+  string GetValue(string language);
 }

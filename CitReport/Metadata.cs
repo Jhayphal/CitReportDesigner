@@ -1,7 +1,6 @@
-﻿namespace CitReport
+﻿namespace CitReport;
+
+public class Metadata
 {
-  public class Metadata
-  {
-    public string Value { get; set; }
-  }
+  public string Value { get; set; }
 }

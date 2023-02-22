@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
 
-namespace CitReport.IO;
+namespace CitReport.IO.Parser;
 
-internal class TableParser : BlockInstructionParser
+public class TableParser : BlockInstructionParser
 {
   private float[] columns;
   private float[] rows;

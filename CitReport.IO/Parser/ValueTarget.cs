@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal readonly struct ValueTarget
+public readonly struct ValueTarget
 {
   public ValueTarget(IMultilanguageValueStorage target, string language)
   {

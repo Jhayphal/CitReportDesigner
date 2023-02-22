@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal sealed class ReportParser
+public sealed class ReportParser
 {
   private readonly IEnumerable<IInstructionParser> parsers = new List<IInstructionParser>
   {

@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal class BodyBlockParser : IInstructionParser
+public class BodyBlockParser : IInstructionParser
 {
   private readonly OptionsParser optionsParser = new();
 

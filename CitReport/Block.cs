@@ -1,9 +1,8 @@
-﻿namespace CitReport
-{
-  public abstract class Block
-  {
-    public string Code { get; set; }
+﻿namespace CitReport;
 
-    public readonly List<Option> Options = new();
-  }
+public abstract class Block
+{
+  public string Code { get; set; }
+
+  public readonly List<Option> Options = new();
 }

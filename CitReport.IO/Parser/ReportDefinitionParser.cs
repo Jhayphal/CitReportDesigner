@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal class ReportDefinitionParser : IInstructionParser
+public class ReportDefinitionParser : IInstructionParser
 {
   public bool CanParse(string current, CodeContext context)
     => current.StartsWith(Instructions.Report, StringComparison.OrdinalIgnoreCase)

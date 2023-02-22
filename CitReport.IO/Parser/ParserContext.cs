@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal sealed class ParserContext
+public sealed class ParserContext
 {
   public ParserContext(IErrorProvider errorProvider)
   {

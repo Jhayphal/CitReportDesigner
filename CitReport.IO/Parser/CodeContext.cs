@@ -1,6 +1,6 @@
-﻿namespace CitReport.IO;
+﻿namespace CitReport.IO.Parser;
 
-internal enum CodeContext
+public enum CodeContext
 {
   CodeBehind,
   ReportDefinition,
