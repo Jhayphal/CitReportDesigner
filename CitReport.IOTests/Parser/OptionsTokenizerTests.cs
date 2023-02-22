@@ -6,6 +6,37 @@ namespace CitReport.IO.Parser.Tests
   public class OptionsTokenizerTests
   {
     [TestMethod()]
+    public void GetTokens_Null()
+    {
+      var tokenizer = new OptionsTokenizer(null);
+      var actual = tokenizer.GetTokens().ToArray();
+      var expected = Array.Empty<string>();
+
+      actual.AreEquals(expected);
+    }
+
+
+    [TestMethod()]
+    public void GetTokens_Empty()
+    {
+      var tokenizer = new OptionsTokenizer(string.Empty);
+      var actual = tokenizer.GetTokens().ToArray();
+      var expected = Array.Empty<string>();
+
+      actual.AreEquals(expected);
+    }
+
+    [TestMethod()]
+    public void GetTokens_Whitespaces()
+    {
+      var tokenizer = new OptionsTokenizer("    ");
+      var actual = tokenizer.GetTokens().ToArray();
+      var expected = Array.Empty<string>();
+
+      actual.AreEquals(expected);
+    }
+
+    [TestMethod()]
     public void GetTokens_SingleOption_WithoutParameters()
     {
       var tokenizer = new OptionsTokenizer("Details()");

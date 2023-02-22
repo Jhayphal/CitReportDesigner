@@ -15,6 +15,11 @@ public class OptionsTokenizer
 
   public IEnumerable<string> GetTokens()
   {
+    if (text == null)
+    {
+      yield break;
+    }
+
     while (position < text.Length)
     {
       while (position < text.Length && char.IsWhiteSpace(text[position]))
