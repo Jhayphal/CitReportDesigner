@@ -29,7 +29,7 @@ public class OptionsTokenizer
 
       while (position < text.Length && text[position] != '(')
       {
-        builder.Append(text[position]);
+        builder.Append(text[position++]);
       }
 
       var token = builder.ToString();
