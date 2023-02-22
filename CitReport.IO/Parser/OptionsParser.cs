@@ -5,7 +5,7 @@ public class OptionsParser
   public IEnumerable<Option> Parse(string current, IErrorProvider errorProvider)
   {
     var result = new List<Option>();
-    var tokenizer = new Tokenizer(current);
+    var tokenizer = new OptionsTokenizer(current);
 
     foreach (var option in tokenizer.GetTokens().Chunk(2))
     {

@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CitReport", "CitReport\CitR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitReport.IO", "CitReport.IO\CitReport.IO.csproj", "{6A0B911D-BE48-4E5D-B192-A014809DC2C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CitReport.IOTests", "CitReport.IOTests\CitReport.IOTests.csproj", "{2E78FE13-4D6E-46B3-88FA-D845445E475A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{6A0B911D-BE48-4E5D-B192-A014809DC2C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A0B911D-BE48-4E5D-B192-A014809DC2C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A0B911D-BE48-4E5D-B192-A014809DC2C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E78FE13-4D6E-46B3-88FA-D845445E475A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E78FE13-4D6E-46B3-88FA-D845445E475A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E78FE13-4D6E-46B3-88FA-D845445E475A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E78FE13-4D6E-46B3-88FA-D845445E475A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

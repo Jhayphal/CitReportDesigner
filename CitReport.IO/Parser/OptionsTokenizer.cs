@@ -2,13 +2,13 @@
 
 namespace CitReport.IO.Parser;
 
-public class Tokenizer
+public class OptionsTokenizer
 {
   private readonly string text;
   private readonly StringBuilder builder = new(); 
   private int position;
 
-  public Tokenizer(string text)
+  public OptionsTokenizer(string text)
   {
     this.text = text;
   }
