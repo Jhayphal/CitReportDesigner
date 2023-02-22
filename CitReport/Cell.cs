@@ -1,11 +1,14 @@
 ﻿using System.Drawing;
-using System.Text;
 
 namespace CitReport
 {
-  public class Cell : IMultilanguageValueStorage
+  public sealed class Cell : IMultilanguageValueStorage, IEquatable<Cell>
   {
-    protected readonly List<Cell> children = new();
+    private static int lastId = 0;
+
+    private readonly int id = ++lastId;
+
+    private readonly List<Cell> children = new();
 
     public Cell(Table table)
     {
@@ -14,7 +17,7 @@ namespace CitReport
 
     public Table Table { get; }
     
-    public Cell Parent { get; protected set; }
+    public Cell Parent { get; private set; }
 
     public IEnumerable<Cell> Children => children;
 
@@ -44,10 +47,15 @@ namespace CitReport
 
     public bool CanGrow { get; set; }
 
+    public bool IsMerged => Parent != null || children.Count > 0;
+
     public void AddChild(Cell cell)
     {
-      children.Add(cell);
-      cell.Parent = this;
+      if (cell != null)
+      {
+        children.Add(cell);
+        cell.Parent = this;
+      }
     }
 
     public string GetValue(string language) => Value.TryGetValue(language, out var value)
@@ -56,10 +64,42 @@ namespace CitReport
 
     public void SetAsParent(Cell cell)
     {
-      cell.children.Add(this);
+      cell?.children.Add(this);
       Parent = cell;
     }
 
+    public bool RemoveChild(Cell cell) => children.Remove(cell);
+
+    public void Break()
+    {
+      if (Parent != null)
+      {
+        Parent.RemoveChild(this);
+        Parent = null;
+      }
+
+      foreach (Cell cell in children)
+      {
+        cell.Break();
+      }
+    }
+
     public void SetValue(string language, string value) => Value[language] = value;
+
+    public override int GetHashCode() => id;
+
+    public override bool Equals(object obj) => Equals(obj as Cell);
+
+    public bool Equals(Cell other)
+      => other != null
+        && ReferenceEquals(other.Table, Table)
+        && other.Column == Column
+        && other.Row == Row;
+
+    public override string ToString() => $"{Column}:{Row}";
+
+    public static bool operator ==(Cell left, Cell right) => left != null && left.Equals(right);
+
+    public static bool operator !=(Cell left, Cell right) => !(left == right);
   }
 }

@@ -20,9 +20,13 @@
       }
     }
 
-    public IEnumerable<float> Columns { get; }
+    public IEnumerable<float> Columns => columns;
     
-    public IEnumerable<float> Rows { get; }
+    public int ColumnsCount => columns.Count;
+
+    public IEnumerable<float> Rows => rows;
+
+    public int RowsCount => rows.Count;
 
     public int GetCellRowIndex(Cell cell)
     {
@@ -52,6 +56,16 @@
 
     public Cell GetCell(int column, int row) => cells[row * columns.Count + column];
 
+    public Cell GetCell(CellPosition position) => GetCell(position.X, position.Y);
+
+    public Cell GetMergedCell(int column, int row)
+    {
+      var cell = GetCell(column, row);
+      return cell.Parent ?? cell;
+    }
+
+    public Cell GetMergedCell(CellPosition position) => GetMergedCell(position.X, position.Y);
+
     /// <summary>
     /// Merge cells by text range, if required.
     /// </summary>
@@ -61,7 +75,53 @@
     /// <exception cref="NotImplementedException"></exception>
     public Cell Merge(CellPosition leftUpper, CellPosition rightBottom)
     {
-      throw new NotImplementedException();
+      if (leftUpper == rightBottom)
+      {
+        return GetCell(leftUpper);
+      }
+
+      var leftCornerCell = GetCell(Math.Min(leftUpper.X, rightBottom.X), Math.Max(rightBottom.Y, leftUpper.Y));
+
+      var other = GetRange(leftUpper, rightBottom).Where(x => x != leftCornerCell);
+      foreach (var cell in other)
+      {
+        if (cell.IsMerged)
+        {
+          cell.Break();
+        }
+
+        leftCornerCell.AddChild(cell);
+      }
+
+      return leftCornerCell;
+    }
+
+    public IEnumerable<Cell> GetRange(CellPosition leftUpper, CellPosition rightBottom)
+    {
+      if (leftUpper == rightBottom)
+      {
+        yield return GetCell(leftUpper);
+      }
+      else
+      {
+        var x = Math.Min(leftUpper.X, rightBottom.X);
+        var xMax = Math.Max(rightBottom.X, leftUpper.X);
+        int y = Math.Min(leftUpper.Y, rightBottom.Y);
+        var yMax = Math.Max(rightBottom.Y, leftUpper.Y);
+
+        if (xMax > ColumnsCount || yMax > RowsCount)
+        {
+          throw new ArgumentOutOfRangeException(xMax > ColumnsCount ? nameof(xMax) : nameof(yMax));
+        }
+
+        for (; y < yMax; ++y)
+        {
+          for (; x < xMax; ++x)
+          {
+            yield return GetCell(x, y);
+          }
+        }
+      }
     }
   }
 }

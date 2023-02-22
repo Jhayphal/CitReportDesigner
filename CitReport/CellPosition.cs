@@ -2,28 +2,53 @@
 
 namespace CitReport
 {
-  public readonly struct CellPosition
+  public readonly struct CellPosition : IEquatable<CellPosition>, IComparable<CellPosition>
   {
     public CellPosition(int x, int y)
     {
+      if (x < 0 || y < 0)
+      {
+        throw new ArgumentOutOfRangeException(x < 0 ? nameof(x) : nameof(y));
+      }
+
       X = x;
       Y = y;
     }
 
-    public int X { get; init; }
+    public readonly int X;
 
-    public int Y { get; init; }
+    public readonly int Y;
 
     public override int GetHashCode() => (Y << 16) | X;
 
-    public override bool Equals([NotNullWhen(true)] object obj)
-      => obj is CellPosition position && position.X == X && position.Y == Y;
+    public override bool Equals([NotNullWhen(true)] object obj) => obj is CellPosition other && Equals(other);
+
+    public bool Equals(CellPosition other) => other.X == X && other.Y == Y;
+
+    public int CompareTo(CellPosition other)
+    {
+      var result = X.CompareTo(other.X);
+      if (result != 0)
+      {
+        return result;
+      }
+
+      return Y.CompareTo(other.Y);
+    }
 
     public override string ToString() => $"{X}:{Y}";
 
     public static bool operator ==(CellPosition left, CellPosition right) => left.Equals(right);
 
     public static bool operator !=(CellPosition left, CellPosition right) => !(left == right);
+
+    public static bool operator <(CellPosition left, CellPosition right) => left.CompareTo(right) < 0;
+
+    public static bool operator <=(CellPosition left, CellPosition right) => left.CompareTo(right) <= 0;
+
+    public static bool operator >(CellPosition left, CellPosition right) => left.CompareTo(right) > 0;
+
+    public static bool operator >=(CellPosition left, CellPosition right) => left.CompareTo(right) >= 0;
 
     public static CellPosition FromString(string position)
     {
