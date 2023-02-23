@@ -23,6 +23,12 @@ public class Option : IEquatable<Option>
     => (GetType().Name + (Name ?? string.Empty) + (Value ?? string.Empty)).GetHashCode();
 
   public override string ToString() => $"{Name}({Value})";
+
+  public static bool operator ==(Option left, Option right) => left is null
+    ? right is null
+    : left.Equals(right);
+
+  public static bool operator !=(Option left, Option right) => !(left == right);
 }
 
 [DisplayName("BlkH")]

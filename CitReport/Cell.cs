@@ -98,7 +98,9 @@ public sealed class Cell : IMultilanguageValueStorage, IEquatable<Cell>
 
   public override string ToString() => $"{Column}:{Row}";
 
-  public static bool operator ==(Cell left, Cell right) => left != null && left.Equals(right);
+  public static bool operator ==(Cell left, Cell right) => left is null
+    ? right is null
+    : left.Equals(right);
 
   public static bool operator !=(Cell left, Cell right) => !(left == right);
 }

@@ -3,10 +3,11 @@
 public class ReportDefinitionParser : IInstructionParser
 {
   public bool CanParse(string current, CodeContext context)
-    => current.StartsWith(Instructions.Report, StringComparison.OrdinalIgnoreCase)
-      || current.StartsWith(Instructions.AfterStart, StringComparison.OrdinalIgnoreCase)
-      || current.StartsWith(Instructions.AfterEnd, StringComparison.OrdinalIgnoreCase)
-      || current.StartsWith(Instructions.Do, StringComparison.OrdinalIgnoreCase);
+    => (context == CodeContext.CodeBehind || context == CodeContext.ReportDefinition)
+      && (current.StartsWith(Instructions.Report, StringComparison.OrdinalIgnoreCase)
+        || current.StartsWith(Instructions.AfterStart, StringComparison.OrdinalIgnoreCase)
+        || current.StartsWith(Instructions.AfterEnd, StringComparison.OrdinalIgnoreCase)
+        || current.StartsWith(Instructions.Do, StringComparison.OrdinalIgnoreCase));
 
   public void Parse(ParserContext context, string current)
   {
@@ -15,7 +16,9 @@ public class ReportDefinitionParser : IInstructionParser
       var parts = current.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
       if (parts.Length > 1)
+      {
         context.Report.ReportDefinition.Code = parts[1];
+      }
 
       if (parts.Length > 2)
       {
