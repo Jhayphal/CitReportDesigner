@@ -2,9 +2,19 @@
 
 namespace CitReport.IO.Parser;
 
-public class BlockInstructionTokenizer
+public class InstructionTokenizer
 {
-  private static readonly HashSet<char> breakers = new() { '{', ',', ':', '}' };
+  private readonly HashSet<char> breakers;
+
+  public InstructionTokenizer()
+  {
+    breakers = new() { '{', ',', ':', '}' };
+  }
+
+  public InstructionTokenizer(IEnumerable<char> splitBy)
+  {
+    breakers = new(splitBy);
+  }
 
   public IEnumerable<string> GetTokens(string current)
   {

@@ -3,9 +3,9 @@
 namespace CitReport.IO.Parser.Tests
 {
   [TestClass()]
-  public class BlockInstructionTokenizerTests
+  public class InstructionTokenizerTests
   {
-    private readonly BlockInstructionTokenizer tokenizer = new();
+    private readonly InstructionTokenizer tokenizer = new();
 
     [TestMethod()]
     public void GetTokens_Null()

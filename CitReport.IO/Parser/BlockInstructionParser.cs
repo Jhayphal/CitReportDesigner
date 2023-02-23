@@ -5,7 +5,7 @@
 /// </summary>
 public abstract class BlockInstructionParser : IInstructionParser
 {
-  protected readonly BlockInstructionTokenizer Tokenizer = new();
+  protected readonly InstructionTokenizer Tokenizer = new();
 
   protected abstract CodeContext ActualContext { get; }
 

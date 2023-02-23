@@ -21,7 +21,7 @@ public class BodyBlockParser : IInstructionParser
       block.Options.AddRange(optionsParser.Parse(options, context.ErrorProvider));
     }
 
-    context.Report.BodyBlocks.Add(block);
+    context.Report.Blocks.Add(block);
     context.SetBlockAsCurrent(block);
   }
 }

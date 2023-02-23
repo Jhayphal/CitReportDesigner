@@ -2,51 +2,36 @@
 
 public class ReportDefinitionParser : IInstructionParser
 {
+  private readonly InstructionTokenizer tokenizer = new(new char[] { ' ' });
+  private readonly OptionsParser optionsParser = new();
+
   public bool CanParse(string current, CodeContext context)
-    => (context == CodeContext.CodeBehind || context == CodeContext.ReportDefinition)
-      && (current.StartsWith(Instructions.Report, StringComparison.OrdinalIgnoreCase)
-        || current.StartsWith(Instructions.AfterStart, StringComparison.OrdinalIgnoreCase)
-        || current.StartsWith(Instructions.AfterEnd, StringComparison.OrdinalIgnoreCase)
-        || current.StartsWith(Instructions.Do, StringComparison.OrdinalIgnoreCase));
+    => context == CodeContext.CodeBehind
+      && current.StartsWith(Instructions.Report, StringComparison.OrdinalIgnoreCase);
 
   public void Parse(ParserContext context, string current)
   {
-    if (current.StartsWith(Instructions.Report, StringComparison.OrdinalIgnoreCase))
+    var code = tokenizer.GetTokens(current)
+      .Skip(1)
+      .Where(t => !string.IsNullOrWhiteSpace(t))
+      .FirstOrDefault();
+
+    if (code is null)
     {
-      var parts = current.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-      if (parts.Length > 1)
-      {
-        context.Report.ReportDefinition.Code = parts[1];
-      }
-
-      if (parts.Length > 2)
-      {
-        var options = string.Join(" ", parts.Skip(2));
-        var optionsParser = new OptionsParser();
-        context.Report.ReportDefinition.Options.AddRange(optionsParser.Parse(options, context.ErrorProvider));
-      }
-    }
-    else
-    {
-      var _ = TryParse(current, Instructions.AfterStart, context.Report.ReportDefinition.AfterStartActions)
-        || TryParse(current, Instructions.AfterEnd, context.Report.ReportDefinition.AfterEndActions)
-        || TryParse(current, Instructions.Do, context.Report.ReportDefinition.DoActions);
-    }
-  }
-
-  private static bool TryParse(string current, string instruction, List<Expression> destination)
-  {
-    if (current.StartsWith(instruction, StringComparison.OrdinalIgnoreCase))
-    {
-      destination.Add(new Expression
-      {
-        Value = current[Instructions.AfterStart.Length..].TrimStart()
-      });
-
-      return true;
+      context.ErrorProvider.AddError($"Unfinished report definition: '{current}'");
+      return;
     }
 
-    return false;
+    context.Report.Definition.Code = code;
+    context.SetContext(CodeContext.ReportDefinition);
+
+    var indexOfCode = current.IndexOf(code);
+    var startOptionsIndex = indexOfCode + code.Length;
+
+    if (startOptionsIndex < current.Length)
+    {
+      var options = optionsParser.Parse(current.Substring(startOptionsIndex), context.ErrorProvider);
+      context.Report.Definition.Options.AddRange(options);
+    }
   }
 }

@@ -6,6 +6,9 @@ public sealed class ReportParser
   {
     new MetadataParser(),
     new ReportDefinitionParser(),
+    new AfterStartParser(),
+    new AfterEndParser(),
+    new DoParser(),
     new BodyBlockParser(),
     new FontParser(),
     new TableParser(),

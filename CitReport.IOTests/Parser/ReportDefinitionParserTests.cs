@@ -33,12 +33,12 @@ namespace CitReport.IO.Parser.Tests
     {
       foreach (var testCase in validCases)
       {
-        Assert.IsTrue(parser.CanParse(testCase, CodeContext.ReportDefinition));
+        Assert.IsTrue(parser.CanParse(testCase, CodeContext.CodeBehind));
       }
 
       foreach (var testCase in validCases)
       {
-        Assert.IsTrue(parser.CanParse(testCase, CodeContext.CodeBehind));
+        Assert.IsFalse(parser.CanParse(testCase, CodeContext.ReportDefinition));
       }
 
       foreach (var testCase in validCases)
@@ -61,7 +61,9 @@ namespace CitReport.IO.Parser.Tests
       errorProvider.Errors.Clear();
       parser.Parse(context, testCase);
       
-      var actual = context.Report.ReportDefinition;
+      Assert.AreEqual(CodeContext.ReportDefinition, context.Context);
+
+      var actual = context.Report.Definition;
       var expected = new ReportBlock { Code = repCode };
 
       Assert.AreEqual(expected, actual);
@@ -77,7 +79,9 @@ namespace CitReport.IO.Parser.Tests
       errorProvider.Errors.Clear();
       parser.Parse(context, testCase);
 
-      var actual = context.Report.ReportDefinition;
+      Assert.AreEqual(CodeContext.ReportDefinition, context.Context);
+
+      var actual = context.Report.Definition;
       var expected = new ReportBlock { Code = repCode };
       expected.Options.AddRange(new Option[]
       {

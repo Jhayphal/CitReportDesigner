@@ -6,7 +6,7 @@ public class Report
 
   public readonly List<Expression> CodeBehind = new();
 
-  public readonly ReportBlock ReportDefinition = new();
+  public readonly ReportBlock Definition = new();
 
-  public readonly List<BodyBlock> BodyBlocks = new();
+  public readonly List<BodyBlock> Blocks = new();
 }
