@@ -105,5 +105,45 @@ namespace CitReport.IO.Parser.Tests
 
       expected.AreEquals(actual);
     }
+
+    [TestMethod()]
+    public void GetTokens_SingleOption_WithUnfinishedExpressionParameter()
+    {
+      var tokenizer = new OptionsTokenizer("BREAK(IIF(x > 1, 2");
+      var actual = tokenizer.GetTokens().ToArray();
+      var expected = new string[] { "BREAK", "IIF(x > 1, 2" };
+
+      expected.AreEquals(actual);
+    }
+
+    [TestMethod()]
+    public void GetTokens_UnknownOption_WithExpressionParameter()
+    {
+      var tokenizer = new OptionsTokenizer("Unknown(x > 1)");
+      var actual = tokenizer.GetTokens().ToArray();
+      var expected = new string[] { "Unknown", "x > 1" };
+
+      expected.AreEquals(actual);
+    }
+
+    [TestMethod()]
+    public void GetTokens_UnknownOption_WithoutParameters()
+    {
+      var tokenizer = new OptionsTokenizer("Unknown()");
+      var actual = tokenizer.GetTokens().ToArray();
+      var expected = new string[] { "Unknown", string.Empty };
+
+      expected.AreEquals(actual);
+    }
+
+    [TestMethod()]
+    public void GetTokens_EmptyBrackets()
+    {
+      var tokenizer = new OptionsTokenizer("()");
+      var actual = tokenizer.GetTokens().ToArray();
+      var expected = new string[] { string.Empty, string.Empty };
+
+      expected.AreEquals(actual);
+    }
   }
 }
