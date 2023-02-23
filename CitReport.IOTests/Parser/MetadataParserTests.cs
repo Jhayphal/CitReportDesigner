@@ -24,11 +24,18 @@ namespace CitReport.IO.Parser.Tests
       " "
     };
 
+    private readonly TestErrorProvider errorProvider = new();
+    private readonly MetadataParser parser = new();
+    private readonly ParserContext context;
+
+    public MetadataParserTests()
+    {
+      context = new ParserContext(errorProvider);
+    }
+
     [TestMethod]
     public void CanParseTests()
     {
-      var parser = new MetadataParser();
-
       foreach (var testCase in validCases)
       {
         Assert.IsTrue(parser.CanParse(testCase.Key, CodeContext.CodeBehind));
@@ -58,12 +65,9 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod]
     public void ParseTests()
     {
-      var errorProvider = new TestErrorProvider();
-      
-      var context = new ParserContext(errorProvider);
       context.SetContext(CodeContext.CodeBehind);
-      
-      var parser = new MetadataParser();
+      errorProvider.Errors.Clear();
+
       foreach (var testCase in validCases)
       {
         parser.Parse(context, testCase.Key);
@@ -71,6 +75,7 @@ namespace CitReport.IO.Parser.Tests
         var expected = new Metadata { Value = testCase.Value };
         
         Assert.AreEqual(expected, actual);
+        Assert.AreEqual(0, errorProvider.Errors.Count);
       }
     }
   }

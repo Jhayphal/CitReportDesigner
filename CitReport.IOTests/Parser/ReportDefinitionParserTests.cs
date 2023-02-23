@@ -19,10 +19,18 @@ namespace CitReport.IO.Parser.Tests
       "{/*repCode*/}"
     };
 
+    private readonly TestErrorProvider errorProvider = new();
+    private readonly ReportDefinitionParser parser = new();
+    private readonly ParserContext context;
+
+    public ReportDefinitionParserTests()
+    {
+      context = new ParserContext(errorProvider);
+    }
+
     [TestMethod()]
     public void CanParseTests()
     {
-      var parser = new ReportDefinitionParser();
       foreach (var testCase in validCases)
       {
         Assert.IsTrue(parser.CanParse(testCase, CodeContext.ReportDefinition));
@@ -47,12 +55,10 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void Parse_WithoutOptions()
     {
-      var errorProvider = new TestErrorProvider();
-      var context = new ParserContext(errorProvider);
-
       var repCode = "Rep";
       var testCase = $"/REPORT {repCode}";
-      var parser = new ReportDefinitionParser();
+
+      errorProvider.Errors.Clear();
       parser.Parse(context, testCase);
       
       var actual = context.Report.ReportDefinition;
@@ -65,12 +71,10 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void Parse_WithOptions()
     {
-      var errorProvider = new TestErrorProvider();
-      var context = new ParserContext(errorProvider);
-
       var repCode = "ZP10SFRD";
       var testCase = $"/REPORT {repCode} Ctl(Str(CEX, 4) + Str(UCH, 4)) Skipper(SkipRecord())";
-      var parser = new ReportDefinitionParser();
+      
+      errorProvider.Errors.Clear();
       parser.Parse(context, testCase);
 
       var actual = context.Report.ReportDefinition;

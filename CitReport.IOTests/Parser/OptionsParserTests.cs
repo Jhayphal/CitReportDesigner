@@ -5,41 +5,51 @@ namespace CitReport.IO.Parser.Tests
   [TestClass()]
   public class OptionsParserTests
   {
+    private readonly OptionsParser parser = new();
+    private readonly TestErrorProvider errorProvider = new();
+
     [TestMethod()]
     public void Parse_Null()
     {
-      var parser = new OptionsParser();
-      var actual = parser.Parse(null, new DebugErrorProvider()).ToArray();
+      errorProvider.Errors.Clear();
+
+      var actual = parser.Parse(null, errorProvider).ToArray();
       var expected = Array.Empty<Option>();
 
       expected.AreEquals(actual);
+      Assert.AreEqual(0, errorProvider.Errors.Count);
     }
 
     [TestMethod()]
     public void Parse_Empty()
     {
-      var parser = new OptionsParser();
-      var actual = parser.Parse(string.Empty, new DebugErrorProvider()).ToArray();
+      errorProvider.Errors.Clear();
+
+      var actual = parser.Parse(string.Empty, errorProvider).ToArray();
       var expected = Array.Empty<Option>();
 
       expected.AreEquals(actual);
+      Assert.AreEqual(0, errorProvider.Errors.Count);
     }
 
     [TestMethod()]
     public void Parse_Whitespaces()
     {
-      var parser = new OptionsParser();
-      var actual = parser.Parse("    ", new DebugErrorProvider()).ToArray();
+      errorProvider.Errors.Clear();
+
+      var actual = parser.Parse("    ", errorProvider).ToArray();
       var expected = Array.Empty<Option>();
 
       expected.AreEquals(actual);
+      Assert.AreEqual(0, errorProvider.Errors.Count);
     }
 
     [TestMethod()]
     public void Parse_ManyOptions_WithParams()
     {
-      var parser = new OptionsParser();
-      var actual = parser.Parse("BREAK(TEXT, CODE) Ctl(PAGE_N) Skipper(SkipRecord())", new DebugErrorProvider()).ToArray();
+      errorProvider.Errors.Clear();
+
+      var actual = parser.Parse("BREAK(TEXT, CODE) Ctl(PAGE_N) Skipper(SkipRecord())", errorProvider).ToArray();
       var expected = new Option[]
       {
         new BreakOption { Name = "BREAK", Value = "TEXT, CODE" },
@@ -48,13 +58,14 @@ namespace CitReport.IO.Parser.Tests
       };
 
       expected.AreEquals(actual);
+      Assert.AreEqual(0, errorProvider.Errors.Count);
     }
 
     [TestMethod()]
     public void Parse_UnknownOption_WithParameter()
     {
-      var errorProvider = new TestErrorProvider();
-      var parser = new OptionsParser();
+      errorProvider.Errors.Clear();
+
       var actual = parser.Parse("Unknown( TEXT )", errorProvider).ToArray();
       var expected = new Option[]
       {
@@ -62,7 +73,6 @@ namespace CitReport.IO.Parser.Tests
       };
 
       expected.AreEquals(actual);
-
       Assert.AreEqual(1, errorProvider.Errors.Count);
     }
   }

@@ -4,17 +4,13 @@ namespace CitReport.IO.Parser;
 
 public class OptionsTokenizer
 {
-  private readonly string text;
   private readonly StringBuilder builder = new(); 
   private int position;
 
-  public OptionsTokenizer(string text)
+  public IEnumerable<string> GetTokens(string text)
   {
-    this.text = text;
-  }
+    position = 0;
 
-  public IEnumerable<string> GetTokens()
-  {
     if (text == null)
     {
       yield break;

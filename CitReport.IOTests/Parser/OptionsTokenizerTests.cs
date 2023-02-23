@@ -5,11 +5,12 @@ namespace CitReport.IO.Parser.Tests
   [TestClass()]
   public class OptionsTokenizerTests
   {
+    private readonly OptionsTokenizer tokenizer = new();
+
     [TestMethod()]
     public void GetTokens_Null()
     {
-      var tokenizer = new OptionsTokenizer(null);
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens(null).ToArray();
       var expected = Array.Empty<string>();
 
       expected.AreEquals(actual);
@@ -19,8 +20,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_Empty()
     {
-      var tokenizer = new OptionsTokenizer(string.Empty);
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens(string.Empty).ToArray();
       var expected = Array.Empty<string>();
 
       expected.AreEquals(actual);
@@ -29,8 +29,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_Whitespaces()
     {
-      var tokenizer = new OptionsTokenizer("    ");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("    ").ToArray();
       var expected = Array.Empty<string>();
 
       expected.AreEquals(actual);
@@ -39,8 +38,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_SingleOption_WithoutParameters()
     {
-      var tokenizer = new OptionsTokenizer("Details()");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("Details()").ToArray();
       var expected = new string[] { "Details", string.Empty };
 
       expected.AreEquals(actual);
@@ -49,8 +47,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_SingleOption_WithoutParameters_WithSpaces()
     {
-      var tokenizer = new OptionsTokenizer("   Details()   ");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("   Details()   ").ToArray();
       var expected = new string[] { "Details", string.Empty };
 
       expected.AreEquals(actual);
@@ -59,8 +56,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_SingleOption_SpaceInParameters()
     {
-      var tokenizer = new OptionsTokenizer("Details( )");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("Details( )").ToArray();
       var expected = new string[] { "Details", " " };
 
       expected.AreEquals(actual);
@@ -69,8 +65,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_SingleOption_SingleParameter()
     {
-      var tokenizer = new OptionsTokenizer("BlkH(100)");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("BlkH(100)").ToArray();
       var expected = new string[] { "BlkH", "100" };
 
       expected.AreEquals(actual);
@@ -79,8 +74,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_ManyOptions_WithoutParameters()
     {
-      var tokenizer = new OptionsTokenizer("Cond() Totals() Details()");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("Cond() Totals() Details()").ToArray();
       var expected = new string[] { "Cond", string.Empty, "Totals", string.Empty, "Details", string.Empty };
 
       expected.AreEquals(actual);
@@ -89,8 +83,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_ManyOptions_WithParameters()
     {
-      var tokenizer = new OptionsTokenizer("Cond(100 > 1) BlkH(30)");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("Cond(100 > 1) BlkH(30)").ToArray();
       var expected = new string[] { "Cond", "100 > 1", "BlkH", "30" };
 
       expected.AreEquals(actual);
@@ -99,8 +92,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_SingleOption_WithExpressionParameter()
     {
-      var tokenizer = new OptionsTokenizer("BREAK(IIF(x > 1, 2, 4))");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("BREAK(IIF(x > 1, 2, 4))").ToArray();
       var expected = new string[] { "BREAK", "IIF(x > 1, 2, 4)" };
 
       expected.AreEquals(actual);
@@ -109,8 +101,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_SingleOption_WithUnfinishedExpressionParameter()
     {
-      var tokenizer = new OptionsTokenizer("BREAK(IIF(x > 1, 2");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("BREAK(IIF(x > 1, 2").ToArray();
       var expected = new string[] { "BREAK", "IIF(x > 1, 2" };
 
       expected.AreEquals(actual);
@@ -119,8 +110,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_UnknownOption_WithExpressionParameter()
     {
-      var tokenizer = new OptionsTokenizer("Unknown(x > 1)");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("Unknown(x > 1)").ToArray();
       var expected = new string[] { "Unknown", "x > 1" };
 
       expected.AreEquals(actual);
@@ -129,8 +119,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_UnknownOption_WithoutParameters()
     {
-      var tokenizer = new OptionsTokenizer("Unknown()");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("Unknown()").ToArray();
       var expected = new string[] { "Unknown", string.Empty };
 
       expected.AreEquals(actual);
@@ -139,8 +128,7 @@ namespace CitReport.IO.Parser.Tests
     [TestMethod()]
     public void GetTokens_EmptyBrackets()
     {
-      var tokenizer = new OptionsTokenizer("()");
-      var actual = tokenizer.GetTokens().ToArray();
+      var actual = tokenizer.GetTokens("()").ToArray();
       var expected = new string[] { string.Empty, string.Empty };
 
       expected.AreEquals(actual);

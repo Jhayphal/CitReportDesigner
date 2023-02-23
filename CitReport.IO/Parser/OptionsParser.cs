@@ -15,12 +15,13 @@ public class OptionsParser
     .Where(x => !string.IsNullOrWhiteSpace(x.Name))
     .ToDictionary(x => x.Name, x => x.Type);
 
+  private readonly OptionsTokenizer tokenizer = new();
+
   public IEnumerable<Option> Parse(string current, IErrorProvider errorProvider)
   {
     var result = new List<Option>();
-    var tokenizer = new OptionsTokenizer(current);
 
-    foreach (var option in tokenizer.GetTokens().Chunk(2))
+    foreach (var option in tokenizer.GetTokens(current).Chunk(2))
     {
       var optionName = option[0];
 
