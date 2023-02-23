@@ -20,7 +20,7 @@ namespace CitReport.IO.Parser.Tests
     };
 
     private readonly TestErrorProvider errorProvider = new();
-    private readonly ReportDefinitionParser parser = new();
+    private readonly DefinitionParser parser = new();
     private readonly ParserContext context;
 
     public ReportDefinitionParserTests()

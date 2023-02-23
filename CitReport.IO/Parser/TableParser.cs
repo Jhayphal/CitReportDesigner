@@ -52,7 +52,7 @@ public class TableParser : BlockInstructionParser
     }
     else
     {
-      context.ErrorProvider.AddError($"Unexpected table instruction outside table definition.");
+      context.ErrorProvider.UnexpectedTableInstructionLocation(current, context.CurrentLine);
     }
   }
 
@@ -72,7 +72,7 @@ public class TableParser : BlockInstructionParser
 
     if (tokens.Length != 3)
     {
-      context.ErrorProvider.AddError($"Wrong instruction data: '{current}'.");
+      context.ErrorProvider.WrongInstructionBody(current, context.CurrentLine);
       return;
     }
 
@@ -93,7 +93,7 @@ public class TableParser : BlockInstructionParser
     var endDefinitionIndex = tokens.IndexOf("}");
     if (endDefinitionIndex < 0 || tokens.Count < 11)
     {
-      context.ErrorProvider.AddError($"Unfinished instruction: '{current}'.");
+      context.ErrorProvider.UnfinishedInstruction(current, context.CurrentLine);
       return;
     }
 
@@ -123,7 +123,7 @@ public class TableParser : BlockInstructionParser
     }
     else
     {
-      context.ErrorProvider.AddError($"Undefined font '{fontAlias}'.");
+      context.ErrorProvider.UndefinedFont(fontAlias, context.CurrentLine);
     }
 
     cell.ForegroundColor = foregroundColor;
@@ -141,11 +141,11 @@ public class TableParser : BlockInstructionParser
 
     if (columns.Length == 0)
     {
-      context.ErrorProvider.AddError("Table has not columns.");
+      context.ErrorProvider.TableHasNotColumns(context.CurrentLine);
     }
     else if (rows.Length == 0)
     {
-      context.ErrorProvider.AddError("Table has not rows.");
+      context.ErrorProvider.TableHasNotRows(context.CurrentLine);
     }
     else
     {

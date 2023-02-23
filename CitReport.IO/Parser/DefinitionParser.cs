@@ -1,6 +1,6 @@
 ﻿namespace CitReport.IO.Parser;
 
-public class ReportDefinitionParser : IInstructionParser
+public class DefinitionParser : IInstructionParser
 {
   private readonly InstructionTokenizer tokenizer = new(new char[] { ' ' });
   private readonly OptionsParser optionsParser = new();
@@ -18,7 +18,7 @@ public class ReportDefinitionParser : IInstructionParser
 
     if (code is null)
     {
-      context.ErrorProvider.AddError($"Unfinished report definition: '{current}'");
+      context.ErrorProvider.UnfinishedInstruction(current, context.CurrentLine);
       return;
     }
 
@@ -30,7 +30,7 @@ public class ReportDefinitionParser : IInstructionParser
 
     if (startOptionsIndex < current.Length)
     {
-      var options = optionsParser.Parse(current.Substring(startOptionsIndex), context.ErrorProvider);
+      var options = optionsParser.Parse(context, current[startOptionsIndex..]);
       context.Report.Definition.Options.AddRange(options);
     }
   }

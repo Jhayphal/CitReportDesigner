@@ -15,23 +15,24 @@ public sealed class ParserContext
 
   public BodyBlock CurrentBlock { get; private set; }
 
+  public int CurrentLine { get; private set; }
+
   public IErrorProvider ErrorProvider { get; }
 
   public readonly Queue<ValueTarget> Fields = new();
 
-  public void SetContext(CodeContext context)
-  {
-    Context = context;
-  }
+  public void SetContext(CodeContext context) => Context = context;
 
   public void SetBlockAsCurrent(BodyBlock current)
   {
     if (Fields.Count > 0)
     {
-      ErrorProvider.AddError($"{Fields.Count} fields has not values.");
+      ErrorProvider.SomeFieldsHasNotValues(Fields.Count, Report.Blocks.Count);
       Fields.Clear();
     }
 
     CurrentBlock = current;
   }
+
+  public void MoveNext() => ++CurrentLine;
 }

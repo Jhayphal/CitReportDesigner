@@ -17,7 +17,7 @@ public class OptionsParser
 
   private readonly OptionsTokenizer tokenizer = new();
 
-  public IEnumerable<Option> Parse(string current, IErrorProvider errorProvider)
+  public IEnumerable<Option> Parse(ParserContext context, string current)
   {
     var result = new List<Option>();
 
@@ -27,20 +27,20 @@ public class OptionsParser
 
       if (option.Length < 2)
       {
-        errorProvider.AddError($"Option '{optionName}' has not value.");
+        context.ErrorProvider.OptionHasNotValue(optionName, context.CurrentLine);
         break;
       }
 
       if (!options.TryGetValue(optionName.ToLower(), out var optionType))
       {
-        errorProvider.AddError($"Unsupported option '{optionName}'.");
+        context.ErrorProvider.UnsupportedOption(optionName, context.CurrentLine);
         optionType = typeof(Option);
       }
 
       var optionValue = Activator.CreateInstance(optionType) as Option;
       if (optionValue == null)
       {
-        errorProvider.AddError($"Type '{optionType.FullName}' does not inherit Option type.");
+        context.ErrorProvider.WrongType(optionType, context.CurrentLine);
       }
       else
       {

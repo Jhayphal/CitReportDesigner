@@ -7,13 +7,19 @@ namespace CitReport.IO.Parser.Tests
   {
     private readonly OptionsParser parser = new();
     private readonly TestErrorProvider errorProvider = new();
+    private readonly ParserContext context;
+
+    public OptionsParserTests()
+    {
+      context = new ParserContext(errorProvider);
+    }
 
     [TestMethod()]
     public void Parse_Null()
     {
       errorProvider.Errors.Clear();
 
-      var actual = parser.Parse(null, errorProvider).ToArray();
+      var actual = parser.Parse(context, null).ToArray();
       var expected = Array.Empty<Option>();
 
       expected.AreEquals(actual);
@@ -25,7 +31,7 @@ namespace CitReport.IO.Parser.Tests
     {
       errorProvider.Errors.Clear();
 
-      var actual = parser.Parse(string.Empty, errorProvider).ToArray();
+      var actual = parser.Parse(context, string.Empty).ToArray();
       var expected = Array.Empty<Option>();
 
       expected.AreEquals(actual);
@@ -37,7 +43,7 @@ namespace CitReport.IO.Parser.Tests
     {
       errorProvider.Errors.Clear();
 
-      var actual = parser.Parse("    ", errorProvider).ToArray();
+      var actual = parser.Parse(context, "    ").ToArray();
       var expected = Array.Empty<Option>();
 
       expected.AreEquals(actual);
@@ -49,7 +55,7 @@ namespace CitReport.IO.Parser.Tests
     {
       errorProvider.Errors.Clear();
 
-      var actual = parser.Parse("BREAK(TEXT, CODE) Ctl(PAGE_N) Skipper(SkipRecord())", errorProvider).ToArray();
+      var actual = parser.Parse(context, "BREAK(TEXT, CODE) Ctl(PAGE_N) Skipper(SkipRecord())").ToArray();
       var expected = new Option[]
       {
         new BreakOption { Name = "BREAK", Value = "TEXT, CODE" },
@@ -66,7 +72,7 @@ namespace CitReport.IO.Parser.Tests
     {
       errorProvider.Errors.Clear();
 
-      var actual = parser.Parse("Unknown( TEXT )", errorProvider).ToArray();
+      var actual = parser.Parse(context, "Unknown( TEXT )").ToArray();
       var expected = new Option[]
       {
         new Option { Name = "Unknown", Value = " TEXT " }

@@ -22,7 +22,7 @@ public sealed class FontParser : BlockInstructionParser
 
     if (parts.Count < 8)
     {
-      context.ErrorProvider.AddError($"Unfinished instruction: '{current}'.");
+      context.ErrorProvider.UnfinishedInstruction(current, context.CurrentLine);
       return;
     }
 

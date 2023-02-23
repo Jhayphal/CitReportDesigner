@@ -18,7 +18,7 @@ public class BodyBlockParser : IInstructionParser
     if (parts.Length > 2)
     {
       var options = string.Join(" ", parts.Skip(2));
-      block.Options.AddRange(optionsParser.Parse(options, context.ErrorProvider));
+      block.Options.AddRange(optionsParser.Parse(context, options));
     }
 
     context.Report.Blocks.Add(block);

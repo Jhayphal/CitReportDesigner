@@ -5,7 +5,7 @@ public sealed class ReportParser
   private readonly IEnumerable<IInstructionParser> parsers = new List<IInstructionParser>
   {
     new MetadataParser(),
-    new ReportDefinitionParser(),
+    new DefinitionParser(),
     new AfterStartParser(),
     new AfterEndParser(),
     new DoParser(),
@@ -25,6 +25,8 @@ public sealed class ReportParser
     string current;
     while ((current = reader.ReadLine()) != null)
     {
+      context.MoveNext();
+
       Parse(current.TrimStart());
     }
 
