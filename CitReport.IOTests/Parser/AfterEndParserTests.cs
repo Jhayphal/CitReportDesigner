@@ -3,13 +3,13 @@
 namespace CitReport.IO.Parser.Tests;
 
 [TestClass()]
-public class AfterStartParserTests
+public class AfterEndParserTests
 {
   private readonly List<string> validCases = new()
   {
-    "/AFTER START r_u := Azer(12)",
-    "/after start r_u := Azer(12)",
-    "/After Start  r_u := Azer(12) "
+    "/AFTER END r_u := Azer(12)",
+    "/after end r_u := Azer(12)",
+    "/After End  r_u := Azer(12) "
   };
 
   private readonly List<string> wrongCases = new()
@@ -17,16 +17,16 @@ public class AfterStartParserTests
     "/REPORT repCode",
     "/BLK repCode",
     "{/*repCode*/}",
-    " /AFTER START r_u := Azer(12)",
-    "/AFTER  START r_u := Azer(12)",
-    "/AFTER END r_u := Azer(12)"
+    "/AFTER START r_u := Azer(12)",
+    " /AFTER END r_u := Azer(12)",
+    "/AFTER  END r_u := Azer(12) "
   };
 
   private readonly TestErrorProvider errorProvider = new();
-  private readonly AfterStartParser parser = new();
+  private readonly AfterEndParser parser = new();
   private readonly ParserContext context;
 
-  public AfterStartParserTests()
+  public AfterEndParserTests()
   {
     context = new ParserContext(errorProvider);
   }
@@ -56,17 +56,17 @@ public class AfterStartParserTests
   }
 
   [TestMethod()]
-  public void Parse_Expression()
+  public void ParseTest()
   {
-    var expression = "R_U[1] := Substr(_NTrim(PST->YEAR), 3, 2) + StrZ(PST->MON, 2) + _NTrim(PST->PAKET)   ";
-    var testCase = $"/AFTER START   {expression}";
+    var expression = "CloseReport( )  ";
+    var testCase = $"/AFTER END  {expression}";
 
     errorProvider.Errors.Clear();
     parser.Parse(context, testCase);
 
-    var actual = context.Report.Definition.AfterStartActions.LastOrDefault();
+    var actual = context.Report.Definition.AfterEndActions.LastOrDefault();
     var expected = new Expression { Value = expression };
-    
+
     Assert.AreEqual(expected, actual);
   }
 }
