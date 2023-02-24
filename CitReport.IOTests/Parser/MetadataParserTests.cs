@@ -3,7 +3,7 @@
 namespace CitReport.IO.Parser.Tests;
 
 [TestClass]
-public class MetadataParserTests
+public class MetadataParserTests : InstructionParserTestsBase<MetadataParser>
 {
   private readonly Dictionary<string, string> validCases = new()
   {
@@ -13,7 +13,9 @@ public class MetadataParserTests
     { "{/*MARGT 0 ", "MARGT 0 " }
   };
 
-  private readonly List<string> wrongCases = new()
+  protected override List<string> ValidCases => validCases.Keys.ToList();
+
+  protected override List<string> WrongCases { get; } = new()
   {
     "{/TS..",
     "/BLK RH",
@@ -24,58 +26,30 @@ public class MetadataParserTests
     " "
   };
 
-  private readonly TestErrorProvider errorProvider = new();
-  private readonly MetadataParser parser = new();
-  private readonly ParserContext context;
-
-  public MetadataParserTests()
-  {
-    context = new ParserContext(errorProvider);
-  }
-
   [TestMethod]
   public void CanParseTests()
   {
-    foreach (var testCase in validCases)
-    {
-      Assert.IsTrue(parser.CanParse(testCase.Key, CodeContext.CodeBehind));
-    }
-
-    foreach (var testCase in validCases)
-    {
-      Assert.IsTrue(parser.CanParse(testCase.Key, CodeContext.Block));
-    }
-
-    foreach (var testCase in validCases)
-    {
-      Assert.IsFalse(parser.CanParse(testCase.Key, CodeContext.ReportDefinition));
-    }
-
-    foreach (var testCase in wrongCases)
-    {
-      Assert.IsFalse(parser.CanParse(testCase, CodeContext.CodeBehind));
-    }
-
-    foreach (var testCase in wrongCases)
-    {
-      Assert.IsFalse(parser.CanParse(testCase, CodeContext.Block));
-    }
+    CanParse(ValidCases, CodeContext.CodeBehind, expected: true);
+    CanParse(ValidCases, CodeContext.Block, expected: true);
+    CanParse(ValidCases, CodeContext.ReportDefinition, expected: false);
+    CanParse(WrongCases, CodeContext.CodeBehind, expected: false);
+    CanParse(WrongCases, CodeContext.Block, expected: false);
   }
 
   [TestMethod]
   public void ParseTests()
   {
-    context.SetContext(CodeContext.CodeBehind);
-    errorProvider.Errors.Clear();
+    Context.SetContext(CodeContext.CodeBehind);
+    ErrorProvider.Errors.Clear();
 
     foreach (var testCase in validCases)
     {
-      parser.Parse(context, testCase.Key);
-      var actual = context.Report.Metadata.Last();
+      Parser.Parse(Context, testCase.Key);
+      var actual = Context.Report.Metadata.Last();
       var expected = new Metadata { Value = testCase.Value };
       
       Assert.AreEqual(expected, actual);
-      Assert.AreEqual(0, errorProvider.Errors.Count);
+      Assert.AreEqual(0, ErrorProvider.Errors.Count);
     }
   }
 }

@@ -3,16 +3,16 @@
 namespace CitReport.IO.Parser.Tests;
 
 [TestClass()]
-public class AfterEndParserTests
+public class AfterEndParserTests : InstructionParserTestsBase<AfterEndParser>
 {
-  private readonly List<string> validCases = new()
+  protected override List<string> ValidCases { get; } = new()
   {
     "/AFTER END r_u := Azer(12)",
     "/after end r_u := Azer(12)",
     "/After End  r_u := Azer(12) "
   };
 
-  private readonly List<string> wrongCases = new()
+  protected override List<string> WrongCases { get; } = new()
   {
     "/REPORT repCode",
     "/BLK repCode",
@@ -22,37 +22,13 @@ public class AfterEndParserTests
     "/AFTER  END r_u := Azer(12) "
   };
 
-  private readonly TestErrorProvider errorProvider = new();
-  private readonly AfterEndParser parser = new();
-  private readonly ParserContext context;
-
-  public AfterEndParserTests()
-  {
-    context = new ParserContext(errorProvider);
-  }
-
   [TestMethod()]
   public void CanParseTest()
   {
-    foreach (var testCase in validCases)
-    {
-      Assert.IsTrue(parser.CanParse(testCase, CodeContext.ReportDefinition));
-    }
-
-    foreach (var testCase in validCases)
-    {
-      Assert.IsFalse(parser.CanParse(testCase, CodeContext.CodeBehind));
-    }
-
-    foreach (var testCase in validCases)
-    {
-      Assert.IsFalse(parser.CanParse(testCase, CodeContext.Block));
-    }
-
-    foreach (var testCase in wrongCases)
-    {
-      Assert.IsFalse(parser.CanParse(testCase, CodeContext.ReportDefinition));
-    }
+    CanParse(ValidCases, CodeContext.ReportDefinition, expected: true);
+    CanParse(ValidCases, CodeContext.CodeBehind, expected: false);
+    CanParse(ValidCases, CodeContext.Block, expected: false);
+    CanParse(WrongCases, CodeContext.ReportDefinition, expected: false);
   }
 
   [TestMethod()]
@@ -61,10 +37,10 @@ public class AfterEndParserTests
     var expression = "CloseReport( )  ";
     var testCase = $"/AFTER END  {expression}";
 
-    errorProvider.Errors.Clear();
-    parser.Parse(context, testCase);
+    ErrorProvider.Errors.Clear();
+    Parser.Parse(Context, testCase);
 
-    var actual = context.Report.Definition.AfterEndActions.LastOrDefault();
+    var actual = Context.Report.Definition.AfterEndActions.LastOrDefault();
     var expected = new Expression { Value = expression };
 
     Assert.AreEqual(expected, actual);

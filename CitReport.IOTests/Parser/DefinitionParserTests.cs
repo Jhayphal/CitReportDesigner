@@ -3,53 +3,29 @@
 namespace CitReport.IO.Parser.Tests;
 
 [TestClass()]
-public class DefinitionParserTests
+public class DefinitionParserTests : InstructionParserTestsBase<DefinitionParser>
 {
-  private readonly List<string> validCases = new()
+  protected override List<string> ValidCases { get; } = new()
   {
     "/REPORT repCode",
     "/REPORT repCode Ctl(Str(CEX, 4) + Str(UCH, 4)) Skipper(SkipRecord())",
     "/REPORT   A2   BREAK(CEX, UCH)"
   };
 
-  private readonly List<string> wrongCases = new()
+  protected override List<string> WrongCases { get; } = new()
   {
     " /REPORT repCode",
     "/BLK repCode",
     "{/*repCode*/}"
   };
 
-  private readonly TestErrorProvider errorProvider = new();
-  private readonly DefinitionParser parser = new();
-  private readonly ParserContext context;
-
-  public DefinitionParserTests()
-  {
-    context = new ParserContext(errorProvider);
-  }
-
   [TestMethod()]
   public void CanParseTests()
   {
-    foreach (var testCase in validCases)
-    {
-      Assert.IsTrue(parser.CanParse(testCase, CodeContext.CodeBehind));
-    }
-
-    foreach (var testCase in validCases)
-    {
-      Assert.IsFalse(parser.CanParse(testCase, CodeContext.ReportDefinition));
-    }
-
-    foreach (var testCase in validCases)
-    {
-      Assert.IsFalse(parser.CanParse(testCase, CodeContext.Block));
-    }
-
-    foreach (var testCase in wrongCases)
-    {
-      Assert.IsFalse(parser.CanParse(testCase, CodeContext.ReportDefinition));
-    }
+    CanParse(ValidCases, CodeContext.CodeBehind, expected: true);
+    CanParse(ValidCases, CodeContext.ReportDefinition, expected: false);
+    CanParse(ValidCases, CodeContext.Block, expected: false);
+    CanParse(WrongCases, CodeContext.ReportDefinition, expected: false);
   }
 
   [TestMethod()]
@@ -58,16 +34,16 @@ public class DefinitionParserTests
     var repCode = "Rep";
     var testCase = $"/REPORT {repCode}";
 
-    errorProvider.Errors.Clear();
-    parser.Parse(context, testCase);
+    ErrorProvider.Errors.Clear();
+    Parser.Parse(Context, testCase);
     
-    Assert.AreEqual(CodeContext.ReportDefinition, context.Context);
+    Assert.AreEqual(CodeContext.ReportDefinition, Context.Context);
 
-    var actual = context.Report.Definition;
+    var actual = Context.Report.Definition;
     var expected = new ReportBlock { Code = repCode };
 
     Assert.AreEqual(expected, actual);
-    Assert.AreEqual(0, errorProvider.Errors.Count);
+    Assert.AreEqual(0, ErrorProvider.Errors.Count);
   }
 
   [TestMethod()]
@@ -76,12 +52,12 @@ public class DefinitionParserTests
     var repCode = "ZP10SFRD";
     var testCase = $"/REPORT {repCode} Ctl(Str(CEX, 4) + Str(UCH, 4)) Skipper(SkipRecord())";
     
-    errorProvider.Errors.Clear();
-    parser.Parse(context, testCase);
+    ErrorProvider.Errors.Clear();
+    Parser.Parse(Context, testCase);
 
-    Assert.AreEqual(CodeContext.ReportDefinition, context.Context);
+    Assert.AreEqual(CodeContext.ReportDefinition, Context.Context);
 
-    var actual = context.Report.Definition;
+    var actual = Context.Report.Definition;
     var expected = new ReportBlock { Code = repCode };
     expected.Options.AddRange(new Option[]
     {
@@ -90,6 +66,6 @@ public class DefinitionParserTests
     });
 
     Assert.AreEqual(expected, actual);
-    Assert.AreEqual(0, errorProvider.Errors.Count);
+    Assert.AreEqual(0, ErrorProvider.Errors.Count);
   }
 }
