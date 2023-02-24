@@ -2,11 +2,9 @@
 
 public sealed class FontParser : BlockInstructionParser
 {
-  private readonly string[] supportedInstructions = new string[] { Instructions.Fl };
-
   protected override CodeContext ActualContext => CodeContext.Block;
 
-  protected override IEnumerable<string> SupportedInstructions => supportedInstructions;
+  protected override IEnumerable<string> SupportedInstructions { get; } = new string[] { Instructions.Fl };
 
   /// <summary>
   /// Parse font.
@@ -26,12 +24,18 @@ public sealed class FontParser : BlockInstructionParser
       return;
     }
 
+    if (!float.TryParse(parts[7], out var size))
+    {
+      context.ErrorProvider.WrongFontSize(current, context.CurrentLine);
+      return;
+    }
+
     var alias = parts[3];
 
     var font = new FontInfo
     {
       Family = parts[5],
-      Size = float.TryParse(parts[7], out var size) ? size : 0
+      Size = size
     };
 
     if (parts.Count > 9)

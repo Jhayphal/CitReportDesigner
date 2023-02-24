@@ -31,4 +31,7 @@ internal static class ParserErrorExtensions
 
   public static void TableHasNotRows(this IErrorProvider errorProvider, int line)
     => errorProvider.AddError($"Table has not rows at line {line}.");
+
+  public static void WrongFontSize(this IErrorProvider errorProvider, string instruction, int line)
+    => errorProvider.AddError($"Wrong font size '{instruction}' at line {line}.");
 }
