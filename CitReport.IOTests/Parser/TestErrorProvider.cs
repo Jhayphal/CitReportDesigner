@@ -1,6 +1,6 @@
 ﻿namespace CitReport.IO.Parser.Tests;
 
-internal class TestErrorProvider : IErrorProvider
+public class TestErrorProvider : IErrorProvider
 {
   public readonly List<string> Errors = new();
 
