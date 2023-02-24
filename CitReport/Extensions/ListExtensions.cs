@@ -17,7 +17,7 @@
       var comparer = EqualityComparer<T>.Default;
       for (int i = 0; i < self.Count; ++i)
       {
-        if (comparer.Equals(self[i], other[i]))
+        if (!comparer.Equals(self[i], other[i]))
         {
           return false;
         }

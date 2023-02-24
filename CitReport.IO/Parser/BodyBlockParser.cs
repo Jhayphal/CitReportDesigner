@@ -4,7 +4,9 @@ public class BodyBlockParser : IInstructionParser
 {
   private readonly OptionsParser optionsParser = new();
 
-  public bool CanParse(string current, CodeContext context) => current.StartsWith(Instructions.Blk, StringComparison.OrdinalIgnoreCase);
+  public bool CanParse(string current, CodeContext context)
+    => (context == CodeContext.Block || context == CodeContext.ReportDefinition)
+      && current.StartsWith(Instructions.Blk, StringComparison.OrdinalIgnoreCase);
 
   public void Parse(ParserContext context, string current)
   {
