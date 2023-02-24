@@ -3,7 +3,7 @@
 namespace CitReport.IO.Parser.Tests
 {
   [TestClass()]
-  public class ReportDefinitionParserTests
+  public class DefinitionParserTests
   {
     private readonly List<string> validCases = new()
     {
@@ -23,7 +23,7 @@ namespace CitReport.IO.Parser.Tests
     private readonly DefinitionParser parser = new();
     private readonly ParserContext context;
 
-    public ReportDefinitionParserTests()
+    public DefinitionParserTests()
     {
       context = new ParserContext(errorProvider);
     }
