@@ -6,12 +6,12 @@ public sealed class ParserContext
   {
     ErrorProvider = errorProvider;
     Report = new Report();
-    Context = CodeContext.CodeBehind;
+    CodeContext = CodeContext.CodeBehind;
   }
 
   public Report Report { get; }
   
-  public CodeContext Context { get; private set; }
+  public CodeContext CodeContext { get; private set; }
 
   public BodyBlock CurrentBlock { get; private set; }
 
@@ -21,7 +21,7 @@ public sealed class ParserContext
 
   public readonly Queue<ValueTarget> Fields = new();
 
-  public void SetContext(CodeContext context) => Context = context;
+  public void SetContext(CodeContext context) => CodeContext = context;
 
   public void SetBlockAsCurrent(BodyBlock current)
   {

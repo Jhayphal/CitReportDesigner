@@ -36,13 +36,12 @@ public class DefinitionParserTests : InstructionParserTestsBase<DefinitionParser
 
     ErrorProvider.Errors.Clear();
     Parser.Parse(Context, testCase);
-    
-    Assert.AreEqual(CodeContext.ReportDefinition, Context.Context);
 
     var actual = Context.Report.Definition;
     var expected = new ReportBlock { Code = repCode };
-
+    
     Assert.AreEqual(expected, actual);
+    Assert.AreEqual(CodeContext.ReportDefinition, Context.CodeContext);
     Assert.AreEqual(0, ErrorProvider.Errors.Count);
   }
 
@@ -55,8 +54,6 @@ public class DefinitionParserTests : InstructionParserTestsBase<DefinitionParser
     ErrorProvider.Errors.Clear();
     Parser.Parse(Context, testCase);
 
-    Assert.AreEqual(CodeContext.ReportDefinition, Context.Context);
-
     var actual = Context.Report.Definition;
     var expected = new ReportBlock { Code = repCode };
     expected.Options.AddRange(new Option[]
@@ -66,6 +63,7 @@ public class DefinitionParserTests : InstructionParserTestsBase<DefinitionParser
     });
 
     Assert.AreEqual(expected, actual);
+    Assert.AreEqual(CodeContext.ReportDefinition, Context.CodeContext);
     Assert.AreEqual(0, ErrorProvider.Errors.Count);
   }
 }

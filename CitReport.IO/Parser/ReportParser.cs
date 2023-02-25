@@ -37,7 +37,7 @@ public sealed class ReportParser
   {
     foreach (var parser in parsers)
     {
-      if (parser.CanParse(current, context.Context))
+      if (parser.CanParse(current, context.CodeContext))
       {
         parser.Parse(context, current);
         break;

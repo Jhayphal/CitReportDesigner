@@ -38,6 +38,7 @@ public class BodyBlockParserTests : InstructionParserTestsBase<BodyBlockParser>
     var testCase = $"/BLK  {expression}";
 
     ErrorProvider.Errors.Clear();
+    Context.SetContext(CodeContext.ReportDefinition);
     Parser.Parse(Context, testCase);
 
     var actual = Context.Report.Blocks.LastOrDefault();
@@ -45,6 +46,8 @@ public class BodyBlockParserTests : InstructionParserTestsBase<BodyBlockParser>
     expected.Options.Add(new BlkHOption { Name = optionName, Value = optionValue });
 
     Assert.AreEqual(expected, actual);
+    Assert.AreEqual(CodeContext.Block, Context.CodeContext);
+    Assert.IsTrue(ReferenceEquals(actual, Context.CurrentBlock));
     Assert.AreEqual(0, ErrorProvider.Errors.Count);
   }
 }

@@ -23,6 +23,7 @@ public class BodyBlockParser : IInstructionParser
       block.Options.AddRange(optionsParser.Parse(context, options));
     }
 
+    context.SetContext(CodeContext.Block);
     context.Report.Blocks.Add(block);
     context.SetBlockAsCurrent(block);
   }
