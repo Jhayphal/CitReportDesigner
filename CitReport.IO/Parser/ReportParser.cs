@@ -11,7 +11,10 @@ public sealed class ReportParser
     new DoParser(),
     new BodyBlockParser(),
     new FontParser(),
-    new TableParser(),
+    new TableRowsParser(),
+    new TableColumnsParser(),
+    new TableCellForegroundParser(),
+    new TableCellParser(),
     new FieldParser(),
     new CodeBehindParser()
   };

@@ -1,4 +1,6 @@
-﻿namespace CitReport.IO.Parser;
+﻿using System.Drawing;
+
+namespace CitReport.IO.Parser;
 
 public sealed class ParserContext
 {
@@ -14,6 +16,18 @@ public sealed class ParserContext
   public CodeContext CodeContext { get; private set; }
 
   public BodyBlock CurrentBlock { get; private set; }
+
+  #region Table Context
+  public Table CurrentTable { get; private set; }
+
+  public float[] Columns { get; set; }
+  
+  public float[] Rows { get; set; }
+  
+  public Color CellForegroundColor { get; set; } = Color.Black;
+  
+  public Color CellBackgroundColor { get; set; } = Color.White;
+  #endregion
 
   public int CurrentLine { get; private set; }
 
@@ -33,6 +47,8 @@ public sealed class ParserContext
 
     CurrentBlock = current;
   }
+
+  public void SetTableAsCurrent(Table current) => CurrentTable = current;
 
   public void MoveNext() => ++CurrentLine;
 }
