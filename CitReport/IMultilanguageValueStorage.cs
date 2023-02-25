@@ -2,7 +2,9 @@
 
 public interface IMultilanguageValueStorage
 {
-  void SetValue(string language, string value);
+  void AddValue(string language, string value);
 
-  string GetValue(string language);
+  void SetValue(string language, int index, string value);
+
+  string GetValue(string language, int index);
 }

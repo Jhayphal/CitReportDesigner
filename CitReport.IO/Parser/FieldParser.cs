@@ -10,6 +10,6 @@ public class FieldParser : IInstructionParser
   public void Parse(ParserContext context, string current)
   {
     var valueStorage = context.Fields.Dequeue();
-    valueStorage.Target.SetValue(valueStorage.Language, current[1..].TrimStart());
+    valueStorage.Target.AddValue(valueStorage.Language, current[1..].TrimStart());
   }
 }

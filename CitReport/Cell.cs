@@ -31,9 +31,9 @@ public sealed class Cell : IMultilanguageValueStorage, IEquatable<Cell>
 
   public VerticalAlignment VerticalAlignment { get; set; }
 
-  public Dictionary<string, string> DisplayValue { get; } = new Dictionary<string, string>();
+  public Dictionary<string, string> DisplayValue { get; } = new();
 
-  public Dictionary<string, string> Value { get; } = new Dictionary<string, string>();
+  public Dictionary<string, List<string>> Value { get; } = new();
 
   public int Column => Table.GetCellColumnIndex(this);
 
@@ -58,8 +58,8 @@ public sealed class Cell : IMultilanguageValueStorage, IEquatable<Cell>
     }
   }
 
-  public string GetValue(string language) => Value.TryGetValue(language, out var value)
-    ? value
+  public string GetValue(string language, int index) => Value.TryGetValue(language, out var value)
+    ? value[index]
     : null;
 
   public void SetAsParent(Cell cell)
@@ -84,7 +84,17 @@ public sealed class Cell : IMultilanguageValueStorage, IEquatable<Cell>
     }
   }
 
-  public void SetValue(string language, string value) => Value[language] = value;
+  public void AddValue(string language, string value)
+  {
+    if (!Value.TryGetValue(language, out var values))
+    {
+      Value.Add(language, values = new());
+    }
+
+    values.Add(value);
+  }
+
+  public void SetValue(string language, int index, string value) => Value[language][index] = value;
 
   public override int GetHashCode() => id;
 
