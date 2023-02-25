@@ -53,10 +53,14 @@ public class TableCellParser : BlockInstructionParser
       ? string.Empty
       : tokens[displayValueIndex];
     cell.DisplayValue[language] = displayValue;
-
-    if (displayValue.Contains('_'))
+    
+    var fieldsCount = DisplayFieldsHelper.GetCount(displayValue);
+    if (fieldsCount > 0)
     {
-      context.Fields.Enqueue(new ValueTarget(cell, language));
+      while (fieldsCount-- > 0)
+      {
+        context.Fields.Enqueue(new ValueTarget(cell, language));
+      }
     }
 
     var fontAlias = tokens[9 + offset].Trim();
