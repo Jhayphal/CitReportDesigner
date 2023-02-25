@@ -22,7 +22,7 @@ public abstract class BlockInstructionParser : IInstructionParser
 
     foreach (var supportedInstruction in instructions)
     {
-      if (current.IndexOf(supportedInstruction) == position)
+      if (current.IndexOf(supportedInstruction, StringComparison.OrdinalIgnoreCase) == position)
       {
         return true;
       }
