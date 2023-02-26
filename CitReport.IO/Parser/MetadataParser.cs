@@ -11,7 +11,7 @@ public sealed class MetadataParser : IInstructionParser
 
   public void Parse(ParserContext context, string current)
   {
-    var metadata = context.CurrentBlock == null
+    var metadata = context.CodeContext == CodeContext.CodeBehind
       ? context.Report.Metadata
       : context.CurrentBlock.Metadata;
 
