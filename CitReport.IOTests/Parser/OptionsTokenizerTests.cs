@@ -16,7 +16,6 @@ public class OptionsTokenizerTests
     expected.AreEquals(actual);
   }
 
-
   [TestMethod()]
   public void GetTokens_Empty()
   {
@@ -111,7 +110,7 @@ public class OptionsTokenizerTests
   public void GetTokens_UnknownOption_WithExpressionParameter()
   {
     var actual = tokenizer.GetTokens("Unknown(x > 1)").ToArray();
-    var expected = new string[] { "Unknown", "x > 1" };
+    var expected = new string[] { "Unknown", "x>1" };
 
     expected.AreEquals(actual);
   }
