@@ -43,8 +43,11 @@ public sealed class ReportParser
       if (parser.CanParse(current, context.CodeContext))
       {
         parser.Parse(context, current);
-        break;
+        
+        return;
       }
     }
+
+    context.ErrorProvider.UnsupportedInstruction(current, context.CurrentLine);
   }
 }

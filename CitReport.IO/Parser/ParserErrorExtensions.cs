@@ -34,4 +34,7 @@ internal static class ParserErrorExtensions
 
   public static void WrongFontSize(this IErrorProvider errorProvider, string instruction, int line)
     => errorProvider.AddError($"Wrong font size '{instruction}' at line {line}.");
+
+  public static void UnsupportedInstruction(this IErrorProvider errorProvider, string instruction, int line)
+    => errorProvider.AddError($"Unsupported instruction '{instruction}' at line ({line}).");
 }
