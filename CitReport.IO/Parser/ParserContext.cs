@@ -48,7 +48,17 @@ public sealed class ParserContext
     CurrentBlock = current;
   }
 
-  public void SetTableAsCurrent(Table current) => CurrentTable = current;
+  public void SetTableAsCurrent(Table current)
+  {
+    CurrentTable = current;
+
+    if (CurrentBlock is null)
+    {
+      throw new InvalidOperationException("Current block is empty.");
+    }
+
+    CurrentBlock.Tables.Add(CurrentTable);
+  }
 
   public void MoveNext() => ++CurrentLine;
 }

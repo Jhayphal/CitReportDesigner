@@ -8,6 +8,8 @@ public class BodyBlock : Block
 
   public readonly Dictionary<string, FontInfo> Fonts = new();
 
+  public readonly List<Table> Tables = new();
+
   public float Height => (Options?.OfType<BlkHOption>().FirstOrDefault()?.Height).GetValueOrDefault();
 
   public override bool Equals(Block other)
