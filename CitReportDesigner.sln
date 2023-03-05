@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CitReport.IO", "CitReport.I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CitReport.IOTests", "CitReport.IOTests\CitReport.IOTests.csproj", "{2E78FE13-4D6E-46B3-88FA-D845445E475A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportAnalizer", "ReportAnalizer\ReportAnalizer.csproj", "{BD9F2F4D-A83B-406B-837A-1B7414E35CAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportAnalizer", "ReportAnalizer\ReportAnalizer.csproj", "{BD9F2F4D-A83B-406B-837A-1B7414E35CAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlsSandbox", "ControlsSandbox\ControlsSandbox.csproj", "{C61AAAB3-2229-485A-9A57-61207A44A5D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{BD9F2F4D-A83B-406B-837A-1B7414E35CAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD9F2F4D-A83B-406B-837A-1B7414E35CAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD9F2F4D-A83B-406B-837A-1B7414E35CAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C61AAAB3-2229-485A-9A57-61207A44A5D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C61AAAB3-2229-485A-9A57-61207A44A5D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C61AAAB3-2229-485A-9A57-61207A44A5D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C61AAAB3-2229-485A-9A57-61207A44A5D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,47 @@
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="using:ControlsSandbox.ViewModels"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  mc:Ignorable="d"
+  d:DesignWidth="350"
+  d:DesignHeight="100"
+  x:Class="ControlsSandbox.Views.BlockView"
+  Height="{Binding Height}">
+
+  <Design.DataContext>
+    <vm:BlockViewModel/>
+  </Design.DataContext>
+
+  <DockPanel>
+    <Canvas DockPanel.Dock="Top">
+      <Rectangle
+        Height="16"
+        Width="{Binding Width}"
+        Stroke="Black"
+        StrokeThickness="1">
+        <Rectangle.Fill>
+          <LinearGradientBrush
+            StartPoint="0%,0%" 
+            EndPoint="0%,100%">
+            <LinearGradientBrush.GradientStops>
+              <GradientStop
+                Offset="0"
+                Color="#FCFCFD"/>
+              <GradientStop
+                Offset="1"
+                Color="#CED3E7"/>
+            </LinearGradientBrush.GradientStops>
+          </LinearGradientBrush>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Label
+        Content="{Binding Header}" 
+        FontFamily="Arial" 
+        FontSize="9" 
+        FontWeight="SemiBold"/>
+    </Canvas>
+  </DockPanel>
+  
+</UserControl>
