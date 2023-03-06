@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CitReport;
+using System.Collections.Generic;
 
 namespace ControlsSandbox.ViewModels
 {
@@ -16,16 +17,35 @@ namespace ControlsSandbox.ViewModels
       { "RF", "Окончание отчета" }
     };
 
-    public string Type { get; set; } = "PH";
+    private readonly BodyBlock block;
+
+    public BlockViewModel()
+    {
+      var report = new Report();
+      this.block = new BodyBlock(report) { Code = "PH" };
+      block.Options.Add(new BlkHOption { Height = 30 });
+    }
+
+    public BlockViewModel(BodyBlock block, int id)
+    {
+      this.block = block;
+      Id = id;
+    }
+
+    public string Type => this.block.Code;
 
     public int Id { get; set; } = 1;
 
-    public int ItemsCount { get; set; } = 2;
+    public int ItemsCount => (block.Tables?.Count).GetValueOrDefault();
 
     public string Header => $"{Type} ({Id}) - {(descriptions.TryGetValue(Type, out var description) ? description : "Неизвестный тип")} [{ItemsCount} элемента]";
 
-    public float Width { get; set; } = 300;
+    public float HeaderHeight => MillimetersToPixels(5f);
 
-    public float Height { get; set; } = 100f;
+    public float SummaryHeight => HeaderHeight + Height;
+
+    public float Width { get; set; } = MillimetersToPixels(190f);
+
+    public float Height => MillimetersToPixels(block.Height);
   }
 }

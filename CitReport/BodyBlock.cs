@@ -4,6 +4,13 @@ namespace CitReport;
 
 public class BodyBlock : Block
 {
+  public BodyBlock(Report report)
+  {
+    Report = report;
+  }
+
+  public readonly Report Report;
+
   public readonly List<Metadata> Metadata = new();
 
   public readonly Dictionary<string, FontInfo> Fonts = new();

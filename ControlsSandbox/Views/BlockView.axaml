@@ -5,20 +5,19 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   mc:Ignorable="d"
-  d:DesignWidth="350"
-  d:DesignHeight="100"
-  x:Class="ControlsSandbox.Views.BlockView"
-  Height="{Binding Height}">
+  x:Class="ControlsSandbox.Views.BlockView">
 
   <Design.DataContext>
     <vm:BlockViewModel/>
   </Design.DataContext>
 
-  <DockPanel>
-    <Canvas DockPanel.Dock="Top">
+  <StackPanel Orientation="Vertical">
+    <Canvas
+      Width="{Binding Width}"
+      Height="{Binding HeaderHeight}">
       <Rectangle
-        Height="16"
         Width="{Binding Width}"
+        Height="{Binding HeaderHeight}"
         Stroke="Black"
         StrokeThickness="1">
         <Rectangle.Fill>
@@ -39,9 +38,12 @@
       <Label
         Content="{Binding Header}" 
         FontFamily="Arial" 
-        FontSize="9" 
+        FontSize="10" 
         FontWeight="SemiBold"/>
     </Canvas>
-  </DockPanel>
+    <Canvas
+      Width="{Binding Width}"
+      Height="{Binding Height}"/>
+  </StackPanel>
   
 </UserControl>
