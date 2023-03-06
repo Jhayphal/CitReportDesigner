@@ -11,40 +11,68 @@
     <vm:BlockViewModel/>
   </Design.DataContext>
 
-  <StackPanel Orientation="Vertical">
-    <Canvas
-      Width="{Binding Width}"
-      Height="{Binding HeaderHeight}">
-      <Rectangle
-        Width="{Binding Width}"
-        Height="{Binding HeaderHeight}"
-        Stroke="Black"
-        StrokeThickness="1">
-        <Rectangle.Fill>
-          <LinearGradientBrush
-            StartPoint="0%,0%" 
-            EndPoint="0%,100%">
-            <LinearGradientBrush.GradientStops>
-              <GradientStop
-                Offset="0"
-                Color="#FCFCFD"/>
-              <GradientStop
-                Offset="1"
-                Color="#CED3E7"/>
-            </LinearGradientBrush.GradientStops>
-          </LinearGradientBrush>
-        </Rectangle.Fill>
-      </Rectangle>
-      <Label
-        Content="{Binding Header}" 
-        FontFamily="Arial" 
-        FontSize="10" 
-        FontWeight="SemiBold"/>
-    </Canvas>
+  <Expander IsExpanded="True" Padding="0">
+    <Expander.Template>
+      <ControlTemplate>
+        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{TemplateBinding CornerRadius}">
+          <Grid RowDefinitions="Auto,*">
+            <ToggleButton Name="PART_toggle"
+                          Padding="0"
+                          Grid.Row="0"
+                          HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                          VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                          IsChecked="{TemplateBinding IsExpanded,
+                                                      Mode=TwoWay}">
+              <Canvas
+                Width="{Binding Width}"
+                Height="{Binding HeaderHeight}">
+                <Rectangle
+                  Width="{Binding Width}"
+                  Height="{Binding HeaderHeight}"
+                  Stroke="Black"
+                  StrokeThickness="1">
+                  <Rectangle.Fill>
+                    <LinearGradientBrush
+                      StartPoint="0%,0%"
+                      EndPoint="0%,100%">
+                      <LinearGradientBrush.GradientStops>
+                        <GradientStop
+                          Offset="0"
+                          Color="#FCFCFD"/>
+                        <GradientStop
+                          Offset="1"
+                          Color="#CED3E7"/>
+                      </LinearGradientBrush.GradientStops>
+                    </LinearGradientBrush>
+                  </Rectangle.Fill>
+                </Rectangle>
+                <Label
+                  Content="{Binding Header}"
+                  Foreground="Black"
+                  FontFamily="Arial"
+                  FontSize="10"
+                  FontWeight="SemiBold"/>
+              </Canvas>
+            </ToggleButton>
+            <ContentPresenter Name="PART_ContentPresenter"
+                              Grid.Row="1"
+                              Padding="{TemplateBinding Padding}"
+                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                              Content="{TemplateBinding Content}"
+                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                              IsVisible="{TemplateBinding IsExpanded}" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Expander.Template>
     <Canvas
       Width="{Binding Width}"
       Height="{Binding Height}"
       Background="White"/>
-  </StackPanel>
+  </Expander>
   
 </UserControl>
