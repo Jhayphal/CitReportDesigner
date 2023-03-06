@@ -8,8 +8,8 @@
   Width="{Binding Width}"
   Height="{Binding Height}"
   x:Class="ControlsSandbox.Views.ReportView"
-  Background="Gray">
+  Background="#F0F0F0">
 
   <ItemsControl Items="{Binding Blocks}"/>
-
+  
 </UserControl>

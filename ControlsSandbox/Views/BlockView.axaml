@@ -43,7 +43,8 @@
     </Canvas>
     <Canvas
       Width="{Binding Width}"
-      Height="{Binding Height}"/>
+      Height="{Binding Height}"
+      Background="White"/>
   </StackPanel>
   
 </UserControl>
