@@ -35,7 +35,7 @@ public class FontParserTests : InstructionParserTestsBase<FontParser>
     var body = ", FONT1, Arial, 10, B}";
     var testCase = $"{{/FL {body}";
 
-    var testBlock = new BodyBlock(Context.Report);
+    var testBlock = new BodyBlock(Context.Report, 1);
     PrepareContext(testBlock);
     Parser.Parse(Context, testCase);
 

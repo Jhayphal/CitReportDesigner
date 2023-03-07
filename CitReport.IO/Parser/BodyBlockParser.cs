@@ -10,7 +10,8 @@ public class BodyBlockParser : IInstructionParser
 
   public void Parse(ParserContext context, string current)
   {
-    var block = new BodyBlock(context.Report);
+    var blockId = (context.Report.Blocks.LastOrDefault()?.Id).GetValueOrDefault() + 1;
+    var block = new BodyBlock(context.Report, blockId);
 
     var parts = current.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 

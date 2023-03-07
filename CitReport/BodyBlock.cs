@@ -4,12 +4,15 @@ namespace CitReport;
 
 public class BodyBlock : Block
 {
-  public BodyBlock(Report report)
+  public BodyBlock(Report report, int id)
   {
     Report = report;
+    Id = id;
   }
 
   public readonly Report Report;
+
+  public readonly int Id;
 
   public readonly List<Metadata> Metadata = new();
 
@@ -22,6 +25,7 @@ public class BodyBlock : Block
   public override bool Equals(Block other)
     => base.Equals(other)
       && other is BodyBlock block
+      && Id == block.Id
       && Height == block.Height
       && Metadata.AreEquals(block.Metadata)
       && Fonts.AreEquals(block.Fonts);

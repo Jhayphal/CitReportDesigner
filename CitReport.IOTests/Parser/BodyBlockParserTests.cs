@@ -42,7 +42,7 @@ public class BodyBlockParserTests : InstructionParserTestsBase<BodyBlockParser>
     Parser.Parse(Context, testCase);
 
     var actual = Context.Report.Blocks.LastOrDefault();
-    var expected = new BodyBlock(Context.Report) { Code = code };
+    var expected = new BodyBlock(Context.Report, id: actual.Id) { Code = code };
     expected.Options.Add(new BlkHOption { Name = optionName, Value = optionValue });
 
     Assert.AreEqual(expected, actual);

@@ -17,12 +17,12 @@ namespace ControlsSandbox.ViewModels
       report.Definition.Code = "ZP1PN1";
       report.Definition.Options.Add(new BreakOption { Name = "BREAK", Value = "STR(KODR,2)" });
 
-      var block = new BodyBlock(report) { Code = "PH" };
+      var block = new BodyBlock(report, id: 1) { Code = "PH" };
       report.Blocks.Add(block);
 
       block.Options.Add(new BlkHOption { Value = "0" });
 
-      block = new BodyBlock(report) { Code = "RH" };
+      block = new BodyBlock(report, id: 2) { Code = "RH" };
       report.Blocks.Add(block);
 
       block.Options.Add(new BlkHOption { Value = "30" });

@@ -22,7 +22,7 @@ namespace ControlsSandbox.ViewModels
     public BlockViewModel()
     {
       var report = new Report();
-      this.block = new BodyBlock(report) { Code = "PH" };
+      this.block = new BodyBlock(report, id: 1) { Code = "PH" };
       block.Options.Add(new BlkHOption { Height = 30 });
     }
 
@@ -34,7 +34,7 @@ namespace ControlsSandbox.ViewModels
 
     public string Type => this.block.Code;
 
-    public int Id { get; set; } = 1;
+    public int Id { get; set; }
 
     public int ItemsCount => (block.Tables?.Count).GetValueOrDefault();
 
