@@ -1,4 +1,5 @@
 ﻿using CitReport;
+using ReactiveUI;
 using System.Collections.Generic;
 
 namespace ControlsSandbox.ViewModels
@@ -18,6 +19,8 @@ namespace ControlsSandbox.ViewModels
     };
 
     private readonly BodyBlock block;
+
+    private bool isExpanded = true;
 
     public BlockViewModel()
     {
@@ -53,6 +56,20 @@ namespace ControlsSandbox.ViewModels
     public double Width { get; set; } = MeasurementConverter.MillimetersToPixels(190f);
 
     public double Height => MeasurementConverter.MillimetersToPixels(block.Height);
+
+    public string HeaderArrowGlyph => IsExpanded ? "🡇" : "🡅";
+
+    public bool IsExpanded
+    {
+      get => isExpanded;
+      set
+      {
+        this.RaiseAndSetIfChanged(ref isExpanded, value);
+        this.RaisePropertyChanged(nameof(HeaderArrowGlyph));
+      }
+    }
+
+    public void ChangeExpandedState() => IsExpanded = !IsExpanded;
 
     private string GetItemsText() => ItemsCount switch
     {

@@ -2,7 +2,7 @@
 {
   public static class MeasurementConverter
   {
-    private const double PrettyFactor = 2.5d;
+    private const double PrettyFactor = 1.5d;
 
     private const double MillimetersInInch = 25.4f;
 

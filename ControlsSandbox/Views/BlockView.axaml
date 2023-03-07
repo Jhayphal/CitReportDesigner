@@ -2,6 +2,8 @@
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:vm="using:ControlsSandbox.ViewModels"
+  xmlns:i="using:Avalonia.Xaml.Interactivity"
+  xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   mc:Ignorable="d"
@@ -11,68 +13,66 @@
     <vm:BlockViewModel/>
   </Design.DataContext>
 
-  <Expander IsExpanded="True" Padding="0">
-    <Expander.Template>
-      <ControlTemplate>
-        <Border Background="{TemplateBinding Background}"
-                BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                CornerRadius="{TemplateBinding CornerRadius}">
-          <Grid RowDefinitions="Auto,*">
-            <ToggleButton Name="PART_toggle"
-                          Padding="0"
-                          Grid.Row="0"
-                          HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                          VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                          IsChecked="{TemplateBinding IsExpanded,
-                                                      Mode=TwoWay}">
-              <Canvas
-                Width="{Binding Width}"
-                Height="{Binding HeaderHeight}">
-                <Rectangle
-                  Width="{Binding Width}"
-                  Height="{Binding HeaderHeight}"
-                  Stroke="Black"
-                  StrokeThickness="1">
-                  <Rectangle.Fill>
-                    <LinearGradientBrush
-                      StartPoint="0%,0%"
-                      EndPoint="0%,100%">
-                      <LinearGradientBrush.GradientStops>
-                        <GradientStop
-                          Offset="0"
-                          Color="#FCFCFD"/>
-                        <GradientStop
-                          Offset="1"
-                          Color="#CED3E7"/>
-                      </LinearGradientBrush.GradientStops>
-                    </LinearGradientBrush>
-                  </Rectangle.Fill>
-                </Rectangle>
-                <Label
-                  Content="{Binding Header}"
-                  Foreground="Black"
-                  FontFamily="Arial"
-                  FontSize="{Binding HeaderFont}"
-                  FontWeight="SemiBold"/>
-              </Canvas>
-            </ToggleButton>
-            <ContentPresenter Name="PART_ContentPresenter"
-                              Grid.Row="1"
-                              Padding="{TemplateBinding Padding}"
-                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                              Content="{TemplateBinding Content}"
-                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                              IsVisible="{TemplateBinding IsExpanded}" />
-          </Grid>
-        </Border>
-      </ControlTemplate>
-    </Expander.Template>
-    <Canvas
+  <Grid RowDefinitions="Auto,*" Background="White">
+    <Border
+      Background="White"
+      BorderBrush="Gray"
+      BorderThickness="1"
       Width="{Binding Width}"
-      Height="{Binding Height}"
-      Background="White"/>
-  </Expander>
+      Height="{Binding HeaderHeight}">
+    <Grid ColumnDefinitions="Auto,*">
+      <Grid.Background>
+        <LinearGradientBrush
+          StartPoint="0%,0%"
+          EndPoint="0%,100%">
+          <LinearGradientBrush.GradientStops>
+            <GradientStop
+              Offset="0"
+              Color="#FCFCFD"/>
+            <GradientStop
+              Offset="1"
+              Color="#CED3E7"/>
+          </LinearGradientBrush.GradientStops>
+        </LinearGradientBrush>
+      </Grid.Background>
+      <i:Interaction.Behaviors>
+        <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeExpandedState}">
+          <ia:InvokeCommandAction Command="{Binding ChangeExpandedState}"/>
+        </ia:EventTriggerBehavior>
+      </i:Interaction.Behaviors>
+      <Label
+        Grid.Column="0"
+        Foreground="Black"
+        Background="Transparent"
+        FontFamily="Arial"
+        FontSize="{Binding HeaderFont}"
+        FontWeight="SemiBold"
+        Content="{Binding HeaderArrowGlyph}"
+        VerticalAlignment="Center">
+      </Label>
+      <Label
+        Grid.Column="1"
+        Foreground="Black"
+        Background="Transparent"
+        FontFamily="Arial"
+        FontSize="{Binding HeaderFont}"
+        FontWeight="SemiBold"
+        Content="{Binding Header}"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Stretch"/>
+    </Grid>
+    </Border>
+    <ContentPresenter
+      Grid.Row="1"
+      Padding="0"
+      IsVisible="{Binding IsExpanded}">
+      <ContentPresenter.Content>
+        <Canvas
+          Width="{Binding Width}"
+          Height="{Binding Height}"
+          Background="White"/>
+      </ContentPresenter.Content>
+    </ContentPresenter>
+  </Grid>
   
 </UserControl>
