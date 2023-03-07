@@ -12,7 +12,7 @@ public class BodyBlock : Block
 
   public readonly Report Report;
 
-  public readonly int Id;
+  public int Id { get; set; }
 
   public readonly List<Metadata> Metadata = new();
 
