@@ -57,7 +57,7 @@ namespace ControlsSandbox.ViewModels
 
     public double Height => MeasurementConverter.MillimetersToPixels(block.Height);
 
-    public string HeaderArrowGlyph => IsExpanded ? "🡇" : "🡅";
+    public string HeaderArrowGlyph => IsExpanded ? "🠋" : "🠉";
 
     public bool IsExpanded
     {
