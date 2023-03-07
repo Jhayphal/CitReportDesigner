@@ -42,7 +42,7 @@ namespace ControlsSandbox.ViewModels
 
     public int ItemsCount => (block.Tables?.Count).GetValueOrDefault();
 
-    public string Header => $"{Type} ({Id}) - {(descriptions.TryGetValue(Type, out var description) ? description : "Неизвестный тип")} [{ItemsCount} элемента]";
+    public string Header => $"{Type} ({Id}) - {GetBlockTypeText()} [{GetItemsText()}]";
 
     public double HeaderFont => MeasurementConverter.MillimetersToPixels(3f);
 
@@ -53,5 +53,17 @@ namespace ControlsSandbox.ViewModels
     public double Width { get; set; } = MeasurementConverter.MillimetersToPixels(190f);
 
     public double Height => MeasurementConverter.MillimetersToPixels(block.Height);
+
+    private string GetItemsText() => ItemsCount switch
+    {
+      1 => $"{ItemsCount} элемент",
+      2 or 3 or 4 => $"{ItemsCount} элемента",
+      _ => $"{ItemsCount} элементов",
+    };
+
+    private string GetBlockTypeText()
+      => descriptions.TryGetValue(Type.ToUpper(), out string description)
+        ? description
+        : "Неизвестный тип";
   }
 }
