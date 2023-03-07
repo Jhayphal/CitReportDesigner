@@ -53,7 +53,7 @@
                   Content="{Binding Header}"
                   Foreground="Black"
                   FontFamily="Arial"
-                  FontSize="10"
+                  FontSize="{Binding HeaderFont}"
                   FontWeight="SemiBold"/>
               </Canvas>
             </ToggleButton>

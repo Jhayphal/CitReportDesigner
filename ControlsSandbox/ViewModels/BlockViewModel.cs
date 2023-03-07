@@ -40,12 +40,14 @@ namespace ControlsSandbox.ViewModels
 
     public string Header => $"{Type} ({Id}) - {(descriptions.TryGetValue(Type, out var description) ? description : "Неизвестный тип")} [{ItemsCount} элемента]";
 
-    public double HeaderHeight => MillimetersToPixels(5f);
+    public double HeaderFont => MeasurementConverter.MillimetersToPixels(3f);
+
+    public double HeaderHeight => MeasurementConverter.MillimetersToPixels(5f);
 
     public double SummaryHeight => HeaderHeight + Height;
 
-    public double Width { get; set; } = MillimetersToPixels(190f);
+    public double Width { get; set; } = MeasurementConverter.MillimetersToPixels(190f);
 
-    public double Height => MillimetersToPixels(block.Height);
+    public double Height => MeasurementConverter.MillimetersToPixels(block.Height);
   }
 }

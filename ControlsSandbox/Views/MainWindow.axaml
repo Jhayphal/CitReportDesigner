@@ -12,6 +12,7 @@
   <ScrollViewer>
     <ContentControl
       Content="{Binding Content}"
+      VerticalAlignment="Top"
       HorizontalAlignment="Left"/>
   </ScrollViewer>
   
