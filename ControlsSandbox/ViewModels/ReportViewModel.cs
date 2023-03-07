@@ -15,9 +15,9 @@ namespace ControlsSandbox.ViewModels
       Blocks = this.report.Blocks.Select((b, i) => new BlockViewModel(b, i)).ToList();
     }
 
-    public float Width { get; set; } = MillimetersToPixels(190);
+    public double Width { get; set; } = MillimetersToPixels(190);
 
-    public float Height { get; set; } = MillimetersToPixels(270);
+    public double Height { get; set; } = MillimetersToPixels(270);
 
     public List<BlockViewModel> Blocks { get; }
   }

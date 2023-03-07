@@ -4,9 +4,13 @@ namespace ControlsSandbox.ViewModels
 {
   public class ViewModelBase : ReactiveObject
   {
-    protected const float SkiaDPI = 96f;
-    protected const float MillimetersInInch = 25.4f;
+    protected const double MillimetersInInch = 25.4f;
 
-    protected static float MillimetersToPixels(float value) => (value / MillimetersInInch) * SkiaDPI;
+    protected static readonly double DPI = 96d;
+    
+    internal static double ScaleFactor = 1d;
+
+    protected static double MillimetersToPixels(double value)
+      => ((value / MillimetersInInch) * DPI) / ScaleFactor;
   }
 }

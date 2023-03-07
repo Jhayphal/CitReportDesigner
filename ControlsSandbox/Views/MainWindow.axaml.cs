@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using ControlsSandbox.Extensions;
+using ControlsSandbox.ViewModels;
 
 namespace ControlsSandbox.Views
 {
@@ -7,6 +9,8 @@ namespace ControlsSandbox.Views
     public MainWindow()
     {
       InitializeComponent();
+
+      ViewModelBase.ScaleFactor = this.GetActiveScreen().PixelDensity;
     }
   }
 }
