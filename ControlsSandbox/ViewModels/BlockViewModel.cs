@@ -6,7 +6,7 @@ namespace ControlsSandbox.ViewModels
 {
   public class BlockViewModel : ViewModelBase
   {
-    private static Dictionary<string, string> descriptions = new()
+    private static readonly Dictionary<string, string> descriptions = new()
     {
       { "RH", "Заголовок отчета" },
       { "PH", "Заголовок страницы" },
