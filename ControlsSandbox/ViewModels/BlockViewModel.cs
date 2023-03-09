@@ -49,15 +49,19 @@ namespace ControlsSandbox.ViewModels
 
     public string Header => $"{Type} ({Id}) - {GetBlockTypeText()} [{GetItemsText()}]";
 
-    public double HeaderFont => MeasurementConverter.MillimetersToPixels(3f);
+    public double HeaderFont => MeasurementConverter.MillimetersToPixels(3d);
 
-    public double HeaderHeight => MeasurementConverter.MillimetersToPixels(5f);
+    public double HeaderHeight => MeasurementConverter.MillimetersToPixels(5d);
 
     public double SummaryHeight => HeaderHeight + Height;
 
-    public double Width { get; set; } = MeasurementConverter.MillimetersToPixels(190f);
+    public double Width { get; set; } = MeasurementConverter.MillimetersToPixels(190d);
 
-    public double Height => MeasurementConverter.MillimetersToPixels(block.Height);
+    public double Height => MeasurementConverter.MillimetersToPixels(HeightMillimeters);
+
+    public double HeightMillimeters => block.Height;
+
+    public string HeightMillimetersText => $"{HeightMillimeters} мм";
 
     public string HeaderArrowGlyph => IsExpanded ? "🠋" : "🠉";
 
@@ -81,6 +85,8 @@ namespace ControlsSandbox.ViewModels
         this.RaisePropertyChanged(nameof(BlockHeaderColorStop));
       }
     }
+
+    public Avalonia.Thickness HeaderItemsPaddings { get; } = new Avalonia.Thickness(MeasurementConverter.MillimetersToPixels(1), 0);
 
     public Color BlockHeaderColorStart => IsSelected ? Color.FromUInt32(0xFFFCFCFD) : Color.FromUInt32(0xFFFEFEFE);
     

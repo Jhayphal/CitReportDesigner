@@ -4,7 +4,7 @@
   {
     private const double PrettyFactor = 1.5d;
 
-    private const double MillimetersInInch = 25.4f;
+    private const double MillimetersInInch = 25.4d;
 
     private static readonly double DPI = 96d;
 

@@ -2,8 +2,8 @@
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:vm="using:ControlsSandbox.ViewModels"
-  xmlns:i="using:Avalonia.Xaml.Interactivity"
-  xmlns:ia="using:Avalonia.Xaml.Interactions.Core"
+  xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+  xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   mc:Ignorable="d"
@@ -20,7 +20,7 @@
       BorderThickness="1"
       Width="{Binding Width}"
       Height="{Binding HeaderHeight}">
-      <Grid ColumnDefinitions="Auto,*">
+      <Grid ColumnDefinitions="Auto,*,Auto">
         <Grid.Background>
           <LinearGradientBrush
             StartPoint="0%,0%"
@@ -35,14 +35,6 @@
             </LinearGradientBrush.GradientStops>
           </LinearGradientBrush>
         </Grid.Background>
-        <i:Interaction.Behaviors>
-          <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeSelectedState}">
-            <ia:InvokeCommandAction Command="{Binding ChangeSelectedState}"/>
-          </ia:EventTriggerBehavior>
-          <ia:EventTriggerBehavior EventName="DoubleTapped" SourceObject="{Binding #ChangeExpandedState}">
-            <ia:InvokeCommandAction Command="{Binding ChangeExpandedState}"/>
-          </ia:EventTriggerBehavior>
-        </i:Interaction.Behaviors>
         <Label
           Grid.Column="0"
           Foreground="Black"
@@ -51,7 +43,13 @@
           FontSize="{Binding HeaderFont}"
           FontWeight="SemiBold"
           Content="{Binding HeaderArrowGlyph}"
-          VerticalAlignment="Center">
+          VerticalAlignment="Center"
+          Padding="{Binding HeaderItemsPaddings}">
+          <i:Interaction.Behaviors>
+            <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeExpandedState}">
+              <ia:InvokeCommandAction Command="{Binding ChangeExpandedState}"/>
+            </ia:EventTriggerBehavior>
+          </i:Interaction.Behaviors>
         </Label>
         <Label
           Grid.Column="1"
@@ -62,7 +60,25 @@
           FontWeight="SemiBold"
           Content="{Binding Header}"
           VerticalAlignment="Center"
-          HorizontalAlignment="Stretch"/>
+          HorizontalAlignment="Stretch"
+          Padding="{Binding HeaderItemsPaddings}">
+          <i:Interaction.Behaviors>
+            <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeSelectedState}">
+              <ia:InvokeCommandAction Command="{Binding ChangeSelectedState}"/>
+            </ia:EventTriggerBehavior>
+          </i:Interaction.Behaviors>
+        </Label>
+        <Label
+          Grid.Column="2"
+          Foreground="Black"
+          Background="Transparent"
+          FontFamily="Arial"
+          FontSize="{Binding HeaderFont}"
+          FontWeight="SemiBold"
+          Content="{Binding HeightMillimetersText}"
+          VerticalAlignment="Center"
+          HorizontalAlignment="Center"
+          Padding="{Binding HeaderItemsPaddings}"/>
       </Grid>
     </Border>
     <ContentPresenter
