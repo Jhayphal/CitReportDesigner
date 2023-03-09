@@ -20,47 +20,50 @@
       BorderThickness="1"
       Width="{Binding Width}"
       Height="{Binding HeaderHeight}">
-    <Grid ColumnDefinitions="Auto,*">
-      <Grid.Background>
-        <LinearGradientBrush
-          StartPoint="0%,0%"
-          EndPoint="0%,100%">
-          <LinearGradientBrush.GradientStops>
-            <GradientStop
-              Offset="0"
-              Color="#FCFCFD"/>
-            <GradientStop
-              Offset="1"
-              Color="#CED3E7"/>
-          </LinearGradientBrush.GradientStops>
-        </LinearGradientBrush>
-      </Grid.Background>
-      <i:Interaction.Behaviors>
-        <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeExpandedState}">
-          <ia:InvokeCommandAction Command="{Binding ChangeExpandedState}"/>
-        </ia:EventTriggerBehavior>
-      </i:Interaction.Behaviors>
-      <Label
-        Grid.Column="0"
-        Foreground="Black"
-        Background="Transparent"
-        FontFamily="Arial"
-        FontSize="{Binding HeaderFont}"
-        FontWeight="SemiBold"
-        Content="{Binding HeaderArrowGlyph}"
-        VerticalAlignment="Center">
-      </Label>
-      <Label
-        Grid.Column="1"
-        Foreground="Black"
-        Background="Transparent"
-        FontFamily="Arial"
-        FontSize="{Binding HeaderFont}"
-        FontWeight="SemiBold"
-        Content="{Binding Header}"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Stretch"/>
-    </Grid>
+      <Grid ColumnDefinitions="Auto,*">
+        <Grid.Background>
+          <LinearGradientBrush
+            StartPoint="0%,0%"
+            EndPoint="0%,100%">
+            <LinearGradientBrush.GradientStops>
+              <GradientStop
+                Offset="0"
+                Color="{Binding BlockHeaderColorStart}"/>
+              <GradientStop
+                Offset="1"
+                Color="{Binding BlockHeaderColorStop}"/>
+            </LinearGradientBrush.GradientStops>
+          </LinearGradientBrush>
+        </Grid.Background>
+        <i:Interaction.Behaviors>
+          <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeSelectedState}">
+            <ia:InvokeCommandAction Command="{Binding ChangeSelectedState}"/>
+          </ia:EventTriggerBehavior>
+          <ia:EventTriggerBehavior EventName="DoubleTapped" SourceObject="{Binding #ChangeExpandedState}">
+            <ia:InvokeCommandAction Command="{Binding ChangeExpandedState}"/>
+          </ia:EventTriggerBehavior>
+        </i:Interaction.Behaviors>
+        <Label
+          Grid.Column="0"
+          Foreground="Black"
+          Background="Transparent"
+          FontFamily="Arial"
+          FontSize="{Binding HeaderFont}"
+          FontWeight="SemiBold"
+          Content="{Binding HeaderArrowGlyph}"
+          VerticalAlignment="Center">
+        </Label>
+        <Label
+          Grid.Column="1"
+          Foreground="Black"
+          Background="Transparent"
+          FontFamily="Arial"
+          FontSize="{Binding HeaderFont}"
+          FontWeight="SemiBold"
+          Content="{Binding Header}"
+          VerticalAlignment="Center"
+          HorizontalAlignment="Stretch"/>
+      </Grid>
     </Border>
     <ContentPresenter
       Grid.Row="1"

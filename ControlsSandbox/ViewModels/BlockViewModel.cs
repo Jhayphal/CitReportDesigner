@@ -1,4 +1,5 @@
-﻿using CitReport;
+﻿using Avalonia.Media;
+using CitReport;
 using ReactiveUI;
 using System.Collections.Generic;
 
@@ -21,6 +22,7 @@ namespace ControlsSandbox.ViewModels
     private readonly BodyBlock block;
 
     private bool isExpanded = true;
+    private bool isSelected;
 
     public BlockViewModel()
     {
@@ -68,6 +70,23 @@ namespace ControlsSandbox.ViewModels
         this.RaisePropertyChanged(nameof(HeaderArrowGlyph));
       }
     }
+
+    public bool IsSelected
+    {
+      get => isSelected;
+      set
+      {
+        this.RaiseAndSetIfChanged(ref isSelected, value);
+        this.RaisePropertyChanged(nameof(BlockHeaderColorStart));
+        this.RaisePropertyChanged(nameof(BlockHeaderColorStop));
+      }
+    }
+
+    public Color BlockHeaderColorStart => IsSelected ? Color.FromUInt32(0xFFFCFCFD) : Color.FromUInt32(0xFFFEFEFE);
+    
+    public Color BlockHeaderColorStop => IsSelected ? Color.FromUInt32(0xFFCED3E7) : Color.FromUInt32(0xFFEFEFEF);
+
+    public void ChangeSelectedState() => IsSelected = !IsSelected;
 
     public void ChangeExpandedState() => IsExpanded = !IsExpanded;
 
