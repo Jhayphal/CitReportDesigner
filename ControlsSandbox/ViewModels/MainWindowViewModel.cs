@@ -75,7 +75,9 @@ namespace ControlsSandbox.ViewModels
       block.TextBlocks.Add(new TextBlock
       {
         Text = "Фамилия Имя Отчество",
-        Width = 25,
+        X = 10,
+        Y = 10,
+        Width = 50,
         Height = 5,
         HorizontalAlignment = HorizontalAlignment.Center,
         VerticalAlignment = VerticalAlignment.Center

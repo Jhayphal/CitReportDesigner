@@ -4,10 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="50"
              x:Class="ControlsSandbox.Views.TextBlockView">
-  <TextBlock
-    Width="{Binding Width}"
-    Height="{Binding Height}"
-    Text="{Binding Text}"
-    HorizontalAlignment="{Binding HorizontalAlignment}"
-    VerticalAlignment="{Binding VerticalAlignment}"/>
+  <Border BorderBrush="Black" BorderThickness="1">
+    <TextBlock
+      Width="{Binding Width}"
+      Height="{Binding Height}"
+      Text="{Binding Text}"
+      HorizontalAlignment="{Binding HorizontalAlignment}"
+      VerticalAlignment="{Binding VerticalAlignment}"/>
+  </Border>
 </UserControl>
