@@ -10,10 +10,10 @@ namespace ControlsSandbox.Views;
 
 public partial class TextBlockView : UserControl
 {
+  private PixelPoint targetPosition;
   private Point lastMousePosition;
   private DispatcherTimer timer;
-  private bool isDragging = false;
-  private PixelPoint targetPosition;
+  private bool isDragging;
 
   public TextBlockView()
   {
@@ -38,18 +38,40 @@ public partial class TextBlockView : UserControl
       return;
     }
 
+    var itemsControl = this.FindAncestorOfType<ItemsControl>();
+    if (itemsControl == null)
+    {
+      return;
+    }
+
     if ((int)presenter.GetValue(Canvas.LeftProperty) == targetPosition.X
       && (int)presenter.GetValue(Canvas.TopProperty) == targetPosition.Y)
     {
       return;
     }
 
-    if (!(targetPosition.X < 0d))
+    if (targetPosition.X < 0d)
+    {
+      presenter.SetValue(Canvas.LeftProperty, 0d);
+    }
+    else if (itemsControl.Bounds.Width < targetPosition.X + presenter.Bounds.Width)
+    {
+      presenter.SetValue(Canvas.LeftProperty, itemsControl.Bounds.Width - presenter.Bounds.Width);
+    }
+    else
     {
       presenter.SetValue(Canvas.LeftProperty, targetPosition.X);
     }
 
-    if (!(targetPosition.Y < 0d))
+    if (targetPosition.Y < 0d)
+    {
+      presenter.SetValue(Canvas.TopProperty, 0d);
+    }
+    else if (itemsControl.Bounds.Height < targetPosition.Y + presenter.Bounds.Height)
+    {
+      presenter.SetValue(Canvas.TopProperty, itemsControl.Bounds.Height - presenter.Bounds.Height);
+    }
+    else
     {
       presenter.SetValue(Canvas.TopProperty, targetPosition.Y);
     }
@@ -91,16 +113,19 @@ public partial class TextBlockView : UserControl
     }
 
     var presenter = this.FindAncestorOfType<ContentPresenter>();
-    if (presenter != null)
+    if (presenter == null)
     {
-      var currentMousePosition = e.GetPosition(this);
-      var offset = currentMousePosition - lastMousePosition;
-
-      var x = presenter.GetValue(Canvas.LeftProperty);
-      var y = presenter.GetValue(Canvas.TopProperty);
-
-      targetPosition = new PixelPoint((int)(x + offset.X), (int)(y + offset.Y));
+      return;
     }
+
+    var currentMousePosition = e.GetPosition(this);
+    var offset = currentMousePosition - lastMousePosition;
+
+    var x = presenter.GetValue(Canvas.LeftProperty);
+    var y = presenter.GetValue(Canvas.TopProperty);
+
+    targetPosition = new PixelPoint((int)(x + offset.X), (int)(y + offset.Y));
+    System.Diagnostics.Debug.WriteLine(targetPosition);
   }
 
   private bool CanStartDrag(PointerEventArgs e) => e.KeyModifiers == KeyModifiers.Control && CanDrag(e);
