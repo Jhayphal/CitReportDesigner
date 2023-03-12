@@ -6,123 +6,122 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using System;
 
-namespace ControlsSandbox.Controls
+namespace ControlsSandbox.Controls;
+
+public abstract class DraggableControl : UserControl
 {
-  public abstract class DraggableControl : UserControl
+  /// <summary>
+  /// Record the last mouse location
+  /// </summary>
+  private Point lastMousePosition;
+
+  /// <summary>
+  /// The timer for smooth updating coordinates
+  /// </summary>
+  private DispatcherTimer timer;
+
+  /// <summary>
+  /// Whether the marker starts first and drags
+  /// </summary>
+  private bool isDragging = false;
+
+  /// <summary>
+  /// Need the coordinate point that needs to be updated
+  /// </summary>
+  private PixelPoint targetPosition;
+
+  public DraggableControl()
   {
-    /// <summary>
-    /// Record the last mouse location
-    /// </summary>
-    private Point lastMousePosition;
+    InitializeComponent();
 
-    /// <summary>
-    /// The timer for smooth updating coordinates
-    /// </summary>
-    private DispatcherTimer timer;
+    // Add the current control event to monitor
+    PointerPressed += OnPointerPressed;
+    PointerMoved += OnPointerMoved;
+    PointerReleased += OnPointerReleased;
 
-    /// <summary>
-    /// Whether the marker starts first and drags
-    /// </summary>
-    private bool isDragging = false;
-
-    /// <summary>
-    /// Need the coordinate point that needs to be updated
-    /// </summary>
-    private PixelPoint targetPosition;
-
-    public DraggableControl()
+    // Initialize the timer
+    timer = new DispatcherTimer
     {
-      InitializeComponent();
+      Interval = TimeSpan.FromMilliseconds(10)
+    };
+    timer.Tick += OnTimerTick;
+  }
 
-      // Add the current control event to monitor
-      PointerPressed += OnPointerPressed;
-      PointerMoved += OnPointerMoved;
-      PointerReleased += OnPointerReleased;
+  /// <summary>
+  /// Times event
+  /// </summary>
+  /// <param name="sender"></param>
+  /// <param name="e"></param>
+  private void OnTimerTick(object sender, EventArgs e)
+  {
+    var window = this.FindAncestorOfType<Window>();
+    if (window != null && window.Position != targetPosition)
+    {
+      // Update coordinates
+      window.Position = targetPosition;
+    }
+  }
 
-      // Initialize the timer
-      timer = new DispatcherTimer
-      {
-        Interval = TimeSpan.FromMilliseconds(10)
-      };
-      timer.Tick += OnTimerTick;
+  private void InitializeComponent()
+  {
+    AvaloniaXamlLoader.Load(this);
+  }
+
+  private void OnPointerPressed(object sender, PointerPressedEventArgs e)
+  {
+    if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+    {
+      return;
     }
 
-    /// <summary>
-    /// Times event
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void OnTimerTick(object sender, EventArgs e)
+    // Start Drag
+    isDragging = true;
+    
+    // Record the current coordinates
+    lastMousePosition = e.GetPosition(this);
+    e.Handled = true;
+    
+    // Start the timer
+    timer.Start();
+  }
+
+  private void OnPointerReleased(object sender, PointerReleasedEventArgs e)
+  {
+    if (!isDragging)
     {
-      var window = this.FindAncestorOfType<Window>();
-      if (window != null && window.Position != targetPosition)
-      {
-        // Update coordinates
-        window.Position = targetPosition;
-      }
+      return;
     }
 
-    private void InitializeComponent()
+    // Stop dragging
+    isDragging = false;
+    e.Handled = true;
+    
+    // Stop the timer
+    timer.Stop();
+  }
+
+  private void OnPointerMoved(object sender, PointerEventArgs e)
+  {
+    if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
     {
-      AvaloniaXamlLoader.Load(this);
+      return;
     }
 
-    private void OnPointerPressed(object sender, PointerPressedEventArgs e)
+    // If the drag is not started, it will not be executed
+    if (!isDragging)
     {
-      if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-      {
-        return;
-      }
+      return;
+    }
 
-      // Start Drag
-      isDragging = true;
-      
+    var currentMousePosition = e.GetPosition(this);
+    var offset = currentMousePosition - lastMousePosition;
+    
+    var window = this.FindAncestorOfType<Window>();
+    if (window != null)
+    {
       // Record the current coordinates
-      lastMousePosition = e.GetPosition(this);
-      e.Handled = true;
-      
-      // Start the timer
-      timer.Start();
-    }
-
-    private void OnPointerReleased(object sender, PointerReleasedEventArgs e)
-    {
-      if (!isDragging)
-      {
-        return;
-      }
-
-      // Stop dragging
-      isDragging = false;
-      e.Handled = true;
-      
-      // Stop the timer
-      timer.Stop();
-    }
-
-    private void OnPointerMoved(object sender, PointerEventArgs e)
-    {
-      if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-      {
-        return;
-      }
-
-      // If the drag is not started, it will not be executed
-      if (!isDragging)
-      {
-        return;
-      }
-
-      var currentMousePosition = e.GetPosition(this);
-      var offset = currentMousePosition - lastMousePosition;
-      
-      var window = this.FindAncestorOfType<Window>();
-      if (window != null)
-      {
-        // Record the current coordinates
-        targetPosition = new PixelPoint(window.Position.X + (int)offset.X,
-            window.Position.Y + (int)offset.Y);
-      }
+      targetPosition = new PixelPoint(window.Position.X + (int)offset.X,
+          window.Position.Y + (int)offset.Y);
     }
   }
 }

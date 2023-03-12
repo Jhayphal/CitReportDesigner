@@ -12,5 +12,8 @@
 
     public static double MillimetersToPixels(double value)
       => (((value / MillimetersInInch) * DPI) / ScaleFactor) * PrettyFactor;
+
+    public static double PixelsToMillimeters(double value)
+      => (((value * MillimetersInInch) / DPI) * ScaleFactor) / PrettyFactor;
   }
 }
