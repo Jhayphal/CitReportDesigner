@@ -1,13 +1,20 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="50"
-             x:Class="ControlsSandbox.Views.TextBlockView">
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:c="using:ControlsSandbox.Converters"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="50"
+  x:Class="ControlsSandbox.Views.TextBlockView">
+
+  <UserControl.Resources>
+    <c:MillimetersValueConverter x:Key="mm"/>
+  </UserControl.Resources>
+  
   <Border BorderBrush="Black" BorderThickness="1">
     <TextBlock
-      Width="{Binding Width}"
-      Height="{Binding Height}"
+      Width="{Binding Width, Converter={StaticResource mm}}"
+      Height="{Binding Height, Converter={StaticResource mm}}"
       Text="{Binding Text}"
       HorizontalAlignment="{Binding HorizontalAlignment}"
       VerticalAlignment="{Binding VerticalAlignment}"/>

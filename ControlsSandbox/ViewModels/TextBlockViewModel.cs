@@ -15,14 +15,14 @@ namespace ControlsSandbox.ViewModels
 
     public double X
     {
-      get => MeasurementConverter.MillimetersToPixels(textBlock.X);
-      set => textBlock.X = (float)MeasurementConverter.PixelsToMillimeters(value);
+      get => textBlock.X;
+      set => textBlock.X = (float)value;
     }
 
     public double Y
     {
-      get => MeasurementConverter.MillimetersToPixels(textBlock.Y);
-      set => textBlock.Y = (float)MeasurementConverter.PixelsToMillimeters(value);
+      get => textBlock.Y;
+      set => textBlock.Y = (float)value;
     }
 
     public string Text
@@ -33,14 +33,14 @@ namespace ControlsSandbox.ViewModels
 
     public double Width
     {
-      get => MeasurementConverter.MillimetersToPixels(textBlock.Width);
-      set => textBlock.Width = (float)MeasurementConverter.PixelsToMillimeters(value);
+      get => textBlock.Width;
+      set => textBlock.Width = (float)value;
     }
 
     public double Height
     {
-      get => MeasurementConverter.MillimetersToPixels(textBlock.Height);
-      set => textBlock.Height = (float)MeasurementConverter.PixelsToMillimeters(value);
+      get => textBlock.Height;
+      set => textBlock.Height = (float)value;
     }
 
     public HorizontalAlignment HorizontalAlignment => ConvertHAligment(textBlock.HorizontalAlignment);
