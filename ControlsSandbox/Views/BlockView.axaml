@@ -81,17 +81,26 @@
           Padding="{Binding HeaderItemsPaddings}"/>
       </Grid>
     </Border>
-    <ContentPresenter
+    <ItemsControl
       Grid.Row="1"
       Padding="0"
-      IsVisible="{Binding IsExpanded}">
-      <ContentPresenter.Content>
-        <Canvas
-          Width="{Binding Width}"
-          Height="{Binding Height}"
-          Background="White"/>
-      </ContentPresenter.Content>
-    </ContentPresenter>
+      IsVisible="{Binding IsExpanded}"
+      Items="{Binding TextBlocks}"
+      Background="White"
+      Width="{Binding Width}"
+      Height="{Binding Height}">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <Canvas />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.Styles>
+        <Style Selector="ItemsControl ContentPresenter">
+          <Setter Property="Canvas.Left" Value="{Binding X}" />
+          <Setter Property="Canvas.Top" Value="{Binding Y}" />
+        </Style>
+      </ItemsControl.Styles>
+    </ItemsControl>
   </Grid>
   
 </UserControl>

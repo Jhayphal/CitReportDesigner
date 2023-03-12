@@ -2,6 +2,7 @@
 using CitReport;
 using ReactiveUI;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ControlsSandbox.ViewModels
 {
@@ -44,6 +45,8 @@ namespace ControlsSandbox.ViewModels
       get => block.Id;
       set => block.Id = value;
     }
+
+    public List<TextBlockViewModel> TextBlocks => block.TextBlocks.Select(x => new TextBlockViewModel(x)).ToList();
 
     public int ItemsCount => (block.Tables?.Count).GetValueOrDefault();
 

@@ -72,6 +72,15 @@ namespace ControlsSandbox.ViewModels
       cell.HorizontalAlignment = HorizontalAlignment.Center;
       cell.Font = block.Fonts[fontAlias];
 
+      block.TextBlocks.Add(new TextBlock
+      {
+        Text = "Фамилия Имя Отчество",
+        Width = 25,
+        Height = 5,
+        HorizontalAlignment = HorizontalAlignment.Center,
+        VerticalAlignment = VerticalAlignment.Center
+      });
+
       Content = new ReportViewModel(report);
     }
 

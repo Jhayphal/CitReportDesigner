@@ -15,13 +15,13 @@ namespace ControlsSandbox.ViewModels
 
     public double X
     {
-      get => textBlock.X;
+      get => MeasurementConverter.MillimetersToPixels(textBlock.X);
       set => textBlock.X = (float)value;
     }
 
-    public float Y
+    public double Y
     {
-      get => textBlock.Y;
+      get => MeasurementConverter.MillimetersToPixels(textBlock.Y);
       set => textBlock.Y = (float)value;
     }
 
@@ -31,15 +31,15 @@ namespace ControlsSandbox.ViewModels
       set => textBlock.Text= value;
     }
 
-    public float Width
+    public double Width
     {
-      get => textBlock.Width;
+      get => MeasurementConverter.MillimetersToPixels(textBlock.Width);
       set => textBlock.Width = (float)value;
     }
 
-    public float Height
+    public double Height
     {
-      get => textBlock.Height;
+      get => MeasurementConverter.MillimetersToPixels(textBlock.Height);
       set => textBlock.Height = (float)value;
     }
 

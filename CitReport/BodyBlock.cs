@@ -20,6 +20,8 @@ public class BodyBlock : Block
 
   public readonly List<Table> Tables = new();
 
+  public readonly List<TextBlock> TextBlocks = new();
+
   public float Height => (Options?.OfType<BlkHOption>().FirstOrDefault()?.Height).GetValueOrDefault();
 
   public override bool Equals(Block other)
