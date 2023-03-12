@@ -13,16 +13,16 @@ namespace ControlsSandbox.ViewModels
       this.textBlock = textBlock;
     }
 
-    public double X
+    public float X
     {
       get => textBlock.X;
-      set => textBlock.X = (float)value;
+      set => textBlock.X = value;
     }
 
-    public double Y
+    public float Y
     {
       get => textBlock.Y;
-      set => textBlock.Y = (float)value;
+      set => textBlock.Y = value;
     }
 
     public string Text
@@ -31,16 +31,16 @@ namespace ControlsSandbox.ViewModels
       set => textBlock.Text = value;
     }
 
-    public double Width
+    public float Width
     {
       get => textBlock.Width;
-      set => textBlock.Width = (float)value;
+      set => textBlock.Width = value;
     }
 
-    public double Height
+    public float Height
     {
       get => textBlock.Height;
-      set => textBlock.Height = (float)value;
+      set => textBlock.Height = value;
     }
 
     public HorizontalAlignment HorizontalAlignment => ConvertHAligment(textBlock.HorizontalAlignment);

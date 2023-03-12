@@ -1,7 +1,6 @@
 <UserControl
   xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:c="using:ControlsSandbox.Converters"
   xmlns:vm="using:ControlsSandbox.ViewModels"
   xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
   xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
@@ -10,10 +9,6 @@
   mc:Ignorable="d"
   x:Class="ControlsSandbox.Views.BlockView">
 
-  <UserControl.Resources>
-    <c:MillimetersValueConverter x:Key="mm"/>
-  </UserControl.Resources>
-  
   <Design.DataContext>
     <vm:BlockViewModel/>
   </Design.DataContext>
@@ -23,8 +18,8 @@
       Background="White"
       BorderBrush="Gray"
       BorderThickness="1"
-      Width="{Binding Width}"
-      Height="{Binding HeaderHeight}">
+      Width="{Binding Width, Converter={StaticResource mm}}"
+      Height="{Binding HeaderHeight, Converter={StaticResource mm}}">
       <Grid ColumnDefinitions="Auto,*,Auto">
         <Grid.Background>
           <LinearGradientBrush
@@ -45,11 +40,11 @@
           Foreground="Black"
           Background="Transparent"
           FontFamily="Arial"
-          FontSize="{Binding HeaderFont}"
+          FontSize="{Binding HeaderFont, Converter={StaticResource mm}}"
           FontWeight="SemiBold"
           Content="{Binding HeaderArrowGlyph}"
           VerticalAlignment="Center"
-          Padding="{Binding HeaderItemsPaddings}">
+          Padding="{Binding HeaderItemsPaddings, Converter={StaticResource mm}}">
           <i:Interaction.Behaviors>
             <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeExpandedState}">
               <ia:InvokeCommandAction Command="{Binding ChangeExpandedState}"/>
@@ -61,12 +56,12 @@
           Foreground="Black"
           Background="Transparent"
           FontFamily="Arial"
-          FontSize="{Binding HeaderFont}"
+          FontSize="{Binding HeaderFont, Converter={StaticResource mm}}"
           FontWeight="SemiBold"
           Content="{Binding Header}"
           VerticalAlignment="Center"
           HorizontalAlignment="Stretch"
-          Padding="{Binding HeaderItemsPaddings}">
+          Padding="{Binding HeaderItemsPaddings, Converter={StaticResource mm}}">
           <i:Interaction.Behaviors>
             <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeSelectedState}">
               <ia:InvokeCommandAction Command="{Binding ChangeSelectedState}"/>
@@ -78,12 +73,12 @@
           Foreground="Black"
           Background="Transparent"
           FontFamily="Arial"
-          FontSize="{Binding HeaderFont}"
+          FontSize="{Binding HeaderFont, Converter={StaticResource mm}}"
           FontWeight="SemiBold"
           Content="{Binding HeightMillimetersText}"
           VerticalAlignment="Center"
           HorizontalAlignment="Center"
-          Padding="{Binding HeaderItemsPaddings}"/>
+          Padding="{Binding HeaderItemsPaddings, Converter={StaticResource mm}}"/>
       </Grid>
     </Border>
     <ItemsControl
@@ -92,8 +87,8 @@
       IsVisible="{Binding IsExpanded}"
       Items="{Binding TextBlocks}"
       Background="White"
-      Width="{Binding Width}"
-      Height="{Binding Height}">
+      Width="{Binding Width, Converter={StaticResource mm}}"
+      Height="{Binding Height, Converter={StaticResource mm}}">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
           <Canvas />

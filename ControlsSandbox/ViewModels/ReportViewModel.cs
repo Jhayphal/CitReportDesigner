@@ -33,9 +33,9 @@ namespace ControlsSandbox.ViewModels
       }
     }
 
-    public double Width { get; set; } = MeasurementConverter.MillimetersToPixels(190);
+    public float Width { get; set; } = 190f;
 
-    public double Height { get; set; } = MeasurementConverter.MillimetersToPixels(270);
+    public float Height { get; set; } = 270f;
 
     public List<BlockViewModel> Blocks { get; }
   }

@@ -9,7 +9,7 @@
   Title="ControlsSandbox"
   Background="#F0F0F0">
 
-  <ScrollViewer>
+  <ScrollViewer HorizontalScrollBarVisibility="Auto">
     <ContentControl
       Content="{Binding Content}"
       VerticalAlignment="Top"

@@ -5,11 +5,11 @@
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:vm="using:ControlsSandbox.ViewModels"
   mc:Ignorable="d"
-  Width="{Binding Width}"
-  Height="{Binding Height}"
+  Width="{Binding Width, Converter={StaticResource mm}}"
+  Height="{Binding Height, Converter={StaticResource mm}}"
   x:Class="ControlsSandbox.Views.ReportView"
   Background="LightGray">
-
+  
   <ItemsControl Items="{Binding Blocks}"/>
   
 </UserControl>
