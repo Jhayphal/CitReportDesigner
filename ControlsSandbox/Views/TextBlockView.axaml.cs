@@ -84,9 +84,17 @@ public partial class TextBlockView : UserControl
       return;
     }
 
-    isDragging = true;
+    var presenter = this.FindAncestorOfType<ContentPresenter>();
+    if (presenter == null)
+    {
+      return;
+    }
 
     lastMousePosition = e.GetPosition(this);
+    targetPosition = new PixelPoint((int)presenter.GetValue(Canvas.LeftProperty), (int)presenter.GetValue(Canvas.TopProperty));
+
+    isDragging = true;
+    Cursor = new Cursor(StandardCursorType.SizeAll);
     e.Handled = true;
 
     timer.Start();
@@ -100,6 +108,7 @@ public partial class TextBlockView : UserControl
     }
 
     isDragging = false;
+    Cursor = Cursor.Default;
     e.Handled = true;
 
     timer.Stop();
@@ -125,7 +134,6 @@ public partial class TextBlockView : UserControl
     var y = presenter.GetValue(Canvas.TopProperty);
 
     targetPosition = new PixelPoint((int)(x + offset.X), (int)(y + offset.Y));
-    System.Diagnostics.Debug.WriteLine(targetPosition);
   }
 
   private bool CanStartDrag(PointerEventArgs e) => e.KeyModifiers == KeyModifiers.Control && CanDrag(e);
