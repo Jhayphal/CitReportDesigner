@@ -45,19 +45,19 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     activateWithModifiers = activateWith;
     minimumSize = minimalSize;
 
-    targetControl.PointerPressed += OnPointerPressed;
-    targetControl.PointerMoved += OnPointerMoved;
-    targetControl.PointerReleased += OnPointerReleased;
+    targetControl.PointerPressed += TryStartResize;
+    targetControl.PointerMoved += GetPointerPosition;
+    targetControl.PointerReleased += RestoreCursor;
 
     applySizeTimer = new DispatcherTimer
     {
       Interval = TimeSpan.FromMilliseconds(10)
     };
 
-    applySizeTimer.Tick += OnTimerTick;
+    applySizeTimer.Tick += ApplySize;
   }
 
-  private void OnPointerPressed(object sender, PointerPressedEventArgs e)
+  private void TryStartResize(object sender, PointerPressedEventArgs e)
   {
     if (!CanStartResize(e))
     {
@@ -91,7 +91,47 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     applySizeTimer.Start();
   }
 
-  private void OnPointerMoved(object sender, PointerEventArgs e)
+  private bool CanStartResize(PointerEventArgs e)
+  {
+    if (e.KeyModifiers != activateWithModifiers || !CanResize(e))
+    {
+      return false;
+    }
+
+    resizeDirection = GetDirection(e.GetPosition(targetControl));
+
+    return !(resizeDirection.Horizontal == HorizontalAlignment.Center
+      && resizeDirection.Vertical == VerticalAlignment.Center);
+  }
+
+  private bool CanResize(PointerEventArgs e) => e.GetCurrentPoint(targetControl).Properties.IsLeftButtonPressed;
+
+  private (HorizontalAlignment, VerticalAlignment) GetDirection(Point point)
+  {
+    var cornerLength = Math.Min(targetControl.Bounds.Height, targetControl.Bounds.Width) / 3d;
+
+    var leftX = cornerLength;
+    var rightX = targetControl.Bounds.Width - cornerLength;
+
+    HorizontalAlignment horizontal = point.X <= leftX
+      ? HorizontalAlignment.Left
+      : point.X >= rightX
+        ? HorizontalAlignment.Right
+        : HorizontalAlignment.Center;
+
+    var topY = cornerLength;
+    var bottomY = targetControl.Bounds.Height - cornerLength;
+
+    VerticalAlignment vertical = point.Y <= topY
+      ? VerticalAlignment.Top
+      : point.Y >= bottomY
+        ? VerticalAlignment.Bottom
+        : VerticalAlignment.Center;
+
+    return (horizontal, vertical);
+  }
+
+  private void GetPointerPosition(object sender, PointerEventArgs e)
   {
     if (isResizing && CanResize(e))
     {
@@ -108,27 +148,44 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     }
   }
 
-  private void OnPointerReleased(object sender, PointerReleasedEventArgs e)
+  private Cursor GetCursorForDirection((HorizontalAlignment Horizontal, VerticalAlignment Vertical) direction)
   {
-    if (!isResizing)
+    if (direction.Horizontal == HorizontalAlignment.Center && direction.Vertical == VerticalAlignment.Center)
     {
-      return;
+      return Cursor.Default;
     }
 
-    targetControl.Cursor = Cursor.Default;
-    isResizing = false;
-    e.Handled = true;
+    if (direction.Horizontal == HorizontalAlignment.Stretch || direction.Vertical == VerticalAlignment.Stretch)
+    {
+      throw new InvalidOperationException("Stretch unexpected.");
+    }
 
-    applySizeTimer.Stop();
+    return direction.Horizontal switch
+    {
+      HorizontalAlignment.Left => direction.Vertical == VerticalAlignment.Top
+        ? sizingCursors[StandardCursorType.TopLeftCorner]
+        : direction.Vertical == VerticalAlignment.Center
+          ? sizingCursors[StandardCursorType.LeftSide]
+          : sizingCursors[StandardCursorType.BottomLeftCorner],
+      HorizontalAlignment.Center => direction.Vertical == VerticalAlignment.Top
+        ? sizingCursors[StandardCursorType.TopSide]
+        : sizingCursors[StandardCursorType.BottomSide],
+      HorizontalAlignment.Right => direction.Vertical == VerticalAlignment.Top
+        ? sizingCursors[StandardCursorType.TopRightCorner]
+        : direction.Vertical == VerticalAlignment.Center
+          ? sizingCursors[StandardCursorType.RightSide]
+          : sizingCursors[StandardCursorType.BottomRightCorner],
+      _ => throw new InvalidOperationException($"{direction.Horizontal}:{direction.Vertical} unexpected."),
+    };
   }
 
-  private void OnTimerTick(object sender, EventArgs e)
+  private void ApplySize(object sender, EventArgs e)
   {
     if (isProgress)
     {
       return;
     }
-    
+
     isProgress = true;
 
     var newBounds = new ControlBounds(originalBounds);
@@ -202,74 +259,17 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     isProgress = false;
   }
 
-  private bool CanStartResize(PointerEventArgs e)
+  private void RestoreCursor(object sender, PointerReleasedEventArgs e)
   {
-    if (e.KeyModifiers == activateWithModifiers && CanResize(e))
+    if (!isResizing)
     {
-      resizeDirection = GetDirection(e.GetPosition(targetControl));
-
-      return !(resizeDirection.Horizontal == HorizontalAlignment.Center
-        && resizeDirection.Vertical == VerticalAlignment.Center);
+      return;
     }
 
-    return false;
-  }
+    targetControl.Cursor = Cursor.Default;
+    isResizing = false;
+    e.Handled = true;
 
-  private bool CanResize(PointerEventArgs e) => e.GetCurrentPoint(targetControl).Properties.IsLeftButtonPressed;
-
-  private (HorizontalAlignment, VerticalAlignment) GetDirection(Point point)
-  {
-    var cornerLength = Math.Min(targetControl.Bounds.Height, targetControl.Bounds.Width) / 3d;
-
-    var leftX = cornerLength;
-    var rightX = targetControl.Bounds.Width - cornerLength;
-
-    HorizontalAlignment horizontal = point.X <= leftX
-      ? HorizontalAlignment.Left
-      : point.X >= rightX
-        ? HorizontalAlignment.Right
-        : HorizontalAlignment.Center;
-
-    var topY = cornerLength;
-    var bottomY = targetControl.Bounds.Height - cornerLength;
-
-    VerticalAlignment vertical = point.Y <= topY
-      ? VerticalAlignment.Top
-      : point.Y >= bottomY
-        ? VerticalAlignment.Bottom
-        : VerticalAlignment.Center;
-
-    return (horizontal, vertical);
-  }
-
-  private Cursor GetCursorForDirection((HorizontalAlignment Horizontal, VerticalAlignment Vertical) direction)
-  {
-    if (direction.Horizontal == HorizontalAlignment.Center && direction.Vertical == VerticalAlignment.Center)
-    {
-      return Cursor.Default;
-    }
-
-    if (direction.Horizontal == HorizontalAlignment.Stretch || direction.Vertical == VerticalAlignment.Stretch)
-    {
-      throw new InvalidOperationException("Stretch unexpected.");
-    }
-
-    return direction.Horizontal switch
-    {
-      HorizontalAlignment.Left => direction.Vertical == VerticalAlignment.Top
-        ? sizingCursors[StandardCursorType.TopLeftCorner]
-        : direction.Vertical == VerticalAlignment.Center
-          ? sizingCursors[StandardCursorType.LeftSide]
-          : sizingCursors[StandardCursorType.BottomLeftCorner],
-      HorizontalAlignment.Center => direction.Vertical == VerticalAlignment.Top
-        ? sizingCursors[StandardCursorType.TopSide]
-        : sizingCursors[StandardCursorType.BottomSide],
-      HorizontalAlignment.Right => direction.Vertical == VerticalAlignment.Top
-        ? sizingCursors[StandardCursorType.TopRightCorner]
-        : direction.Vertical == VerticalAlignment.Center
-          ? sizingCursors[StandardCursorType.RightSide]
-          : sizingCursors[StandardCursorType.BottomRightCorner],
-      _ => throw new InvalidOperationException($"{direction.Horizontal}:{direction.Vertical} unexpected."),
-    };
+    applySizeTimer.Stop();
   }
 }

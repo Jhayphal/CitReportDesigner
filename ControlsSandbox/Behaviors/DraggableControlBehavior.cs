@@ -28,19 +28,16 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
     targetControl = userControl;
     activateWithModifiers = activateWith;
 
-    targetControl.PointerPressed += OnPointerPressed;
-    targetControl.PointerMoved += OnPointerMoved;
-    targetControl.PointerReleased += OnPointerReleased;
+    targetControl.PointerPressed += TryStartDrag;
+    targetControl.PointerMoved += GetPosition;
 
-    applyPositionTimer = new DispatcherTimer
-    {
-      Interval = TimeSpan.FromMilliseconds(10)
-    };
+    applyPositionTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(10) };
+    applyPositionTimer.Tick += ApplyPosition;
 
-    applyPositionTimer.Tick += OnTimerTick;
+    targetControl.PointerReleased += RestoreCursor;
   }
 
-  private void OnPointerPressed(object sender, PointerPressedEventArgs e)
+  private void TryStartDrag(object sender, PointerPressedEventArgs e)
   {
     if (!CanStartDrag(e))
     {
@@ -74,7 +71,11 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
     applyPositionTimer.Start();
   }
 
-  private void OnPointerMoved(object sender, PointerEventArgs e)
+  private bool CanStartDrag(PointerEventArgs e) => e.KeyModifiers == activateWithModifiers && CanDrag(e);
+
+  private bool CanDrag(PointerEventArgs e) => e.GetCurrentPoint(targetControl).Properties.IsLeftButtonPressed;
+
+  private void GetPosition(object sender, PointerEventArgs e)
   {
     if (isDragging && CanDrag(e))
     {
@@ -93,21 +94,7 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
     }
   }
 
-  private void OnPointerReleased(object sender, PointerReleasedEventArgs e)
-  {
-    if (!isDragging)
-    {
-      return;
-    }
-
-    isDragging = false;
-    targetControl.Cursor = Cursor.Default;
-    e.Handled = true;
-
-    applyPositionTimer.Stop();
-  }
-
-  private void OnTimerTick(object sender, EventArgs e)
+  private void ApplyPosition(object sender, EventArgs e)
   {
     if (isProgress
       || (int)viewModel.X == targetPosition.X
@@ -124,7 +111,17 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
     isProgress = false;
   }
 
-  private bool CanStartDrag(PointerEventArgs e) => e.KeyModifiers == activateWithModifiers && CanDrag(e);
+  private void RestoreCursor(object sender, PointerReleasedEventArgs e)
+  {
+    if (!isDragging)
+    {
+      return;
+    }
 
-  private bool CanDrag(PointerEventArgs e) => e.GetCurrentPoint(targetControl).Properties.IsLeftButtonPressed;
+    isDragging = false;
+    targetControl.Cursor = Cursor.Default;
+    e.Handled = true;
+
+    applyPositionTimer.Stop();
+  }
 }
