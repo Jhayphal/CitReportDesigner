@@ -2,11 +2,13 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using System;
 
 namespace ControlsSandbox.Behaviors;
 
-public sealed class DraggableControlBehavior : ControlBehavior
+public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
+  where TRelativeTo : class, IVisual
 {
   private readonly UserControl targetControl;
   private readonly DispatcherTimer applyPositionTimer;
@@ -16,10 +18,12 @@ public sealed class DraggableControlBehavior : ControlBehavior
   private PixelPoint targetPosition;
   private Point lastMousePosition;
   private bool isDragging;
+  private TRelativeTo relativeTo;
 
-  public DraggableControlBehavior(UserControl userControl)
+  public DraggableControlBehavior(UserControl userControl, KeyModifiers activateWith)
   {
     targetControl = userControl;
+    ActivateWithModifiers = activateWith;
 
     targetControl.PointerPressed += OnPointerPressed;
     targetControl.PointerMoved += OnPointerMoved;
@@ -33,6 +37,8 @@ public sealed class DraggableControlBehavior : ControlBehavior
     applyPositionTimer.Tick += OnTimerTick;
   }
 
+  public KeyModifiers ActivateWithModifiers { get; }
+
   private void OnPointerPressed(object sender, PointerPressedEventArgs e)
   {
     if (!CanStartDrag(e))
@@ -42,6 +48,12 @@ public sealed class DraggableControlBehavior : ControlBehavior
 
     viewModel = targetControl.DataContext as IControlBounds;
     if (viewModel == null)
+    {
+      return;
+    }
+
+    relativeTo = targetControl.FindAncestorOfType<TRelativeTo>();
+    if (relativeTo == null)
     {
       return;
     }

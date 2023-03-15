@@ -26,6 +26,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     { StandardCursorType.RightSide, new Cursor(StandardCursorType.RightSide) },
     { StandardCursorType.BottomRightCorner, new Cursor(StandardCursorType.BottomRightCorner) }
   };
+  private readonly Size minSize;
 
   private IControlBounds viewModel;
   private Point targetOffset;
@@ -35,10 +36,11 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
   private (HorizontalAlignment Horizontal, VerticalAlignment Vertical) resizeDirection;
   private TRelativeTo relativeTo;
 
-  public ResizableControlBehavior(UserControl userControl, KeyModifiers activateWith)
+  public ResizableControlBehavior(UserControl userControl, KeyModifiers activateWith, Size minSize)
   {
     targetControl = userControl;
     ActivateWithModifiers = activateWith;
+    this.minSize = minSize;
 
     targetControl.PointerPressed += OnPointerPressed;
     targetControl.PointerMoved += OnPointerMoved;
@@ -67,15 +69,15 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
       return;
     }
 
-    if (viewModel.SizeUnit == ReportSizeUnit.Millimeter)
-    {
-      viewModel = new MillimetersToPixelsBoundsAdapter(viewModel);
-    }
-
     relativeTo = targetControl.FindAncestorOfType<TRelativeTo>();
     if (relativeTo == null)
     {
       return;
+    }
+
+    if (viewModel.SizeUnit == ReportSizeUnit.Millimeter)
+    {
+      viewModel = new MillimetersToPixelsBoundsAdapter(viewModel);
     }
 
     targetOffset = new Point();
@@ -135,6 +137,12 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
       else
       {
         newBounds.Width += targetOffset.X;
+
+        if (newBounds.Width - minSize.Width < double.Epsilon)
+        {
+          newBounds.X += newBounds.Width - minSize.Width;
+          newBounds.Width = minSize.Width;
+        }
       }
 
       viewModel.X = newBounds.X;
@@ -144,7 +152,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     {
       newBounds.Width -= targetOffset.X;
 
-      if (newBounds.Width - 1d > double.Epsilon)
+      if (newBounds.Width - minSize.Width > double.Epsilon)
       {
         viewModel.Width = newBounds.Width;
       }
@@ -162,6 +170,12 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
       else
       {
         newBounds.Height += targetOffset.Y;
+
+        if (newBounds.Height - minSize.Height < double.Epsilon)
+        {
+          newBounds.Y += newBounds.Height - minSize.Height;
+          newBounds.Height = minSize.Height;
+        }
       }
 
       viewModel.Y = newBounds.Y;
@@ -171,7 +185,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     {
       newBounds.Height -= targetOffset.Y;
 
-      if (newBounds.Height - 1d > double.Epsilon)
+      if (newBounds.Height - minSize.Height > double.Epsilon)
       {
         viewModel.Height = newBounds.Height;
       }

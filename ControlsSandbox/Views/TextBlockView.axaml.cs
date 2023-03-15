@@ -1,4 +1,6 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using ControlsSandbox.Behaviors;
 
 namespace ControlsSandbox.Views;
@@ -15,8 +17,8 @@ public partial class TextBlockView : UserControl
 
     behaviors = new ControlBehavior[]
     {
-      new DraggableControlBehavior(this),
-      new ResizableControlBehavior<Canvas>(this, Avalonia.Input.KeyModifiers.Alt)
+      new DraggableControlBehavior<Canvas>(this, KeyModifiers.Control),
+      new ResizableControlBehavior<Canvas>(this, KeyModifiers.Alt, new Size(10, 10))
     };
   }
 }
