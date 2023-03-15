@@ -13,17 +13,20 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
   private readonly UserControl targetControl;
   private readonly DispatcherTimer applyPositionTimer;
   private readonly Cursor moveCursor = new(StandardCursorType.SizeAll);
+  private readonly KeyModifiers activateWithModifiers;
 
   private IControlBounds viewModel;
-  private PixelPoint targetPosition;
+  private Point targetPosition;
   private Point lastMousePosition;
   private bool isDragging;
   private TRelativeTo relativeTo;
 
+  private volatile bool isProgress;
+
   public DraggableControlBehavior(UserControl userControl, KeyModifiers activateWith)
   {
     targetControl = userControl;
-    ActivateWithModifiers = activateWith;
+    activateWithModifiers = activateWith;
 
     targetControl.PointerPressed += OnPointerPressed;
     targetControl.PointerMoved += OnPointerMoved;
@@ -36,8 +39,6 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
 
     applyPositionTimer.Tick += OnTimerTick;
   }
-
-  public KeyModifiers ActivateWithModifiers { get; }
 
   private void OnPointerPressed(object sender, PointerPressedEventArgs e)
   {
@@ -64,7 +65,7 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
     }
 
     lastMousePosition = e.GetPosition(targetControl);
-    targetPosition = new PixelPoint((int)viewModel.X, (int)viewModel.Y);
+    targetPosition = new Point(viewModel.X, viewModel.Y);
 
     isDragging = true;
     targetControl.Cursor = moveCursor;
@@ -75,24 +76,21 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
 
   private void OnPointerMoved(object sender, PointerEventArgs e)
   {
-    if (!(isDragging && CanDrag(e)))
+    if (isDragging && CanDrag(e))
     {
-      if (e.KeyModifiers == KeyModifiers.Control)
-      {
-        targetControl.Cursor = moveCursor;
-      }
-      else if (ReferenceEquals(targetControl.Cursor, moveCursor))
-      {
-        targetControl.Cursor = Cursor.Default;
-      }
+      var currentMousePosition = e.GetPosition(targetControl);
+      var offset = currentMousePosition - lastMousePosition;
 
-      return;
+      targetPosition = new Point(viewModel.X + offset.X, viewModel.Y + offset.Y);
     }
-
-    var currentMousePosition = e.GetPosition(targetControl);
-    var offset = currentMousePosition - lastMousePosition;
-
-    targetPosition = new PixelPoint((int)(viewModel.X + offset.X), (int)(viewModel.Y + offset.Y));
+    else if (e.KeyModifiers == KeyModifiers.Control)
+    {
+      targetControl.Cursor = moveCursor;
+    }
+    else if (ReferenceEquals(targetControl.Cursor, moveCursor))
+    {
+      targetControl.Cursor = Cursor.Default;
+    }
   }
 
   private void OnPointerReleased(object sender, PointerReleasedEventArgs e)
@@ -111,17 +109,22 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
 
   private void OnTimerTick(object sender, EventArgs e)
   {
-    if ((int)viewModel.X == targetPosition.X
+    if (isProgress
+      || (int)viewModel.X == targetPosition.X
       && (int)viewModel.Y == targetPosition.Y)
     {
       return;
     }
 
-    viewModel.X = targetPosition.X < 0d ? 0d : targetPosition.X;
-    viewModel.Y = targetPosition.Y < 0d ? 0d : targetPosition.Y;
+    isProgress = true;
+
+    viewModel.X = double.IsNegative(targetPosition.X) ? 0d : targetPosition.X;
+    viewModel.Y = double.IsNegative(targetPosition.Y) ? 0d : targetPosition.Y;
+
+    isProgress = false;
   }
 
-  private bool CanStartDrag(PointerEventArgs e) => e.KeyModifiers == KeyModifiers.Control && CanDrag(e);
+  private bool CanStartDrag(PointerEventArgs e) => e.KeyModifiers == activateWithModifiers && CanDrag(e);
 
   private bool CanDrag(PointerEventArgs e) => e.GetCurrentPoint(targetControl).Properties.IsLeftButtonPressed;
 }

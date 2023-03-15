@@ -26,7 +26,8 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     { StandardCursorType.RightSide, new Cursor(StandardCursorType.RightSide) },
     { StandardCursorType.BottomRightCorner, new Cursor(StandardCursorType.BottomRightCorner) }
   };
-  private readonly Size minSize;
+  private readonly Size minimumSize;
+  private readonly KeyModifiers activateWithModifiers;
 
   private IControlBounds viewModel;
   private Point targetOffset;
@@ -36,11 +37,13 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
   private (HorizontalAlignment Horizontal, VerticalAlignment Vertical) resizeDirection;
   private TRelativeTo relativeTo;
 
-  public ResizableControlBehavior(UserControl userControl, KeyModifiers activateWith, Size minSize)
+  private volatile bool isProgress;
+
+  public ResizableControlBehavior(UserControl userControl, KeyModifiers activateWith, Size minimalSize)
   {
     targetControl = userControl;
-    ActivateWithModifiers = activateWith;
-    this.minSize = minSize;
+    activateWithModifiers = activateWith;
+    minimumSize = minimalSize;
 
     targetControl.PointerPressed += OnPointerPressed;
     targetControl.PointerMoved += OnPointerMoved;
@@ -53,8 +56,6 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
 
     applySizeTimer.Tick += OnTimerTick;
   }
-
-  public KeyModifiers ActivateWithModifiers { get; }
 
   private void OnPointerPressed(object sender, PointerPressedEventArgs e)
   {
@@ -97,7 +98,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
       var currentMousePosition = e.GetPosition(relativeTo);
       targetOffset = lastMousePosition - currentMousePosition;
     }
-    else if (e.KeyModifiers == ActivateWithModifiers)
+    else if (e.KeyModifiers == activateWithModifiers)
     {
       targetControl.Cursor = GetCursorForDirection(GetDirection(e.GetPosition(targetControl)));
     }
@@ -123,6 +124,13 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
 
   private void OnTimerTick(object sender, EventArgs e)
   {
+    if (isProgress)
+    {
+      return;
+    }
+    
+    isProgress = true;
+
     var newBounds = new ControlBounds(originalBounds);
 
     if (resizeDirection.Horizontal == HorizontalAlignment.Left)
@@ -138,10 +146,10 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
       {
         newBounds.Width += targetOffset.X;
 
-        if (newBounds.Width - minSize.Width < double.Epsilon)
+        if (newBounds.Width - minimumSize.Width < double.Epsilon)
         {
-          newBounds.X += newBounds.Width - minSize.Width;
-          newBounds.Width = minSize.Width;
+          newBounds.X += newBounds.Width - minimumSize.Width;
+          newBounds.Width = minimumSize.Width;
         }
       }
 
@@ -152,7 +160,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     {
       newBounds.Width -= targetOffset.X;
 
-      if (newBounds.Width - minSize.Width > double.Epsilon)
+      if (newBounds.Width - minimumSize.Width > double.Epsilon)
       {
         viewModel.Width = newBounds.Width;
       }
@@ -171,10 +179,10 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
       {
         newBounds.Height += targetOffset.Y;
 
-        if (newBounds.Height - minSize.Height < double.Epsilon)
+        if (newBounds.Height - minimumSize.Height < double.Epsilon)
         {
-          newBounds.Y += newBounds.Height - minSize.Height;
-          newBounds.Height = minSize.Height;
+          newBounds.Y += newBounds.Height - minimumSize.Height;
+          newBounds.Height = minimumSize.Height;
         }
       }
 
@@ -185,16 +193,18 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     {
       newBounds.Height -= targetOffset.Y;
 
-      if (newBounds.Height - minSize.Height > double.Epsilon)
+      if (newBounds.Height - minimumSize.Height > double.Epsilon)
       {
         viewModel.Height = newBounds.Height;
       }
     }
+
+    isProgress = false;
   }
 
   private bool CanStartResize(PointerEventArgs e)
   {
-    if (e.KeyModifiers == ActivateWithModifiers && CanResize(e))
+    if (e.KeyModifiers == activateWithModifiers && CanResize(e))
     {
       resizeDirection = GetDirection(e.GetPosition(targetControl));
 
