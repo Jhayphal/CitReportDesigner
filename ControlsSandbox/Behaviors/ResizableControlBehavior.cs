@@ -3,13 +3,15 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ControlsSandbox.Behaviors;
 
-public sealed class ResizableControlBehavior : ControlBehavior
+public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
+  where TRelativeTo : class, IVisual
 {
   private readonly UserControl targetControl;
   private readonly DispatcherTimer applySizeTimer;
@@ -31,6 +33,7 @@ public sealed class ResizableControlBehavior : ControlBehavior
   private bool isResizing;
   private ControlBounds originalBounds;
   private (HorizontalAlignment Horizontal, VerticalAlignment Vertical) resizeDirection;
+  private TRelativeTo relativeTo;
 
   public ResizableControlBehavior(UserControl userControl, KeyModifiers activateWith)
   {
@@ -69,9 +72,15 @@ public sealed class ResizableControlBehavior : ControlBehavior
       viewModel = new MillimetersToPixelsBoundsAdapter(viewModel);
     }
 
-    originalBounds = new ControlBounds(viewModel);
-    lastMousePosition = e.GetPosition(targetControl);
+    relativeTo = targetControl.FindAncestorOfType<TRelativeTo>();
+    if (relativeTo == null)
+    {
+      return;
+    }
+
     targetOffset = new Point();
+    originalBounds = new ControlBounds(viewModel);
+    lastMousePosition = e.GetPosition(relativeTo);
 
     isResizing = true;
     e.Handled = true;
@@ -83,7 +92,8 @@ public sealed class ResizableControlBehavior : ControlBehavior
   {
     if (isResizing && CanResize(e))
     {
-      targetOffset = lastMousePosition - e.GetPosition(targetControl);
+      var currentMousePosition = e.GetPosition(relativeTo);
+      targetOffset = lastMousePosition - currentMousePosition;
     }
     else if (e.KeyModifiers == ActivateWithModifiers)
     {
@@ -111,43 +121,60 @@ public sealed class ResizableControlBehavior : ControlBehavior
 
   private void OnTimerTick(object sender, EventArgs e)
   {
-    if (originalBounds.X == 0 && originalBounds.Y == 0)
-    {
-      return;
-    }
-
     var newBounds = new ControlBounds(originalBounds);
 
     if (resizeDirection.Horizontal == HorizontalAlignment.Left)
     {
       newBounds.X = originalBounds.X - targetOffset.X;
-      newBounds.Width += targetOffset.X;
+
+      if (double.IsNegative(newBounds.X))
+      {
+        newBounds.Width += targetOffset.X + newBounds.X;
+        newBounds.X = 0d;
+      }
+      else
+      {
+        newBounds.Width += targetOffset.X;
+      }
+
+      viewModel.X = newBounds.X;
+      viewModel.Width = newBounds.Width;
     }
     else if (resizeDirection.Horizontal == HorizontalAlignment.Right)
     {
       newBounds.Width -= targetOffset.X;
+
+      if (newBounds.Width - 1d > double.Epsilon)
+      {
+        viewModel.Width = newBounds.Width;
+      }
     }
 
     if (resizeDirection.Vertical == VerticalAlignment.Top)
     {
       newBounds.Y = originalBounds.Y - targetOffset.Y;
-      newBounds.Height += targetOffset.Y;
+
+      if (double.IsNegative(newBounds.Y))
+      {
+        newBounds.Height += targetOffset.Y + newBounds.Y;
+        newBounds.Y = 0d;
+      }
+      else
+      {
+        newBounds.Height += targetOffset.Y;
+      }
+
+      viewModel.Y = newBounds.Y;
+      viewModel.Height = newBounds.Height;
     }
     else if (resizeDirection.Vertical == VerticalAlignment.Bottom)
     {
       newBounds.Height -= targetOffset.Y;
-    }
 
-    if (!(newBounds.X < 0d))
-    {
-      viewModel.X = newBounds.X;
-      viewModel.Width = newBounds.Width;
-    }
-
-    if (!(newBounds.Y < 0d))
-    {
-      viewModel.Y = newBounds.Y;
-      viewModel.Height = newBounds.Height;
+      if (newBounds.Height - 1d > double.Epsilon)
+      {
+        viewModel.Height = newBounds.Height;
+      }
     }
   }
 

@@ -20,4 +20,6 @@ public struct ControlBounds : IControlBounds
   public double Height { get; set; }
 
   public ReportSizeUnit SizeUnit { get; set; }
+
+  public override string ToString() => $"{X:###.#}:{Y:###.#} {Width:###.#}:{Height:###.#}";
 }
