@@ -16,7 +16,7 @@ public partial class TextBlockView : UserControl
     behaviors = new ControlBehavior[]
     {
       new DraggableControlBehavior(this),
-      new ResizableControlBehavior(this)
+      new ResizableControlBehavior(this, Avalonia.Input.KeyModifiers.Alt)
     };
   }
 }

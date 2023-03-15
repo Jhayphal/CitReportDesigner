@@ -26,14 +26,16 @@ public sealed class ResizableControlBehavior : ControlBehavior
   };
 
   private IControlBounds viewModel;
-  private PixelPoint targetOffset;
+  private Point targetOffset;
   private Point lastMousePosition;
   private bool isResizing;
+  private ControlBounds originalBounds;
   private (HorizontalAlignment Horizontal, VerticalAlignment Vertical) resizeDirection;
 
-  public ResizableControlBehavior(UserControl userControl)
+  public ResizableControlBehavior(UserControl userControl, KeyModifiers activateWith)
   {
     targetControl = userControl;
+    ActivateWithModifiers = activateWith;
 
     targetControl.PointerPressed += OnPointerPressed;
     targetControl.PointerMoved += OnPointerMoved;
@@ -47,36 +49,7 @@ public sealed class ResizableControlBehavior : ControlBehavior
     applySizeTimer.Tick += OnTimerTick;
   }
 
-  private Cursor GetCursorForDirection((HorizontalAlignment Horizontal, VerticalAlignment Vertical) direction)
-  {
-    if (direction.Horizontal == HorizontalAlignment.Center && direction.Vertical == VerticalAlignment.Center)
-    {
-      return Cursor.Default;
-    }
-
-    if (direction.Horizontal == HorizontalAlignment.Stretch || direction.Vertical == VerticalAlignment.Stretch)
-    {
-      throw new InvalidOperationException("Stretch unexpected.");
-    }
-
-    return direction.Horizontal switch
-    {
-      HorizontalAlignment.Left => direction.Vertical == VerticalAlignment.Top
-        ? sizingCursors[StandardCursorType.TopLeftCorner]
-        : direction.Vertical == VerticalAlignment.Center
-          ? sizingCursors[StandardCursorType.LeftSide]
-          : sizingCursors[StandardCursorType.BottomLeftCorner],
-      HorizontalAlignment.Center => direction.Vertical == VerticalAlignment.Top
-        ? sizingCursors[StandardCursorType.TopSide]
-        : sizingCursors[StandardCursorType.BottomSide],
-      HorizontalAlignment.Right => direction.Vertical == VerticalAlignment.Top
-        ? sizingCursors[StandardCursorType.TopRightCorner]
-        : direction.Vertical == VerticalAlignment.Center
-          ? sizingCursors[StandardCursorType.RightSide]
-          : sizingCursors[StandardCursorType.BottomRightCorner],
-      _ => throw new InvalidOperationException($"{direction.Horizontal}:{direction.Vertical} unexpected."),
-    };
-  }
+  public KeyModifiers ActivateWithModifiers { get; }
 
   private void OnPointerPressed(object sender, PointerPressedEventArgs e)
   {
@@ -96,8 +69,9 @@ public sealed class ResizableControlBehavior : ControlBehavior
       viewModel = new MillimetersToPixelsBoundsAdapter(viewModel);
     }
 
+    originalBounds = new ControlBounds(viewModel);
     lastMousePosition = e.GetPosition(targetControl);
-    targetOffset = new PixelPoint();
+    targetOffset = new Point();
 
     isResizing = true;
     e.Handled = true;
@@ -107,25 +81,18 @@ public sealed class ResizableControlBehavior : ControlBehavior
 
   private void OnPointerMoved(object sender, PointerEventArgs e)
   {
-    if (!(isResizing && CanResize(e)))
+    if (isResizing && CanResize(e))
     {
-      if (e.KeyModifiers == KeyModifiers.Alt)
-      {
-        targetControl.Cursor = GetCursorForDirection(GetDirection(e.GetPosition(targetControl)));
-      }
-      else if (sizingCursors.Any(c => ReferenceEquals(c.Value, targetControl.Cursor)))
-      {
-        targetControl.Cursor = Cursor.Default;
-      }
-
-      return;
+      targetOffset = lastMousePosition - e.GetPosition(targetControl);
     }
-
-    var newMousePosition = e.GetPosition(targetControl);
-    var offset = lastMousePosition - newMousePosition;
-    lastMousePosition = newMousePosition;
-
-    targetOffset = new PixelPoint((int)offset.X, (int)offset.Y);
+    else if (e.KeyModifiers == ActivateWithModifiers)
+    {
+      targetControl.Cursor = GetCursorForDirection(GetDirection(e.GetPosition(targetControl)));
+    }
+    else if (sizingCursors.Any(c => ReferenceEquals(c.Value, targetControl.Cursor)))
+    {
+      targetControl.Cursor = Cursor.Default;
+    }
   }
 
   private void OnPointerReleased(object sender, PointerReleasedEventArgs e)
@@ -144,40 +111,49 @@ public sealed class ResizableControlBehavior : ControlBehavior
 
   private void OnTimerTick(object sender, EventArgs e)
   {
-    if (targetOffset.X == 0 && targetOffset.Y == 0)
+    if (originalBounds.X == 0 && originalBounds.Y == 0)
     {
       return;
     }
 
-    var x = viewModel.X;
-    var y = viewModel.Y;
+    var newBounds = new ControlBounds(originalBounds);
 
     if (resizeDirection.Horizontal == HorizontalAlignment.Left)
     {
-      viewModel.X = x - targetOffset.X;
-      viewModel.Width += targetOffset.X;
+      newBounds.X = originalBounds.X - targetOffset.X;
+      newBounds.Width += targetOffset.X;
     }
     else if (resizeDirection.Horizontal == HorizontalAlignment.Right)
     {
-      viewModel.Width -= targetOffset.X;
+      newBounds.Width -= targetOffset.X;
     }
 
     if (resizeDirection.Vertical == VerticalAlignment.Top)
     {
-      viewModel.Y = y - targetOffset.Y;
-      viewModel.Height += targetOffset.Y;
+      newBounds.Y = originalBounds.Y - targetOffset.Y;
+      newBounds.Height += targetOffset.Y;
     }
     else if (resizeDirection.Vertical == VerticalAlignment.Bottom)
     {
-      viewModel.Height -= targetOffset.Y;
+      newBounds.Height -= targetOffset.Y;
     }
 
-    targetOffset = new PixelPoint();
+    if (!(newBounds.X < 0d))
+    {
+      viewModel.X = newBounds.X;
+      viewModel.Width = newBounds.Width;
+    }
+
+    if (!(newBounds.Y < 0d))
+    {
+      viewModel.Y = newBounds.Y;
+      viewModel.Height = newBounds.Height;
+    }
   }
 
   private bool CanStartResize(PointerEventArgs e)
   {
-    if (e.KeyModifiers == KeyModifiers.Alt && CanResize(e))
+    if (e.KeyModifiers == ActivateWithModifiers && CanResize(e))
     {
       resizeDirection = GetDirection(e.GetPosition(targetControl));
 
@@ -213,5 +189,36 @@ public sealed class ResizableControlBehavior : ControlBehavior
         : VerticalAlignment.Center;
 
     return (horizontal, vertical);
+  }
+
+  private Cursor GetCursorForDirection((HorizontalAlignment Horizontal, VerticalAlignment Vertical) direction)
+  {
+    if (direction.Horizontal == HorizontalAlignment.Center && direction.Vertical == VerticalAlignment.Center)
+    {
+      return Cursor.Default;
+    }
+
+    if (direction.Horizontal == HorizontalAlignment.Stretch || direction.Vertical == VerticalAlignment.Stretch)
+    {
+      throw new InvalidOperationException("Stretch unexpected.");
+    }
+
+    return direction.Horizontal switch
+    {
+      HorizontalAlignment.Left => direction.Vertical == VerticalAlignment.Top
+        ? sizingCursors[StandardCursorType.TopLeftCorner]
+        : direction.Vertical == VerticalAlignment.Center
+          ? sizingCursors[StandardCursorType.LeftSide]
+          : sizingCursors[StandardCursorType.BottomLeftCorner],
+      HorizontalAlignment.Center => direction.Vertical == VerticalAlignment.Top
+        ? sizingCursors[StandardCursorType.TopSide]
+        : sizingCursors[StandardCursorType.BottomSide],
+      HorizontalAlignment.Right => direction.Vertical == VerticalAlignment.Top
+        ? sizingCursors[StandardCursorType.TopRightCorner]
+        : direction.Vertical == VerticalAlignment.Center
+          ? sizingCursors[StandardCursorType.RightSide]
+          : sizingCursors[StandardCursorType.BottomRightCorner],
+      _ => throw new InvalidOperationException($"{direction.Horizontal}:{direction.Vertical} unexpected."),
+    };
   }
 }
