@@ -219,7 +219,16 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
 
       if (newBounds.Width - minimumSize.Width > double.Epsilon)
       {
+        if (newBounds.X + newBounds.Width > relativeTo.Bounds.Width)
+        {
+          newBounds.Width = relativeTo.Bounds.Width - newBounds.X;
+        }
+
         viewModel.Width = newBounds.Width;
+      }
+      else
+      {
+        viewModel.Width = minimumSize.Width;
       }
     }
 
@@ -252,7 +261,16 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
 
       if (newBounds.Height - minimumSize.Height > double.Epsilon)
       {
+        if (newBounds.Y + newBounds.Height > relativeTo.Bounds.Height)
+        {
+          newBounds.Height = relativeTo.Bounds.Height - newBounds.Y;
+        }
+
         viewModel.Height = newBounds.Height;
+      }
+      else
+      {
+        viewModel.Height = minimumSize.Height;
       }
     }
 

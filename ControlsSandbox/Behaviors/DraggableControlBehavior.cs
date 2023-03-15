@@ -105,8 +105,31 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
 
     isProgress = true;
 
-    viewModel.X = double.IsNegative(targetPosition.X) ? 0d : targetPosition.X;
-    viewModel.Y = double.IsNegative(targetPosition.Y) ? 0d : targetPosition.Y;
+    if (double.IsNegative(targetPosition.X))
+    {
+      viewModel.X = 0d;
+    }
+    else if (double.IsNegative(relativeTo.Bounds.Width - (targetPosition.X + viewModel.Width)))
+    {
+      viewModel.X = relativeTo.Bounds.Width - viewModel.Width;
+    }
+    else
+    {
+      viewModel.X = targetPosition.X;
+    }
+
+    if (double.IsNegative(targetPosition.Y))
+    {
+      viewModel.Y = 0d;
+    }
+    else if (double.IsNegative(relativeTo.Bounds.Height - (targetPosition.Y + viewModel.Height)))
+    {
+      viewModel.Y = relativeTo.Bounds.Height - viewModel.Height;
+    }
+    else
+    {
+      viewModel.Y = targetPosition.Y;
+    }
 
     isProgress = false;
   }
