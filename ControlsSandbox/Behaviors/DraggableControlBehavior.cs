@@ -9,12 +9,13 @@ namespace ControlsSandbox.Behaviors;
 public sealed class DraggableControlBehavior : ControlBehavior
 {
   private readonly UserControl targetControl;
+  private readonly DispatcherTimer applyPositionTimer;
+  private readonly Cursor moveCursor = new(StandardCursorType.SizeAll);
 
+  private IControlBounds viewModel;
   private PixelPoint targetPosition;
   private Point lastMousePosition;
-  private readonly DispatcherTimer timer;
   private bool isDragging;
-  private IControlBounds viewModel;
 
   public DraggableControlBehavior(UserControl userControl)
   {
@@ -24,12 +25,12 @@ public sealed class DraggableControlBehavior : ControlBehavior
     targetControl.PointerMoved += OnPointerMoved;
     targetControl.PointerReleased += OnPointerReleased;
 
-    timer = new DispatcherTimer
+    applyPositionTimer = new DispatcherTimer
     {
       Interval = TimeSpan.FromMilliseconds(10)
     };
 
-    timer.Tick += OnTimerTick;
+    applyPositionTimer.Tick += OnTimerTick;
   }
 
   private void OnPointerPressed(object sender, PointerPressedEventArgs e)
@@ -54,16 +55,25 @@ public sealed class DraggableControlBehavior : ControlBehavior
     targetPosition = new PixelPoint((int)viewModel.X, (int)viewModel.Y);
 
     isDragging = true;
-    targetControl.Cursor = new Cursor(StandardCursorType.SizeAll);
+    targetControl.Cursor = moveCursor;
     e.Handled = true;
 
-    timer.Start();
+    applyPositionTimer.Start();
   }
 
   private void OnPointerMoved(object sender, PointerEventArgs e)
   {
     if (!(isDragging && CanDrag(e)))
     {
+      if (e.KeyModifiers == KeyModifiers.Control)
+      {
+        targetControl.Cursor = moveCursor;
+      }
+      else if (ReferenceEquals(targetControl.Cursor, moveCursor))
+      {
+        targetControl.Cursor = Cursor.Default;
+      }
+
       return;
     }
 
@@ -84,7 +94,7 @@ public sealed class DraggableControlBehavior : ControlBehavior
     targetControl.Cursor = Cursor.Default;
     e.Handled = true;
 
-    timer.Stop();
+    applyPositionTimer.Stop();
   }
 
   private void OnTimerTick(object sender, EventArgs e)

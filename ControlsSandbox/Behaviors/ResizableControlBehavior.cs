@@ -12,15 +12,8 @@ namespace ControlsSandbox.Behaviors;
 public sealed class ResizableControlBehavior : ControlBehavior
 {
   private readonly UserControl targetControl;
-  private readonly DispatcherTimer timer;
-
-  private (HorizontalAlignment Horizontal, VerticalAlignment Vertical) resizeDirection;
-  private PixelPoint targetOffset;
-  private Point lastMousePosition;
-  private bool isResizing;
-  private IControlBounds viewModel;
-
-  private readonly Dictionary<StandardCursorType, Cursor> cursors = new()
+  private readonly DispatcherTimer applySizeTimer;
+  private readonly Dictionary<StandardCursorType, Cursor> sizingCursors = new()
   {
     { StandardCursorType.TopLeftCorner, new Cursor(StandardCursorType.TopLeftCorner) },
     { StandardCursorType.LeftSide, new Cursor(StandardCursorType.LeftSide) },
@@ -32,6 +25,12 @@ public sealed class ResizableControlBehavior : ControlBehavior
     { StandardCursorType.BottomRightCorner, new Cursor(StandardCursorType.BottomRightCorner) }
   };
 
+  private IControlBounds viewModel;
+  private PixelPoint targetOffset;
+  private Point lastMousePosition;
+  private bool isResizing;
+  private (HorizontalAlignment Horizontal, VerticalAlignment Vertical) resizeDirection;
+
   public ResizableControlBehavior(UserControl userControl)
   {
     targetControl = userControl;
@@ -40,12 +39,12 @@ public sealed class ResizableControlBehavior : ControlBehavior
     targetControl.PointerMoved += OnPointerMoved;
     targetControl.PointerReleased += OnPointerReleased;
 
-    timer = new DispatcherTimer
+    applySizeTimer = new DispatcherTimer
     {
       Interval = TimeSpan.FromMilliseconds(10)
     };
 
-    timer.Tick += OnTimerTick;
+    applySizeTimer.Tick += OnTimerTick;
   }
 
   private Cursor GetCursorForDirection((HorizontalAlignment Horizontal, VerticalAlignment Vertical) direction)
@@ -63,18 +62,18 @@ public sealed class ResizableControlBehavior : ControlBehavior
     return direction.Horizontal switch
     {
       HorizontalAlignment.Left => direction.Vertical == VerticalAlignment.Top
-        ? cursors[StandardCursorType.TopLeftCorner]
+        ? sizingCursors[StandardCursorType.TopLeftCorner]
         : direction.Vertical == VerticalAlignment.Center
-          ? cursors[StandardCursorType.LeftSide]
-          : cursors[StandardCursorType.BottomLeftCorner],
+          ? sizingCursors[StandardCursorType.LeftSide]
+          : sizingCursors[StandardCursorType.BottomLeftCorner],
       HorizontalAlignment.Center => direction.Vertical == VerticalAlignment.Top
-        ? cursors[StandardCursorType.TopSide]
-        : cursors[StandardCursorType.BottomSide],
+        ? sizingCursors[StandardCursorType.TopSide]
+        : sizingCursors[StandardCursorType.BottomSide],
       HorizontalAlignment.Right => direction.Vertical == VerticalAlignment.Top
-        ? cursors[StandardCursorType.TopRightCorner]
+        ? sizingCursors[StandardCursorType.TopRightCorner]
         : direction.Vertical == VerticalAlignment.Center
-          ? cursors[StandardCursorType.RightSide]
-          : cursors[StandardCursorType.BottomRightCorner],
+          ? sizingCursors[StandardCursorType.RightSide]
+          : sizingCursors[StandardCursorType.BottomRightCorner],
       _ => throw new InvalidOperationException($"{direction.Horizontal}:{direction.Vertical} unexpected."),
     };
   }
@@ -103,7 +102,7 @@ public sealed class ResizableControlBehavior : ControlBehavior
     isResizing = true;
     e.Handled = true;
 
-    timer.Start();
+    applySizeTimer.Start();
   }
 
   private void OnPointerMoved(object sender, PointerEventArgs e)
@@ -114,7 +113,7 @@ public sealed class ResizableControlBehavior : ControlBehavior
       {
         targetControl.Cursor = GetCursorForDirection(GetDirection(e.GetPosition(targetControl)));
       }
-      else if (cursors.Any(c => ReferenceEquals(c.Value, targetControl.Cursor)))
+      else if (sizingCursors.Any(c => ReferenceEquals(c.Value, targetControl.Cursor)))
       {
         targetControl.Cursor = Cursor.Default;
       }
@@ -140,7 +139,7 @@ public sealed class ResizableControlBehavior : ControlBehavior
     isResizing = false;
     e.Handled = true;
 
-    timer.Stop();
+    applySizeTimer.Stop();
   }
 
   private void OnTimerTick(object sender, EventArgs e)
