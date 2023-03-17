@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 
-namespace ControlsSandbox.Views
+namespace ControlsSandbox.Views;
+
+public partial class ReportView : UserControl
 {
-  public partial class ReportView : UserControl
+  public ReportView()
   {
-    public ReportView()
-    {
-      InitializeComponent();
-    }
+    InitializeComponent();
   }
 }

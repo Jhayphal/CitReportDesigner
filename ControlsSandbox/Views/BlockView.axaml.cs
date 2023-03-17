@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 
-namespace ControlsSandbox.Views
+namespace ControlsSandbox.Views;
+
+public partial class BlockView : UserControl
 {
-  public partial class BlockView : UserControl
+  public BlockView()
   {
-    public BlockView()
-    {
-      InitializeComponent();
-    }
+    InitializeComponent();
   }
 }
