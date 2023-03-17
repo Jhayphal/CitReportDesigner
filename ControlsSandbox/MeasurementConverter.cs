@@ -2,11 +2,11 @@
 {
   public static class MeasurementConverter
   {
-    private const double PrettyFactor = 1.5d;
+    private const double PrettyFactor = 1d;
 
     private const double MillimetersInInch = 25.4d;
 
-    private static readonly double DPI = 96d;
+    internal static double DPI = 96d;
 
     internal static double ScaleFactor = 1d;
 

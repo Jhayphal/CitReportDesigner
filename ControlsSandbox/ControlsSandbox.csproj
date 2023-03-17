@@ -6,9 +6,11 @@
     <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
     <TrimMode>copyused</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Controls\" />
+    <Folder Include="Extensions\" />
     <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
     <None Remove=".gitignore" />
