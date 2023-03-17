@@ -56,7 +56,7 @@ public static class MeasurementConverter
     return SkiaPlatform.DefaultDpi;
   }
 
-  [DllImport("kernel32.dll", SetLastError = true)]
+  [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
   private static extern IntPtr LoadLibrary(string fileName);
 
   [DllImport("user32.dll")]
