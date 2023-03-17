@@ -42,14 +42,17 @@ public static class MeasurementConverter
 
   private static Vector GetCurrentDpi(IWindowImpl window)
   {
-    var shCoreAvailable = LoadLibrary("shcore.dll") != IntPtr.Zero;
-    if (shCoreAvailable && Win32Platform.WindowsVersion > PlatformConstants.Windows8)
+    if (Win32Platform.WindowsVersion > PlatformConstants.Windows8)
     {
-      var monitor = MonitorFromWindow(window.Handle.Handle, MONITOR.MONITOR_DEFAULTTONEAREST);
-
-      if (GetDpiForMonitor(monitor, MONITOR_DPI_TYPE.MDT_RAW_DPI, out var dpiX, out var dpiY) == 0)
+      var shCoreAvailable = LoadLibrary("shcore.dll") != IntPtr.Zero;
+      if (shCoreAvailable)
       {
-        return new Vector(dpiX, dpiY);
+        var monitor = MonitorFromWindow(window.Handle.Handle, MONITOR.MONITOR_DEFAULTTONEAREST);
+
+        if (GetDpiForMonitor(monitor, MONITOR_DPI_TYPE.MDT_RAW_DPI, out var dpiX, out var dpiY) == 0)
+        {
+          return new Vector(dpiX, dpiY);
+        }
       }
     }
 
