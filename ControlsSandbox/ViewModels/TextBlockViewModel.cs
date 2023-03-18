@@ -5,7 +5,7 @@ using System;
 
 namespace ControlsSandbox.ViewModels;
 
-public class TextBlockViewModel : ViewModelBase, IControlBounds
+public class TextBlockViewModel : ViewModelBase, IBounds
 {
   private readonly CitReport.TextBlock textBlock;
 

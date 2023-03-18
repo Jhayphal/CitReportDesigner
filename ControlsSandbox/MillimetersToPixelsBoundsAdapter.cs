@@ -1,10 +1,10 @@
 ﻿namespace ControlsSandbox;
 
-public readonly struct MillimetersToPixelsBoundsAdapter : IControlBounds
+public readonly struct MillimetersToPixelsBoundsAdapter : IBounds
 {
-  private readonly IControlBounds m_adapter;
+  private readonly IBounds m_adapter;
 
-  public MillimetersToPixelsBoundsAdapter(IControlBounds draggable)
+  public MillimetersToPixelsBoundsAdapter(IBounds draggable)
   {
     m_adapter = draggable;
   }

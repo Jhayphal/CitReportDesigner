@@ -29,7 +29,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
   private readonly Size minimumSize;
   private readonly KeyModifiers activateWithModifiers;
 
-  private IControlBounds viewModel;
+  private IBounds viewModel;
   private Point targetOffset;
   private Point lastMousePosition;
   private bool isResizing;
@@ -64,7 +64,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
       return;
     }
 
-    viewModel = targetControl.DataContext as IControlBounds;
+    viewModel = targetControl.DataContext as IBounds;
     if (viewModel == null)
     {
       return;

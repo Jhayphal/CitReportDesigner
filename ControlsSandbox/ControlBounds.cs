@@ -1,8 +1,8 @@
-﻿namespace ControlsSandbox.Behaviors;
+﻿namespace ControlsSandbox;
 
-public struct ControlBounds : IControlBounds
+public struct ControlBounds : IBounds
 {
-  public ControlBounds(IControlBounds bounds)
+  public ControlBounds(IBounds bounds)
   {
     X = bounds.X;
     Y = bounds.Y;
@@ -12,9 +12,9 @@ public struct ControlBounds : IControlBounds
   }
 
   public double X { get; set; }
-  
+
   public double Y { get; set; }
-  
+
   public double Width { get; set; }
 
   public double Height { get; set; }

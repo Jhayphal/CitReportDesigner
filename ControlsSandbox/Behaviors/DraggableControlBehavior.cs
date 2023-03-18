@@ -15,7 +15,7 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
   private readonly Cursor moveCursor = new(StandardCursorType.SizeAll);
   private readonly KeyModifiers activateWithModifiers;
 
-  private IControlBounds viewModel;
+  private IBounds viewModel;
   private Point targetPosition;
   private Point lastMousePosition;
   private bool isDragging;
@@ -44,7 +44,7 @@ public sealed class DraggableControlBehavior<TRelativeTo> : ControlBehavior
       return;
     }
 
-    viewModel = targetControl.DataContext as IControlBounds;
+    viewModel = targetControl.DataContext as IBounds;
     if (viewModel == null)
     {
       return;
