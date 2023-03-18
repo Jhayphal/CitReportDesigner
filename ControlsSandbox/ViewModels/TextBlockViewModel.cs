@@ -9,6 +9,23 @@ public class TextBlockViewModel : ViewModelBase, IBounds
 {
   private readonly CitReport.TextBlock textBlock;
 
+  /// <summary>
+  /// Конструктор для дизайнера.
+  /// </summary>
+  public TextBlockViewModel()
+  {
+    textBlock = new CitReport.TextBlock
+    {
+      Text = "Text for designer",
+      X = 10f,
+      Y = 10f,
+      Width = 40f,
+      Height = 5f,
+      HorizontalAlignment = CitReport.HorizontalAlignment.Center,
+      VerticalAlignment = CitReport.VerticalAlignment.Center
+    };
+  }
+
   public TextBlockViewModel(CitReport.TextBlock textBlock)
   {
     this.textBlock = textBlock;
