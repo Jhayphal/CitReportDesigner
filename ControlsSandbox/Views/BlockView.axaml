@@ -85,7 +85,7 @@
       Grid.Row="1"
       Padding="0"
       IsVisible="{Binding IsExpanded}"
-      Items="{Binding TextBlocks}"
+      Items="{Binding Items}"
       Background="White"
       Width="{Binding Width, Converter={StaticResource mm}}"
       Height="{Binding Height, Converter={StaticResource mm}}">

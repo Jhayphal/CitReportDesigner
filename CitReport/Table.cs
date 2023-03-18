@@ -5,30 +5,82 @@ namespace CitReport;
 public sealed class Table : IEnumerable<Cell>
 {
   private readonly List<Cell> cells;
-  private readonly List<float> columns;
-  private readonly List<float> rows;
+  private readonly List<double> columns;
+  private readonly List<double> rows;
 
-  public Table(IEnumerable<float> columns, IEnumerable<float> rows)
+  public Table(IEnumerable<double> columns, IEnumerable<double> rows)
   {
-    this.columns = new List<float>(columns);
-    this.rows = new List<float>(rows);
+    this.columns = new List<double>(columns);
+    this.rows = new List<double>(rows);
 
     cells = new List<Cell>();
 
-    var count = this.columns.Count * this.rows.Count;
+    var count = ColumnsCount * RowsCount;
     while (count-- > 0)
     {
       cells.Add(new Cell(this));
     }
   }
 
-  public IEnumerable<float> Columns => columns;
+  public double X
+  {
+    get => columns[0];
+    set
+    {
+      var oldX = columns[0];
+      var newX = value;
+
+      if (oldX != newX)
+      {
+        var shift = newX - oldX;
+
+        for (int i = ColumnsCount; i >= 0; --i)
+        {
+          columns[i] += shift;
+        }
+      }
+    }
+  }
+
+  public double Y
+  {
+    get => rows[0];
+    set
+    {
+      var oldY = rows[0];
+      var newY = value;
+
+      if (oldY != newY)
+      {
+        var shift = newY - oldY;
+
+        for (int i = RowsCount; i >= 0; --i)
+        {
+          rows[i] += shift;
+        }
+      }
+    }
+  }
+
+  public double Width
+  {
+    get => GetWidth();
+    set => SetWidth(value);
+  }
+
+  public double Height
+  {
+    get => GetHeight();
+    set => SetHeight(value);
+  }
+
+  public IEnumerable<double> Columns => columns;
   
-  public int ColumnsCount => columns.Count;
+  public int ColumnsCount => columns.Count - 1;
 
-  public IEnumerable<float> Rows => rows;
+  public IEnumerable<double> Rows => rows;
 
-  public int RowsCount => rows.Count;
+  public int RowsCount => rows.Count - 1;
 
   public IEnumerator<Cell> GetEnumerator()
     => GetRange(new CellPosition(0, 0), new CellPosition(ColumnsCount, RowsCount)).GetEnumerator();
@@ -43,7 +95,7 @@ public sealed class Table : IEnumerable<Cell>
       return index;
     }
     
-    return index / this.columns.Count;
+    return index / ColumnsCount;
   }
 
   public int GetCellColumnIndex(Cell cell)
@@ -54,12 +106,26 @@ public sealed class Table : IEnumerable<Cell>
       return index;
     }
 
-    return index % this.columns.Count;
+    return index % ColumnsCount;
   }
 
-  public float GetColumnWidth(int index) => this.columns[index];
+  public double GetColumnWidth(int index) => columns[index + 1] - columns[index];
 
-  public float GetRowHeight(int index) => this.rows[index];
+  public void SetColumnWidth(int index, double newWidth)
+  {
+    var oldWidth = GetColumnWidth(index);
+    var shift = newWidth - oldWidth;
+    columns[index + 1] += shift;
+  }
+
+  public double GetRowHeight(int index) => rows[index + 1] - rows[index];
+
+  public void SetRowHeight(int index, double newHeight)
+  {
+    var oldHeight = GetRowHeight(index);
+    var shift = newHeight - oldHeight;
+    rows[index + 1] += shift;
+  }
 
   public Cell GetCell(int column, int row)
   {
@@ -126,11 +192,39 @@ public sealed class Table : IEnumerable<Cell>
         {
           yield return GetCellDirect(x, y);
         }
+
+        x = Math.Min(leftUpper.X, rightBottom.X);
       }
     }
   }
 
-  private Cell GetCellDirect(int column, int row) => cells[row * columns.Count + column];
+  private Cell GetCellDirect(int column, int row) => cells[row * ColumnsCount + column];
 
   private Cell GetCellDirect(CellPosition position) => GetCellDirect(position.X, position.Y);
+
+  private double GetWidth() => columns[ColumnsCount] - columns[0];
+
+  private void SetWidth(double newWidth)
+  {
+    var oldWidth = GetWidth();
+    var scale = newWidth / oldWidth;
+
+    for (int i = ColumnsCount; i >= 0; --i)
+    {
+      SetColumnWidth(i, GetColumnWidth(i) * scale);
+    }
+  }
+
+  private double GetHeight() => rows[RowsCount] - rows[0];
+
+  private void SetHeight(double newHeight)
+  {
+    var oldHeight = GetHeight();
+    var scale = newHeight / oldHeight;
+
+    for (int i = RowsCount; i >= 0; --i)
+    {
+      SetRowHeight(i, GetRowHeight(i) * scale);
+    }
+  }
 }

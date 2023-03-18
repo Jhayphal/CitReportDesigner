@@ -1,13 +1,20 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ControlsSandbox.Views.CellView">
+<UserControl
+  xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="using:ControlsSandbox.ViewModels"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  mc:Ignorable="d"
+  x:Class="ControlsSandbox.Views.CellView">
+
+  <Design.DataContext>
+    <vm:CellViewModel />
+  </Design.DataContext>
+  
   <Border
     BorderBrush="Black"
     BorderThickness="1"
-    Background="White"
+    Background="LightGray"
     Width="{Binding Width, Converter={StaticResource mm}}"
     Height="{Binding Height, Converter={StaticResource mm}}">
     <TextBlock
@@ -16,4 +23,5 @@
       VerticalAlignment="{Binding VerticalAlignment}"
       Margin="0"/>
   </Border>
+
 </UserControl>

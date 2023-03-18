@@ -1,8 +1,5 @@
 ﻿namespace ControlsSandbox;
 
-public interface IBounds : IPosition
+public interface IBounds : IPosition, ISize
 {
-  double Width { get; set; }
-
-  double Height { get; set; }
 }

@@ -24,7 +24,7 @@ public sealed class FontParser : BlockInstructionParser
       return;
     }
 
-    if (!float.TryParse(parts[7], out var size))
+    if (!double.TryParse(parts[7], out var size))
     {
       context.ErrorProvider.WrongFontSize(current, context.CurrentLine);
       return;

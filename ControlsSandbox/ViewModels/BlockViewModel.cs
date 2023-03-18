@@ -2,6 +2,7 @@
 using CitReport;
 using ReactiveUI;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace ControlsSandbox.ViewModels;
@@ -36,6 +37,10 @@ public class BlockViewModel : ViewModelBase
   {
     this.block = block;
     Id = id;
+
+    var textBlocks = block.TextBlocks.Select(x => (ViewModelBase)new TextBlockViewModel(x));
+    var tables = block.Tables.Select(x => (ViewModelBase)new TableViewModel(x));
+    Items = new ObservableCollection<ViewModelBase>(textBlocks.Concat(tables));
   }
 
   public string Type => block.Code;
@@ -46,7 +51,7 @@ public class BlockViewModel : ViewModelBase
     set => block.Id = value;
   }
 
-  public List<TextBlockViewModel> TextBlocks => block.TextBlocks.Select(x => new TextBlockViewModel(x)).ToList();
+  public ObservableCollection<ViewModelBase> Items { get; }
 
   public int ItemsCount => (block.Tables?.Count).GetValueOrDefault();
 

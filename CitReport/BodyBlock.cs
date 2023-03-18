@@ -22,7 +22,7 @@ public class BodyBlock : Block
 
   public readonly List<TextBlock> TextBlocks = new();
 
-  public float Height => (Options?.OfType<BlkHOption>().FirstOrDefault()?.Height).GetValueOrDefault();
+  public double Height => (Options?.OfType<BlkHOption>().FirstOrDefault()?.Height).GetValueOrDefault();
 
   public override bool Equals(Block other)
     => base.Equals(other)

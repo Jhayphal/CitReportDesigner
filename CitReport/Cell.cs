@@ -23,13 +23,13 @@ public sealed class Cell : IMultilanguageValueStorage, IEquatable<Cell>
 
   public FontInfo Font { get; set; }
 
-  public Color ForegroundColor { get; set; }
+  public Color ForegroundColor { get; set; } = Color.Black;
 
-  public Color BackgroundColor { get; set; }
+  public Color BackgroundColor { get; set; } = Color.Gray;
 
-  public HorizontalAlignment HorizontalAlignment { get; set; }
+  public HorizontalAlignment HorizontalAlignment { get; set; } = HorizontalAlignment.Center;
 
-  public VerticalAlignment VerticalAlignment { get; set; }
+  public VerticalAlignment VerticalAlignment { get; set; } = VerticalAlignment.Center;
 
   public Dictionary<string, string> DisplayValue { get; } = new();
 
@@ -37,13 +37,21 @@ public sealed class Cell : IMultilanguageValueStorage, IEquatable<Cell>
 
   public int Column => Table.GetCellColumnIndex(this);
 
-  public int Row => Table.GetCellColumnIndex(this);
+  public int Row => Table.GetCellRowIndex(this);
 
   public CellPosition Position => new(Column, Row);
 
-  public float Width => Table.GetColumnWidth(Column);
+  public double Width
+  {
+    get => Table.GetColumnWidth(Column);
+    set => Table.SetColumnWidth(Column, value);
+  }
 
-  public float Height => Table.GetRowHeight(Row);
+  public double Height
+  {
+    get => Table.GetRowHeight(Row);
+    set => Table.SetRowHeight(Row, value);
+  }
 
   public bool CanGrow { get; set; }
 
@@ -100,11 +108,7 @@ public sealed class Cell : IMultilanguageValueStorage, IEquatable<Cell>
 
   public override bool Equals(object obj) => Equals(obj as Cell);
 
-  public bool Equals(Cell other)
-    => other != null
-      && ReferenceEquals(other.Table, Table)
-      && other.Column == Column
-      && other.Row == Row;
+  public bool Equals(Cell other) => other.GetHashCode() == GetHashCode();
 
   public override string ToString() => $"{Column}:{Row}";
 

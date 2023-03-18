@@ -38,9 +38,9 @@ public class TableColumnsParser : BlockInstructionParser
     context.Rows = null;
   }
 
-  private float[] ParseArray(string current)
+  private double[] ParseArray(string current)
     => Tokenizer.GetTokens(current)
-      .Where(x => float.TryParse(x, out var _))
-      .Select(float.Parse)
+      .Where(x => double.TryParse(x, out var _))
+      .Select(double.Parse)
       .ToArray();
 }

@@ -4,7 +4,7 @@ public class FontInfo : IEquatable<FontInfo>
 {
   public string Family { get; set; }
 
-  public float Size { get; set; }
+  public double Size { get; set; }
 
   public FontStyle Style { get; set; }
 

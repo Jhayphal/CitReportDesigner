@@ -1,7 +1,6 @@
 ﻿using Avalonia.Layout;
 using Avalonia.Media;
 using ReactiveUI;
-using System;
 
 namespace ControlsSandbox.ViewModels;
 
@@ -38,7 +37,7 @@ public class TextBlockViewModel : ViewModelBase, IBounds
     {
       if (textBlock.X != value)
       {
-        textBlock.X = (float)value;
+        textBlock.X = value;
         this.RaisePropertyChanged(nameof(X));
       }
     }
@@ -51,7 +50,7 @@ public class TextBlockViewModel : ViewModelBase, IBounds
     {
       if (textBlock.Y != value)
       {
-        textBlock.Y = (float)value;
+        textBlock.Y = value;
         this.RaisePropertyChanged(nameof(Y));
       }
     }
@@ -77,7 +76,7 @@ public class TextBlockViewModel : ViewModelBase, IBounds
     {
       if (textBlock.Width != value)
       {
-        textBlock.Width = (float)value;
+        textBlock.Width = value;
         this.RaisePropertyChanged(nameof(Width));
       }
     }
@@ -90,7 +89,7 @@ public class TextBlockViewModel : ViewModelBase, IBounds
     {
       if (textBlock.Height != value)
       {
-        textBlock.Height = (float)value;
+        textBlock.Height = value;
         this.RaisePropertyChanged(nameof(Height));
       }
     }
@@ -98,27 +97,11 @@ public class TextBlockViewModel : ViewModelBase, IBounds
 
   public ReportSizeUnit SizeUnit => ReportSizeUnit.Millimeter;
 
-  public HorizontalAlignment HorizontalAlignment => ConvertHAlignment(textBlock.HorizontalAlignment);
+  public HorizontalAlignment HorizontalAlignment => AlignmentConverter.ConvertHorizontal(textBlock.HorizontalAlignment);
 
-  public VerticalAlignment VerticalAlignment => ConvertVAlignment(textBlock.VerticalAlignment);
+  public VerticalAlignment VerticalAlignment => AlignmentConverter.ConvertVertical(textBlock.VerticalAlignment);
 
   public IBrush ForegroundColor { get; set; } = Brushes.Black;
 
   public IBrush BackgroundColor { get; set; } = Brushes.White;
-
-  private HorizontalAlignment ConvertHAlignment(CitReport.HorizontalAlignment alignment) => alignment switch
-  {
-    CitReport.HorizontalAlignment.Center => HorizontalAlignment.Center,
-    CitReport.HorizontalAlignment.Right => HorizontalAlignment.Right,
-    CitReport.HorizontalAlignment.Left => HorizontalAlignment.Left,
-    _ => throw new InvalidOperationException(alignment.ToString())
-  };
-
-  private VerticalAlignment ConvertVAlignment(CitReport.VerticalAlignment alignment) => alignment switch
-  {
-    CitReport.VerticalAlignment.Center => VerticalAlignment.Center,
-    CitReport.VerticalAlignment.Top => VerticalAlignment.Top,
-    CitReport.VerticalAlignment.Bottom => VerticalAlignment.Bottom,
-    _ => throw new InvalidOperationException(alignment.ToString())
-  };
 }

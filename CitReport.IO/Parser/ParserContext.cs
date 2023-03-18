@@ -20,9 +20,9 @@ public sealed class ParserContext
   #region Table Context
   public Table CurrentTable { get; private set; }
 
-  public float[] Columns { get; set; }
+  public double[] Columns { get; set; }
   
-  public float[] Rows { get; set; }
+  public double[] Rows { get; set; }
   
   public Color CellForegroundColor { get; set; } = Color.Black;
   

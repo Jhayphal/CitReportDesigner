@@ -33,9 +33,9 @@ public class ReportViewModel : ViewModelBase
     }
   }
 
-  public float Width { get; set; } = 190f;
+  public double Width { get; set; } = 190f;
 
-  public float Height { get; set; } = 270f;
+  public double Height { get; set; } = 270f;
 
   public List<BlockViewModel> Blocks { get; }
 }

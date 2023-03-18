@@ -37,10 +37,10 @@ public class BlkHOption : Option
   public override string Value
   {
     get => Height.ToString();
-    set => Height = float.Parse(value);
+    set => Height = double.Parse(value);
   }
 
-  public float Height { get; set; }
+  public double Height { get; set; }
 }
 
 [DisplayName("New_Linebreak")]

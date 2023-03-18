@@ -4,15 +4,15 @@ namespace CitReport;
 
 public class TextBlock
 {
-  public float X { get; set; }
+  public double X { get; set; }
   
-  public float Y { get; set; }
+  public double Y { get; set; }
 
   public string Text { get; set; }
 
-  public float Width { get; set; }
+  public double Width { get; set; }
 
-  public float Height { get; set; }
+  public double Height { get; set; }
 
   public HorizontalAlignment HorizontalAlignment { get; set; }
 
