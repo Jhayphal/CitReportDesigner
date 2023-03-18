@@ -1,11 +1,23 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using ControlsSandbox.Behaviors;
 
 namespace ControlsSandbox.Views;
 
 public partial class CellView : UserControl
 {
-    public CellView()
+#pragma warning disable IDE0052 // Remove unread private members
+  private readonly ControlBehavior[] behaviors;
+#pragma warning restore IDE0052 // Remove unread private members
+
+  public CellView()
+  {
+    InitializeComponent();
+
+    behaviors = new ControlBehavior[]
     {
-        InitializeComponent();
-    }
+      new ResizableControlBehavior<Canvas>(this, KeyModifiers.Alt, new Size(10, 10))
+    };
+  }
 }

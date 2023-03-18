@@ -1,5 +1,5 @@
-﻿using Avalonia.Controls;
-using CitReport;
+﻿using CitReport;
+using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -33,15 +33,23 @@ public class TableViewModel : ViewModelBase, IBounds
 
     Cells = new ObservableCollection<CellViewModel>(table.Select(x => new CellViewModel(x)));
 
-    ColumnDefinitions = new ColumnDefinitions();
-    ColumnDefinitions.AddRange(
-      Enumerable.Range(0, this.table.ColumnsCount)
-      .Select(x => new ColumnDefinition(GridLength.Auto)));
+    foreach (var cell in Cells)
+    {
+      cell.OnNeedTableRedraw += NotifyCellsToRedraw;
+    }
+  }
 
-    RowDefinitions = new RowDefinitions();
-    RowDefinitions.AddRange(
-      Enumerable.Range(0, this.table.ColumnsCount)
-      .Select(x => new RowDefinition(GridLength.Auto)));
+  private void NotifyCellsToRedraw(object sender, string e)
+  {
+    foreach (var cell in Cells)
+    {
+      cell.RaisePropertyChanged(e);
+    }
+
+    this.RaisePropertyChanged(nameof(X));
+    this.RaisePropertyChanged(nameof(Y));
+    this.RaisePropertyChanged(nameof(Width));
+    this.RaisePropertyChanged(nameof(Height));
   }
 
   public ObservableCollection<CellViewModel> Cells { get; }
@@ -49,30 +57,54 @@ public class TableViewModel : ViewModelBase, IBounds
   public double X
   {
     get => table.X;
-    set => table.X = value;
+    set
+    {
+      if (table.X != value)
+      {
+        table.X = value;
+        this.RaisePropertyChanged(nameof(X));
+      }
+    }
   }
 
   public double Y
   {
     get => table.Y;
-    set => table.Y = value;
+    set
+    {
+      if (table.Y != value)
+      {
+        table.Y = value;
+        this.RaisePropertyChanged(nameof(Y));
+      }
+    }
   }
 
   public double Width
   {
     get => table.Width;
-    set => table.Width = value;
+    set
+    {
+      if (table.Width != value)
+      {
+        table.Width = value;
+        this.RaisePropertyChanged(nameof(Width));
+      }
+    }
   }
 
   public double Height
   {
     get => table.Height;
-    set => table.Height = value;
+    set
+    {
+      if (table.Height != value)
+      {
+        table.Height = value;
+        this.RaisePropertyChanged(nameof(Height));
+      }
+    }
   }
 
   public ReportSizeUnit SizeUnit => ReportSizeUnit.Millimeter;
-
-  public ColumnDefinitions ColumnDefinitions { get; }
-
-  public RowDefinitions RowDefinitions { get; }
 }

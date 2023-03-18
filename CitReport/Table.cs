@@ -74,11 +74,11 @@ public sealed class Table : IEnumerable<Cell>
     set => SetHeight(value);
   }
 
-  public IEnumerable<double> Columns => columns;
+  public IList<double> Columns => columns;
   
   public int ColumnsCount => columns.Count - 1;
 
-  public IEnumerable<double> Rows => rows;
+  public IList<double> Rows => rows;
 
   public int RowsCount => rows.Count - 1;
 

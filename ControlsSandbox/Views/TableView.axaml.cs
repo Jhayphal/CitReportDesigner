@@ -1,11 +1,22 @@
 using Avalonia.Controls;
+using Avalonia.Input;
+using ControlsSandbox.Behaviors;
 
 namespace ControlsSandbox.Views;
 
 public partial class TableView : UserControl
 {
-    public TableView()
+#pragma warning disable IDE0052 // Remove unread private members
+  private readonly ControlBehavior[] behaviors;
+#pragma warning restore IDE0052 // Remove unread private members
+
+  public TableView()
+  {
+    InitializeComponent();
+
+    behaviors = new ControlBehavior[]
     {
-        InitializeComponent();
-    }
+      new DraggableControlBehavior<Canvas>(this, KeyModifiers.Control)
+    };
+  }
 }
