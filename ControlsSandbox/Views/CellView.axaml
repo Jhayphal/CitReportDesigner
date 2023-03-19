@@ -14,7 +14,7 @@
   <Border
     BorderBrush="Black"
     BorderThickness="1"
-    Background="LightGray"
+    Background="Transparent"
     Width="{Binding Width, Converter={StaticResource mm}}"
     Height="{Binding Height, Converter={StaticResource mm}}">
     <TextBlock
