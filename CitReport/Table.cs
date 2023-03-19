@@ -24,17 +24,17 @@ public sealed class Table : IEnumerable<Cell>
 
   public double X
   {
-    get => columns[0];
+    get => columns[FirstColumn];
     set
     {
-      var oldX = columns[0];
+      var oldX = columns[FirstColumn];
       var newX = value;
 
       if (oldX != newX)
       {
         var shift = newX - oldX;
 
-        for (int i = ColumnsCount; i >= 0; --i)
+        for (int i = ColumnsCount; i >= FirstColumn; --i)
         {
           columns[i] += shift;
         }
@@ -78,12 +78,22 @@ public sealed class Table : IEnumerable<Cell>
   
   public int ColumnsCount => columns.Count - 1;
 
+  public const int FirstColumn = 0;
+
+  public int LastColumn => ColumnsCount - 1;
+
   public IList<double> Rows => rows;
 
   public int RowsCount => rows.Count - 1;
 
+  public const int FirstRow = 0;
+
+  public int LastRow => RowsCount - 1;
+
   public IEnumerator<Cell> GetEnumerator()
-    => GetRange(new CellPosition(0, 0), new CellPosition(ColumnsCount, RowsCount)).GetEnumerator();
+    => GetRange(
+      new CellPosition(FirstColumn, FirstRow), 
+      new CellPosition(LastColumn, LastRow)).GetEnumerator();
 
   IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -125,6 +135,10 @@ public sealed class Table : IEnumerable<Cell>
     var oldHeight = GetRowHeight(index);
     var shift = newHeight - oldHeight;
     rows[index + 1] += shift;
+
+    var notifyFrom = new CellPosition(FirstColumn, index);
+    var notifyTo = new CellPosition(LastColumn, Math.Min(index + 1, LastRow));
+    CellsSizeChanged.Invoke(this, GetRange(notifyFrom, notifyTo));
   }
 
   public Cell GetCell(int column, int row)
@@ -181,14 +195,14 @@ public sealed class Table : IEnumerable<Cell>
       int y = Math.Min(leftUpper.Y, rightBottom.Y);
       var yMax = Math.Max(rightBottom.Y, leftUpper.Y);
 
-      if (xMax > ColumnsCount || yMax > RowsCount)
+      if (xMax > LastColumn || yMax > LastRow)
       {
-        throw new ArgumentOutOfRangeException(xMax > ColumnsCount ? nameof(xMax) : nameof(yMax));
+        throw new ArgumentOutOfRangeException(xMax > LastColumn ? nameof(xMax) : nameof(yMax));
       }
 
-      for (; y < yMax; ++y)
+      for (; y <= yMax; ++y)
       {
-        for (; x < xMax; ++x)
+        for (; x <= xMax; ++x)
         {
           yield return GetCellDirect(x, y);
         }
@@ -202,29 +216,31 @@ public sealed class Table : IEnumerable<Cell>
 
   private Cell GetCellDirect(CellPosition position) => GetCellDirect(position.X, position.Y);
 
-  private double GetWidth() => columns[ColumnsCount] - columns[0];
+  private double GetWidth() => columns[ColumnsCount] - columns[FirstColumn];
 
   private void SetWidth(double newWidth)
   {
     var oldWidth = GetWidth();
     var scale = newWidth / oldWidth;
 
-    for (int i = ColumnsCount; i >= 0; --i)
+    for (int i = LastColumn; i >= FirstColumn; --i)
     {
       SetColumnWidth(i, GetColumnWidth(i) * scale);
     }
   }
 
-  private double GetHeight() => rows[RowsCount] - rows[0];
+  private double GetHeight() => rows[RowsCount] - rows[FirstRow];
 
   private void SetHeight(double newHeight)
   {
     var oldHeight = GetHeight();
     var scale = newHeight / oldHeight;
 
-    for (int i = RowsCount; i >= 0; --i)
+    for (int i = RowsCount; i >= FirstRow; --i)
     {
       SetRowHeight(i, GetRowHeight(i) * scale);
     }
   }
+
+  public event EventHandler<IEnumerable<Cell>> CellsSizeChanged;
 }

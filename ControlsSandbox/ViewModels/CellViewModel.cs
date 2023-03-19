@@ -9,8 +9,6 @@ public class CellViewModel : ViewModelBase, IBounds
 {
   private readonly CitReport.Cell cell;
 
-  public event EventHandler<string> OnNeedTableRedraw;
-
   /// <summary>
   /// Конструктор для дизайнера.
   /// </summary>
@@ -57,9 +55,7 @@ public class CellViewModel : ViewModelBase, IBounds
       if (cell.Table.Columns[column] != value)
       {
         cell.Table.Columns[column] = value;
-
-        OnNeedTableRedraw.Invoke(this, nameof(X));
-        OnNeedTableRedraw.Invoke(this, nameof(Width));
+        this.RaisePropertyChanged(nameof(X));
       }
     }
   }
@@ -73,9 +69,7 @@ public class CellViewModel : ViewModelBase, IBounds
       if (cell.Table.Rows[row] != value)
       {
         cell.Table.Rows[row] = value;
-
-        OnNeedTableRedraw.Invoke(this, nameof(Y));
-        OnNeedTableRedraw.Invoke(this, nameof(Height));
+        this.RaisePropertyChanged(nameof(Y));
       }
     }
   }
@@ -88,9 +82,7 @@ public class CellViewModel : ViewModelBase, IBounds
       if (cell.Width != value)
       {
         cell.Width = value;
-
-        OnNeedTableRedraw.Invoke(this, nameof(Width));
-        OnNeedTableRedraw.Invoke(this, nameof(X));
+        this.RaisePropertyChanged(nameof(Width));
       }
     }
   }
@@ -103,9 +95,7 @@ public class CellViewModel : ViewModelBase, IBounds
       if (cell.Height != value)
       {
         cell.Height = value;
-
-        OnNeedTableRedraw.Invoke(this, nameof(Height));
-        OnNeedTableRedraw.Invoke(this, nameof(Y));
+        this.RaisePropertyChanged(nameof(Height));
       }
     }
   }
@@ -128,7 +118,9 @@ public class CellViewModel : ViewModelBase, IBounds
 
   public IBrush BackgroundColor { get; set; } = Brushes.White;
 
-  public override bool Equals(object obj) => obj is CellViewModel viewModel && viewModel.cell.Equals(cell);
+  public bool Equals(CitReport.Cell cell) => cell == this.cell;
+
+  public override bool Equals(object obj) => obj is CellViewModel viewModel && Equals(viewModel.cell);
 
   public override int GetHashCode() => cell.GetHashCode();
 

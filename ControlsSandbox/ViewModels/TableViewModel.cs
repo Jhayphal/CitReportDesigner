@@ -1,5 +1,6 @@
 ﻿using CitReport;
 using ReactiveUI;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -30,26 +31,19 @@ public class TableViewModel : ViewModelBase, IBounds
   public TableViewModel(Table table)
   {
     this.table = table;
-
+    this.table.CellsSizeChanged += Table_CellsSizeChanged;
     Cells = new ObservableCollection<CellViewModel>(table.Select(x => new CellViewModel(x)));
-
-    foreach (var cell in Cells)
-    {
-      cell.OnNeedTableRedraw += NotifyCellsToRedraw;
-    }
   }
 
-  private void NotifyCellsToRedraw(object sender, string e)
+  private void Table_CellsSizeChanged(object sender, IEnumerable<Cell> e)
   {
-    foreach (var cell in Cells)
+    foreach (var cell in Cells.Where(x => e.Any(c => x.Equals(c))))
     {
-      cell.RaisePropertyChanged(e);
+      cell.RaisePropertyChanged(nameof(CellViewModel.X));
+      cell.RaisePropertyChanged(nameof(CellViewModel.Y));
+      cell.RaisePropertyChanged(nameof(CellViewModel.Width));
+      cell.RaisePropertyChanged(nameof(CellViewModel.Height));
     }
-
-    this.RaisePropertyChanged(nameof(X));
-    this.RaisePropertyChanged(nameof(Y));
-    this.RaisePropertyChanged(nameof(Width));
-    this.RaisePropertyChanged(nameof(Height));
   }
 
   public ObservableCollection<CellViewModel> Cells { get; }
