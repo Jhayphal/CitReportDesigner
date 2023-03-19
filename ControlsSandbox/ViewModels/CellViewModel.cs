@@ -45,6 +45,10 @@ public class CellViewModel : ViewModelBase, IBounds
     }
   }
 
+  public int Column => cell.Column;
+
+  public int Row => cell.Row;
+
   public double X
   {
     get => cell.X;
