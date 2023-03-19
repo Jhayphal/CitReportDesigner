@@ -12,7 +12,6 @@
   </Design.DataContext>
   
   <ItemsControl
-    UseLayoutRounding="False"
     Items="{Binding Cells}"
     Width="{Binding Width, Converter={StaticResource mm}}"
     Height="{Binding Height, Converter={StaticResource mm}}">

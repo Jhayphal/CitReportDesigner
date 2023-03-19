@@ -32,7 +32,21 @@ public class TableViewModel : ViewModelBase, IBounds
   {
     this.table = table;
     this.table.CellsSizeChanged += Table_CellsSizeChanged;
+    this.table.TablePositionChanged += Table_TablePositionChanged;
+    this.table.TableSizeChanged += Table_TableSizeChanged;
     Cells = new ObservableCollection<CellViewModel>(table.Select(x => new CellViewModel(x)));
+  }
+
+  private void Table_TablePositionChanged(object sender, System.EventArgs e)
+  {
+    this.RaisePropertyChanged(nameof(X));
+    this.RaisePropertyChanged(nameof(Y));
+  }
+
+  private void Table_TableSizeChanged(object sender, System.EventArgs e)
+  {
+    this.RaisePropertyChanged(nameof(Width));
+    this.RaisePropertyChanged(nameof(Height));
   }
 
   private void Table_CellsSizeChanged(object sender, IEnumerable<Cell> e)

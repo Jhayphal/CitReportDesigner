@@ -60,27 +60,13 @@ public class CellViewModel : ViewModelBase, IBounds
   public double Width
   {
     get => cell.Width;
-    set
-    {
-      if (cell.Width != value)
-      {
-        cell.Width = value;
-        this.RaisePropertyChanged(nameof(Width));
-      }
-    }
+    set => cell.Width = value;
   }
 
   public double Height
   {
     get => cell.Height;
-    set
-    {
-      if (cell.Height != value)
-      {
-        cell.Height = value;
-        this.RaisePropertyChanged(nameof(Height));
-      }
-    }
+    set => cell.Height = value;
   }
 
   public int Row => cell.Row;

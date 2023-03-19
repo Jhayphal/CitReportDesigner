@@ -63,7 +63,7 @@ public sealed partial class Table
     else
     {
       var notifyFrom = new CellPosition(index, 0);
-      var notifyTo = new CellPosition(Math.Min(index + 1, borders.LastColumn), borders.LastRow);
+      var notifyTo = new CellPosition(Math.Max(index - 1, 0), borders.LastRow);
       var cells = GetRange(notifyFrom, notifyTo);
 
       CellsSizeChanged?.Invoke(this, cells);
@@ -79,7 +79,7 @@ public sealed partial class Table
     else
     {
       var notifyFrom = new CellPosition(0, index);
-      var notifyTo = new CellPosition(borders.LastColumn, Math.Min(index + 1, borders.LastRow));
+      var notifyTo = new CellPosition(borders.LastColumn, Math.Max(index - 1, 0));
       var cells = GetRange(notifyFrom, notifyTo);
 
       CellsSizeChanged?.Invoke(this, cells);
