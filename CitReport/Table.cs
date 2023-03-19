@@ -2,17 +2,14 @@
 
 namespace CitReport;
 
-public sealed class Table : IEnumerable<Cell>
+public sealed partial class Table : IEnumerable<Cell>
 {
-  private readonly List<Cell> cells;
-  private readonly List<double> columns;
-  private readonly List<double> rows;
+  private readonly IList<Cell> cells;
+  private readonly TableBorders borders;
 
   public Table(IEnumerable<double> columns, IEnumerable<double> rows)
   {
-    this.columns = new List<double>(columns);
-    this.rows = new List<double>(rows);
-
+    borders = new TableBorders(columns, rows);
     cells = new List<Cell>();
 
     var count = ColumnsCount * RowsCount;
@@ -24,91 +21,68 @@ public sealed class Table : IEnumerable<Cell>
 
   public double X
   {
-    get => columns[FirstColumn];
+    get => borders.X;
     set
     {
-      var oldX = columns[FirstColumn];
-      var newX = value;
-
-      if (oldX != newX)
+      if (borders.X != value)
       {
-        var shift = newX - oldX;
-
-        for (int i = ColumnsCount; i >= FirstColumn; --i)
-        {
-          columns[i] += shift;
-        }
+        borders.X = value;
+        OnTablePositionChanged();
       }
     }
   }
 
   public double Y
   {
-    get => rows[0];
+    get => borders.Y;
     set
     {
-      var oldY = rows[0];
-      var newY = value;
-
-      if (oldY != newY)
+      if (borders.Y != value)
       {
-        var shift = newY - oldY;
-
-        for (int i = RowsCount; i >= 0; --i)
-        {
-          rows[i] += shift;
-        }
+        borders.Y = value;
+        OnTablePositionChanged();
       }
     }
   }
 
   public double Width
   {
-    get => GetWidth();
-    set => SetWidth(value);
+    get => borders.Width;
+    set
+    {
+      if (borders.Width != value)
+      {
+        borders.Width = value;
+        OnTableSizeChanged(this);
+      }
+    }
   }
 
   public double Height
   {
-    get => GetHeight();
-    set => SetHeight(value);
+    get => borders.Height;
+    set
+    {
+      if (borders.Height != value)
+      {
+        borders.Height = value;
+        OnTableSizeChanged(this);
+      }
+    }
   }
 
-  public IList<double> Columns => columns;
-  
-  public int ColumnsCount => columns.Count - 1;
+  public int ColumnsCount => borders.ColumnsCount;
 
-  public const int FirstColumn = 0;
-
-  public int LastColumn => ColumnsCount - 1;
-
-  public IList<double> Rows => rows;
-
-  public int RowsCount => rows.Count - 1;
-
-  public const int FirstRow = 0;
-
-  public int LastRow => RowsCount - 1;
+  public int RowsCount => borders.RowsCount;
 
   public IEnumerator<Cell> GetEnumerator()
     => GetRange(
-      new CellPosition(FirstColumn, FirstRow), 
-      new CellPosition(LastColumn, LastRow)).GetEnumerator();
+      new CellPosition(0, 0), 
+      new CellPosition(borders.LastColumn, borders.LastRow)).GetEnumerator();
 
   IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-  public int GetCellRowIndex(Cell cell)
-  {
-    var index = cells.IndexOf(cell);
-    if (index == -1)
-    {
-      return index;
-    }
-    
-    return index / ColumnsCount;
-  }
-
-  public int GetCellColumnIndex(Cell cell)
+  public int GetColumnIndex(Cell cell)
   {
     var index = cells.IndexOf(cell);
     if (index == -1)
@@ -119,128 +93,36 @@ public sealed class Table : IEnumerable<Cell>
     return index % ColumnsCount;
   }
 
-  public double GetColumnWidth(int index) => columns[index + 1] - columns[index];
-
-  public void SetColumnWidth(int index, double newWidth)
+  public int GetRowIndex(Cell cell)
   {
-    var oldWidth = GetColumnWidth(index);
-    var shift = newWidth - oldWidth;
-    columns[index + 1] += shift;
-  }
-
-  public double GetRowHeight(int index) => rows[index + 1] - rows[index];
-
-  public void SetRowHeight(int index, double newHeight)
-  {
-    var oldHeight = GetRowHeight(index);
-    var shift = newHeight - oldHeight;
-    rows[index + 1] += shift;
-
-    var notifyFrom = new CellPosition(FirstColumn, index);
-    var notifyTo = new CellPosition(LastColumn, Math.Min(index + 1, LastRow));
-    CellsSizeChanged.Invoke(this, GetRange(notifyFrom, notifyTo));
-  }
-
-  public Cell GetCell(int column, int row)
-  {
-    var cell = GetCellDirect(column, row);
-    return cell.Parent ?? cell;
-  }
-
-  public Cell GetCell(CellPosition position) => GetCell(position.X, position.Y);
-
-  /// <summary>
-  /// Merge cells by text range, if required.
-  /// </summary>
-  /// <param name="leftUpper">Like A3.</param>
-  /// <param name="rightBottom">Like B8.</param>
-  /// <returns>Merged cell.</returns>
-  /// <exception cref="NotImplementedException"></exception>
-  public Cell Merge(CellPosition leftUpper, CellPosition rightBottom)
-  {
-    if (leftUpper == rightBottom)
+    var index = cells.IndexOf(cell);
+    if (index == -1)
     {
-      return GetCellDirect(leftUpper);
+      return index;
     }
-
-    var leftCornerCell = GetCellDirect(Math.Min(leftUpper.X, rightBottom.X), Math.Max(rightBottom.Y, leftUpper.Y));
-
-    var other = GetRangeDirect(leftUpper, rightBottom).Where(x => x != leftCornerCell);
-    foreach (var cell in other)
-    {
-      if (cell.IsMerged)
-      {
-        cell.Break();
-      }
-
-      leftCornerCell.AddChild(cell);
-    }
-
-    return leftCornerCell;
+    
+    return index / ColumnsCount;
   }
 
-  public IEnumerable<Cell> GetRange(CellPosition leftUpper, CellPosition rightBottom)
-    => GetRangeDirect(leftUpper, rightBottom).Where(x => x.Parent == null);
+  public double GetColumnWidth(int index) => borders.GetColumnWidth(index);
 
-  private IEnumerable<Cell> GetRangeDirect(CellPosition leftUpper, CellPosition rightBottom)
+  public void SetColumnWidth(int index, double value)
   {
-    if (leftUpper == rightBottom)
+    if (GetColumnWidth(index) != value)
     {
-      yield return GetCellDirect(leftUpper);
-    }
-    else
-    {
-      var x = Math.Min(leftUpper.X, rightBottom.X);
-      var xMax = Math.Max(rightBottom.X, leftUpper.X);
-      int y = Math.Min(leftUpper.Y, rightBottom.Y);
-      var yMax = Math.Max(rightBottom.Y, leftUpper.Y);
-
-      if (xMax > LastColumn || yMax > LastRow)
-      {
-        throw new ArgumentOutOfRangeException(xMax > LastColumn ? nameof(xMax) : nameof(yMax));
-      }
-
-      for (; y <= yMax; ++y)
-      {
-        for (; x <= xMax; ++x)
-        {
-          yield return GetCellDirect(x, y);
-        }
-
-        x = Math.Min(leftUpper.X, rightBottom.X);
-      }
+      borders.SetColumnWidth(index, value);
+      OnColumnWidthChanged(index);
     }
   }
 
-  private Cell GetCellDirect(int column, int row) => cells[row * ColumnsCount + column];
+  public double GetRowHeight(int index) => borders.GetRowHeight(index);
 
-  private Cell GetCellDirect(CellPosition position) => GetCellDirect(position.X, position.Y);
-
-  private double GetWidth() => columns[ColumnsCount] - columns[FirstColumn];
-
-  private void SetWidth(double newWidth)
+  public void SetRowHeight(int row, double height)
   {
-    var oldWidth = GetWidth();
-    var scale = newWidth / oldWidth;
-
-    for (int i = LastColumn; i >= FirstColumn; --i)
+    if (GetRowHeight(row) != height)
     {
-      SetColumnWidth(i, GetColumnWidth(i) * scale);
+      borders.SetRowHeight(row, height);
+      OnRowHeightChanged(row);
     }
   }
-
-  private double GetHeight() => rows[RowsCount] - rows[FirstRow];
-
-  private void SetHeight(double newHeight)
-  {
-    var oldHeight = GetHeight();
-    var scale = newHeight / oldHeight;
-
-    for (int i = RowsCount; i >= FirstRow; --i)
-    {
-      SetRowHeight(i, GetRowHeight(i) * scale);
-    }
-  }
-
-  public event EventHandler<IEnumerable<Cell>> CellsSizeChanged;
 }

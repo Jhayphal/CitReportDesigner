@@ -1,7 +1,6 @@
 ﻿using Avalonia.Layout;
 using Avalonia.Media;
 using ReactiveUI;
-using System;
 
 namespace ControlsSandbox.ViewModels;
 
@@ -48,30 +47,14 @@ public class CellViewModel : ViewModelBase, IBounds
 
   public double X
   {
-    get => cell.Table.Columns[cell.Column];
-    set
-    {
-      var column = cell.Column;
-      if (cell.Table.Columns[column] != value)
-      {
-        cell.Table.Columns[column] = value;
-        this.RaisePropertyChanged(nameof(X));
-      }
-    }
+    get => cell.X;
+    set => cell.X = value;
   }
 
   public double Y
   {
-    get => cell.Table.Rows[cell.Row];
-    set
-    {
-      var row = cell.Row;
-      if (cell.Table.Rows[row] != value)
-      {
-        cell.Table.Rows[row] = value;
-        this.RaisePropertyChanged(nameof(Y));
-      }
-    }
+    get => cell.Y;
+    set => cell.Y = value;
   }
 
   public double Width

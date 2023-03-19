@@ -35,11 +35,23 @@ public sealed class Cell : IMultilanguageValueStorage, IEquatable<Cell>
 
   public Dictionary<string, List<string>> Value { get; } = new();
 
-  public int Column => Table.GetCellColumnIndex(this);
+  public int Column => Table.GetColumnIndex(this);
 
-  public int Row => Table.GetCellRowIndex(this);
+  public int Row => Table.GetRowIndex(this);
 
   public CellPosition Position => new(Column, Row);
+
+  public double X
+  {
+    get => Table.GetCellX(this);
+    set => Table.SetCellX(this, value);
+  }
+
+  public double Y
+  {
+    get => Table.GetCellY(this);
+    set => Table.SetCellY(this, value);
+  }
 
   public double Width
   {

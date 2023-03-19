@@ -4,39 +4,39 @@ namespace CitReport;
 
 public readonly struct CellPosition : IEquatable<CellPosition>, IComparable<CellPosition>
 {
-  public CellPosition(int x, int y)
+  public CellPosition(int column, int row)
   {
-    if (x < 0 || y < 0)
+    if (column < 0 || row < 0)
     {
-      throw new ArgumentOutOfRangeException(x < 0 ? nameof(x) : nameof(y));
+      throw new ArgumentOutOfRangeException(column < 0 ? nameof(column) : nameof(row));
     }
 
-    X = x;
-    Y = y;
+    Column = column;
+    Row = row;
   }
 
-  public readonly int X;
+  public readonly int Column;
 
-  public readonly int Y;
+  public readonly int Row;
 
-  public override int GetHashCode() => (Y << 16) | X;
+  public override int GetHashCode() => (Row << 16) | Column;
 
   public override bool Equals([NotNullWhen(true)] object obj) => obj is CellPosition other && Equals(other);
 
-  public bool Equals(CellPosition other) => other.X == X && other.Y == Y;
+  public bool Equals(CellPosition other) => other.Column == Column && other.Row == Row;
 
   public int CompareTo(CellPosition other)
   {
-    var result = X.CompareTo(other.X);
+    var result = Column.CompareTo(other.Column);
     if (result != 0)
     {
       return result;
     }
 
-    return Y.CompareTo(other.Y);
+    return Row.CompareTo(other.Row);
   }
 
-  public override string ToString() => $"{X}:{Y}";
+  public override string ToString() => $"{Column}:{Row}";
 
   public static bool operator ==(CellPosition left, CellPosition right) => left.Equals(right);
 
@@ -80,7 +80,7 @@ public readonly struct CellPosition : IEquatable<CellPosition>, IComparable<Cell
     return new CellPosition(x, y);
   }
 
-  public static string ToString(CellPosition position) => $"{IndexToColumn(position.X)}{position.Y + 1}";
+  public static string ToString(CellPosition position) => $"{IndexToColumn(position.Column)}{position.Row + 1}";
 
   public static int ColumnToIndex(char column) => column - (char.IsUpper(column) ? 'A' : 'a');
 
