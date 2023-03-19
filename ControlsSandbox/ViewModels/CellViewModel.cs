@@ -18,7 +18,7 @@ public class CellViewModel : ViewModelBase, IBounds
       new double[] { 0f, 5f, 10f });
     
     cell = table.GetCell(0, 0);
-    cell.DisplayValue.Add(string.Empty, "Text for designer");
+    cell.Properties.DisplayValue.Add(string.Empty, "Text for designer");
   }
 
   public CellViewModel(CitReport.Cell cell)
@@ -30,16 +30,16 @@ public class CellViewModel : ViewModelBase, IBounds
   {
     get
     {
-      cell.DisplayValue.TryGetValue(DesignerEnvironment.Current.Language, out string text);
+      cell.Properties.DisplayValue.TryGetValue(DesignerEnvironment.Current.Language, out string text);
       return text ?? string.Empty;
     }
     set
     {
-      cell.DisplayValue.TryGetValue(DesignerEnvironment.Current.Language, out string text);
+      cell.Properties.DisplayValue.TryGetValue(DesignerEnvironment.Current.Language, out string text);
       text ??= string.Empty;
       if (text != value)
       {
-        cell.DisplayValue[DesignerEnvironment.Current.Language] = value;
+        cell.Properties.DisplayValue[DesignerEnvironment.Current.Language] = value;
         this.RaisePropertyChanged(nameof(Text));
       }
     }
@@ -93,9 +93,9 @@ public class CellViewModel : ViewModelBase, IBounds
 
   public ReportSizeUnit SizeUnit => ReportSizeUnit.Millimeter;
 
-  public HorizontalAlignment HorizontalAlignment => AlignmentConverter.ConvertHorizontal(cell.HorizontalAlignment);
+  public HorizontalAlignment HorizontalAlignment => AlignmentConverter.ConvertHorizontal(cell.Style.HorizontalAlignment);
 
-  public VerticalAlignment VerticalAlignment => AlignmentConverter.ConvertVertical(cell.VerticalAlignment);
+  public VerticalAlignment VerticalAlignment => AlignmentConverter.ConvertVertical(cell.Style.VerticalAlignment);
 
   public IBrush ForegroundColor { get; set; } = Brushes.Black;
 

@@ -37,40 +37,40 @@ public class MainWindowViewModel : ViewModelBase
     block.Tables.Add(table);
 
     var cell = table.GetCell(0, 0);
-    cell.DisplayValue.Add(string.Empty, "Имя");
-    cell.VerticalAlignment = VerticalAlignment.Center;
-    cell.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Font = block.Fonts[fontAlias];
+    cell.Properties.DisplayValue.Add(string.Empty, "Имя");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
 
     cell = table.GetCell(1, 0);
-    cell.DisplayValue.Add(string.Empty, "Фамилия");
-    cell.VerticalAlignment = VerticalAlignment.Center;
-    cell.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Font = block.Fonts[fontAlias];
+    cell.Properties.DisplayValue.Add(string.Empty, "Фамилия");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
 
     cell = table.GetCell(2, 0);
-    cell.DisplayValue.Add(string.Empty, "Отчество");
-    cell.VerticalAlignment = VerticalAlignment.Center;
-    cell.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Font = block.Fonts[fontAlias];
+    cell.Properties.DisplayValue.Add(string.Empty, "Отчество");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
 
     cell = table.GetCell(0, 1);
-    cell.DisplayValue.Add(string.Empty, "Олег");
-    cell.VerticalAlignment = VerticalAlignment.Center;
-    cell.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Font = block.Fonts[fontAlias];
+    cell.Properties.DisplayValue.Add(string.Empty, "Олег");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
 
     cell = table.GetCell(1, 1);
-    cell.DisplayValue.Add(string.Empty, "Назаренко");
-    cell.VerticalAlignment = VerticalAlignment.Center;
-    cell.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Font = block.Fonts[fontAlias];
+    cell.Properties.DisplayValue.Add(string.Empty, "Назаренко");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
 
     cell = table.GetCell(2, 1);
-    cell.DisplayValue.Add(string.Empty, "Сергеевич");
-    cell.VerticalAlignment = VerticalAlignment.Center;
-    cell.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Font = block.Fonts[fontAlias];
+    cell.Properties.DisplayValue.Add(string.Empty, "Сергеевич");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
 
     block.TextBlocks.Add(new TextBlock
     {

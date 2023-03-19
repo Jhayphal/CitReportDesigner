@@ -17,13 +17,13 @@ public class TableViewModel : ViewModelBase, IBounds
   {
     table = new Table(new double[] { 0f, 50f, 100f }, new double[] { 0f, 5f, 10f });
     var cell = table.GetCell(0, 0);
-    cell.DisplayValue.Add(string.Empty, "Text for designer");
+    cell.Properties.DisplayValue.Add(string.Empty, "Text for designer");
     cell = table.GetCell(1, 0);
-    cell.DisplayValue.Add(string.Empty, "Col 2 Row 1");
+    cell.Properties.DisplayValue.Add(string.Empty, "Col 2 Row 1");
     cell = table.GetCell(0, 1);
-    cell.DisplayValue.Add(string.Empty, "Col 1 Row 2");
+    cell.Properties.DisplayValue.Add(string.Empty, "Col 1 Row 2");
     cell = table.GetCell(1, 1);
-    cell.DisplayValue.Add(string.Empty, "Col 2 Row 2");
+    cell.Properties.DisplayValue.Add(string.Empty, "Col 2 Row 2");
 
     Cells = new ObservableCollection<CellViewModel>(table.Select(x => new CellViewModel(x)));
   }

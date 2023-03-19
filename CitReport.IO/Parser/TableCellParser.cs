@@ -47,12 +47,12 @@ public class TableCellParser : BlockInstructionParser
     var cellPositionLeftUpper = CellPosition.FromString(tokens[3 + offset].Trim());
     var cellPositionRightBottom = CellPosition.FromString(tokens[5 + offset].Trim());
     Cell cell = context.CurrentTable.Merge(cellPositionLeftUpper, cellPositionRightBottom);
-    cell.CanGrow = canGrow;
+    cell.Properties.CanGrow = canGrow;
     var displayValueIndex = endDefinitionIndex + 1;
     var displayValue = displayValueIndex >= tokens.Count
       ? string.Empty
       : tokens[displayValueIndex];
-    cell.DisplayValue[language] = displayValue;
+    cell.Properties.DisplayValue[language] = displayValue;
     
     var fieldsCount = DisplayFieldsHelper.GetCount(displayValue);
     if (fieldsCount > 0)
@@ -66,14 +66,14 @@ public class TableCellParser : BlockInstructionParser
     var fontAlias = tokens[9 + offset].Trim();
     if (context.CurrentBlock.Fonts.TryGetValue(fontAlias, out var fontInfo))
     {
-      cell.Font = fontInfo;
+      cell.Style.Font = fontInfo;
     }
     else
     {
       context.ErrorProvider.UndefinedFont(fontAlias, context.CurrentLine);
     }
 
-    cell.ForegroundColor = context.CellForegroundColor;
-    cell.BackgroundColor = context.CellBackgroundColor;
+    cell.Style.ForegroundColor = context.CellForegroundColor;
+    cell.Style.BackgroundColor = context.CellBackgroundColor;
   }
 }
