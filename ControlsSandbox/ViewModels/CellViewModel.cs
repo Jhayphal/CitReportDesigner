@@ -69,14 +69,6 @@ public class CellViewModel : ViewModelBase, IBounds
     set => cell.Height = value;
   }
 
-  public int Row => cell.Row;
-
-  public int RowSpan => 1;
-
-  public int Column => cell.Column;
-
-  public int ColumnSpan => 1;
-
   public ReportSizeUnit SizeUnit => ReportSizeUnit.Millimeter;
 
   public HorizontalAlignment HorizontalAlignment => AlignmentConverter.ConvertHorizontal(cell.Style.HorizontalAlignment);

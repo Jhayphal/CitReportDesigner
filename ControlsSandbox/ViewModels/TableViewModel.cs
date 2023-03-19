@@ -65,53 +65,25 @@ public class TableViewModel : ViewModelBase, IBounds
   public double X
   {
     get => table.X;
-    set
-    {
-      if (table.X != value)
-      {
-        table.X = value;
-        this.RaisePropertyChanged(nameof(X));
-      }
-    }
+    set => table.X = value;
   }
 
   public double Y
   {
     get => table.Y;
-    set
-    {
-      if (table.Y != value)
-      {
-        table.Y = value;
-        this.RaisePropertyChanged(nameof(Y));
-      }
-    }
+    set => table.Y = value;
   }
 
   public double Width
   {
     get => table.Width;
-    set
-    {
-      if (table.Width != value)
-      {
-        table.Width = value;
-        this.RaisePropertyChanged(nameof(Width));
-      }
-    }
+    set => table.Width = value;
   }
 
   public double Height
   {
     get => table.Height;
-    set
-    {
-      if (table.Height != value)
-      {
-        table.Height = value;
-        this.RaisePropertyChanged(nameof(Height));
-      }
-    }
+    set => table.Height = value;
   }
 
   public ReportSizeUnit SizeUnit => ReportSizeUnit.Millimeter;

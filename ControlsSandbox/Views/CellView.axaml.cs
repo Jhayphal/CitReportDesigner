@@ -17,7 +17,7 @@ public partial class CellView : UserControl
 
     behaviors = new ControlBehavior[]
     {
-      new ResizableControlBehavior<Canvas>(this, KeyModifiers.Alt, new Size(10, 10))
+      new ResizableControlBehavior<Canvas>(this, KeyModifiers.Alt, minimalSize: new Size(10, 10), findLastAncestor: true)
     };
   }
 }

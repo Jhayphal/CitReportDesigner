@@ -36,14 +36,16 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
   private ControlBounds originalBounds;
   private (HorizontalAlignment Horizontal, VerticalAlignment Vertical) resizeDirection;
   private TRelativeTo relativeTo;
+  private bool findLastAncestor;
 
   private volatile bool isProgress;
 
-  public ResizableControlBehavior(UserControl userControl, KeyModifiers activateWith, Size minimalSize)
+  public ResizableControlBehavior(UserControl userControl, KeyModifiers activateWith, Size minimalSize, bool findLastAncestor = false)
   {
     targetControl = userControl;
     activateWithModifiers = activateWith;
     minimumSize = minimalSize;
+    this.findLastAncestor = findLastAncestor;
 
     targetControl.PointerPressed += TryStartResize;
     targetControl.PointerMoved += GetPointerPosition;
@@ -70,7 +72,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
       return;
     }
 
-    relativeTo = targetControl.FindAncestorOfType<TRelativeTo>();
+    relativeTo = FindAncestor();
     if (relativeTo == null)
     {
       return;
@@ -89,6 +91,21 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     e.Handled = true;
 
     applySizeTimer.Start();
+  }
+
+  private TRelativeTo FindAncestor()
+  {
+    var previouslyAncestor = targetControl.FindAncestorOfType<TRelativeTo>();
+    if (findLastAncestor)
+    {
+      var currentAncestor = previouslyAncestor.FindAncestorOfType<TRelativeTo>();
+      while (currentAncestor != null)
+      {
+        previouslyAncestor = currentAncestor;
+        currentAncestor = previouslyAncestor.FindAncestorOfType<TRelativeTo>();
+      }
+    }
+    return previouslyAncestor;
   }
 
   private bool CanStartResize(PointerEventArgs e)
