@@ -22,7 +22,7 @@ public sealed partial class Table
     {
       var x = Math.Min(leftUpper.Column, rightBottom.Column);
       var xMax = Math.Max(rightBottom.Column, leftUpper.Column);
-      int y = Math.Min(leftUpper.Row, rightBottom.Row);
+      var y = Math.Min(leftUpper.Row, rightBottom.Row);
       var yMax = Math.Max(rightBottom.Row, leftUpper.Row);
 
       if (xMax > borders.LastColumn || yMax > borders.LastRow)

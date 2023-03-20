@@ -1,4 +1,6 @@
-﻿namespace CitReport;
+﻿using CitReport.Extensions;
+
+namespace CitReport;
 
 public class TableBorders
 {
@@ -19,11 +21,11 @@ public class TableBorders
       var oldX = Columns[FirstColumn];
       var newX = value;
 
-      if (oldX != newX)
+      if (!oldX.AreEqual(newX))
       {
         var shift = newX - oldX;
 
-        for (int i = ColumnsCount; i >= FirstColumn; --i)
+        for (var i = ColumnsCount; i >= FirstColumn; --i)
         {
           Columns[i] += shift;
         }
@@ -39,11 +41,11 @@ public class TableBorders
       var oldY = Rows[FirstRow];
       var newY = value;
 
-      if (oldY != newY)
+      if (!oldY.AreEqual(newY))
       {
         var shift = newY - oldY;
 
-        for (int i = RowsCount; i >= FirstRow; --i)
+        for (var i = RowsCount; i >= FirstRow; --i)
         {
           Rows[i] += shift;
         }
@@ -80,8 +82,11 @@ public class TableBorders
   public void SetColumnWidth(int index, double newWidth)
   {
     var oldWidth = GetColumnWidth(index);
-    var shift = newWidth - oldWidth;
-    Columns[index + 1] += shift;
+    if (!oldWidth.AreEqual(newWidth))
+    {
+      var shift = newWidth - oldWidth;
+      Columns[index + 1] += shift;
+    }
   }
 
   public double GetRowHeight(int index) => Rows[index + 1] - Rows[index];
@@ -89,8 +94,11 @@ public class TableBorders
   public void SetRowHeight(int index, double newHeight)
   {
     var oldHeight = GetRowHeight(index);
-    var shift = newHeight - oldHeight;
-    Rows[index + 1] += shift;
+    if (!oldHeight.AreEqual(newHeight))
+    {
+      var shift = newHeight - oldHeight;
+      Rows[index + 1] += shift;
+    }
   }
 
   private double GetWidth() => Columns[ColumnsCount] - Columns[FirstColumn];
@@ -98,11 +106,14 @@ public class TableBorders
   private void SetWidth(double newWidth)
   {
     var oldWidth = GetWidth();
-    var scale = newWidth / oldWidth;
-
-    for (int i = LastColumn; i >= FirstColumn; --i)
+    if (!oldWidth.AreEqual(newWidth))
     {
-      SetColumnWidth(i, GetColumnWidth(i) * scale);
+      var scale = newWidth / oldWidth;
+
+      for (var i = LastColumn; i >= FirstColumn; --i)
+      {
+        SetColumnWidth(i, GetColumnWidth(i) * scale);
+      }
     }
   }
 
@@ -111,11 +122,14 @@ public class TableBorders
   private void SetHeight(double newHeight)
   {
     var oldHeight = GetHeight();
-    var scale = newHeight / oldHeight;
-
-    for (int i = RowsCount; i >= FirstRow; --i)
+    if (!oldHeight.AreEqual(newHeight))
     {
-      SetRowHeight(i, GetRowHeight(i) * scale);
+      var scale = newHeight / oldHeight;
+
+      for (var i = RowsCount; i >= FirstRow; --i)
+      {
+        SetRowHeight(i, GetRowHeight(i) * scale);
+      }
     }
   }
 }

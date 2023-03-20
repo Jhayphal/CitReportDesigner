@@ -1,16 +1,17 @@
-﻿using Avalonia;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using ControlsSandbox.ViewModels;
 
 namespace ControlsSandbox.Behaviors;
 
-public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
+public sealed class ResizableCellBehavior<TRelativeTo> : ControlBehavior
   where TRelativeTo : class, IVisual
 {
   private readonly UserControl targetControl;
@@ -30,6 +31,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
   private readonly KeyModifiers activateWithModifiers;
 
   private IBounds viewModel;
+  private CellViewModel cell;
   private Point targetOffset;
   private Point lastMousePosition;
   private bool isResizing;
@@ -40,7 +42,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
 
   private volatile bool isProgress;
 
-  public ResizableControlBehavior(UserControl userControl, KeyModifiers activateWith, Size minimalSize, bool findLastAncestor = false)
+  public ResizableCellBehavior(UserControl userControl, KeyModifiers activateWith, Size minimalSize, bool findLastAncestor = false)
   {
     targetControl = userControl;
     activateWithModifiers = activateWith;
@@ -53,7 +55,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
 
     applySizeTimer = new DispatcherTimer
     {
-      Interval = TimeSpan.FromMilliseconds(10)
+      Interval = TimeSpan.FromMilliseconds(1000)
     };
 
     applySizeTimer.Tick += ApplySize;
@@ -68,6 +70,12 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
 
     viewModel = targetControl.DataContext as IBounds;
     if (viewModel == null)
+    {
+      return;
+    }
+
+    cell = viewModel as CellViewModel;
+    if (cell == null)
     {
       return;
     }
@@ -118,7 +126,7 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
     resizeDirection = GetDirection(e.GetPosition(targetControl));
 
     return !(resizeDirection.Horizontal == HorizontalAlignment.Center
-      && resizeDirection.Vertical == VerticalAlignment.Center);
+             && resizeDirection.Vertical == VerticalAlignment.Center);
   }
 
   private bool CanResize(PointerEventArgs e) => e.GetCurrentPoint(targetControl).Properties.IsLeftButtonPressed;
@@ -270,7 +278,11 @@ public sealed class ResizableControlBehavior<TRelativeTo> : ControlBehavior
       }
 
       viewModel.Y = newBounds.Y;
-      viewModel.Height = newBounds.Height;
+      
+      if (cell.Row > 0)
+      {
+        viewModel.Height = newBounds.Height;
+      }
     }
     else if (resizeDirection.Vertical == VerticalAlignment.Bottom)
     {

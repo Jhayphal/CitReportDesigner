@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using CitReport.Extensions;
 
 namespace CitReport;
 
@@ -106,12 +107,12 @@ public sealed partial class Table : IEnumerable<Cell>
 
   public double GetColumnWidth(int index) => borders.GetColumnWidth(index);
 
-  public void SetColumnWidth(int index, double value)
+  public void SetColumnWidth(int column, double width)
   {
-    if (GetColumnWidth(index) != value)
+    if (!width.AreEqual(GetColumnWidth(column)))
     {
-      borders.SetColumnWidth(index, value);
-      OnColumnWidthChanged(index);
+      borders.SetColumnWidth(column, width);
+      OnColumnWidthChanged(column);
     }
   }
 
@@ -119,7 +120,7 @@ public sealed partial class Table : IEnumerable<Cell>
 
   public void SetRowHeight(int row, double height)
   {
-    if (GetRowHeight(row) != height)
+    if (!height.AreEqual(GetRowHeight(row)))
     {
       borders.SetRowHeight(row, height);
       OnRowHeightChanged(row);

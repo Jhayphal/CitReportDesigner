@@ -33,48 +33,9 @@ public class MainWindowViewModel : ViewModelBase
 
     block.Metadata.Add(new Metadata { Value = "BlockHeaderColor:=227,197,186" });
 
-    var table = new Table(new double[] { 0, 50, 100, 150 }, new double[] { 0, 5, 10 });
-    block.Tables.Add(table);
-
-    var cell = table.GetCell(0, 0);
-    cell.Properties.DisplayValue.Add(string.Empty, "Имя");
-    cell.Style.VerticalAlignment = VerticalAlignment.Center;
-    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Style.Font = block.Fonts[fontAlias];
-
-    cell = table.GetCell(1, 0);
-    cell.Properties.DisplayValue.Add(string.Empty, "Фамилия");
-    cell.Style.VerticalAlignment = VerticalAlignment.Center;
-    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Style.Font = block.Fonts[fontAlias];
-
-    cell = table.GetCell(2, 0);
-    cell.Properties.DisplayValue.Add(string.Empty, "Отчество");
-    cell.Style.VerticalAlignment = VerticalAlignment.Center;
-    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Style.Font = block.Fonts[fontAlias];
-
-    cell = table.GetCell(0, 1);
-    cell.Properties.DisplayValue.Add(string.Empty, "Олег");
-    cell.Style.VerticalAlignment = VerticalAlignment.Center;
-    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Style.Font = block.Fonts[fontAlias];
-
-    cell = table.GetCell(1, 1);
-    cell.Properties.DisplayValue.Add(string.Empty, "Назаренко");
-    cell.Style.VerticalAlignment = VerticalAlignment.Center;
-    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Style.Font = block.Fonts[fontAlias];
-
-    cell = table.GetCell(2, 1);
-    cell.Properties.DisplayValue.Add(string.Empty, "Сергеевич");
-    cell.Style.VerticalAlignment = VerticalAlignment.Center;
-    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
-    cell.Style.Font = block.Fonts[fontAlias];
-
     block.TextBlocks.Add(new TextBlock
     {
-      Text = "Фамилия Имя Отчество",
+      Text = "РўРµРєСЃС‚ РґР»СЏ РѕС‚С‡РµС‚Р°",
       X = 10,
       Y = 10,
       Width = 50,
@@ -83,6 +44,56 @@ public class MainWindowViewModel : ViewModelBase
       VerticalAlignment = VerticalAlignment.Center
     });
 
+    block = new BodyBlock(report, id: 3) { Code = "RH" };
+    report.Blocks.Add(block);
+
+    block.Options.Add(new BlkHOption { Value = "50" });
+    block.Options.Add(new New_LinebreakOption());
+
+    fontAlias = "FONT1";
+    block.Fonts.Add(fontAlias, new FontInfo { Family = "Times New Roman", Size = 10f });
+
+    block.Metadata.Add(new Metadata { Value = "BlockHeaderColor:=227,197,186" });
+
+    var table = new Table(new double[] { 0, 50, 100, 150 }, new double[] { 0, 5, 10 });
+    block.Tables.Add(table);
+
+    var cell = table.GetCell(0, 0);
+    cell.Properties.DisplayValue.Add(string.Empty, "РРјСЏ");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
+
+    cell = table.GetCell(1, 0);
+    cell.Properties.DisplayValue.Add(string.Empty, "Р¤Р°РјРёР»РёСЏ");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
+
+    cell = table.GetCell(2, 0);
+    cell.Properties.DisplayValue.Add(string.Empty, "РћС‚С‡РµСЃС‚РІРѕ");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
+
+    cell = table.GetCell(0, 1);
+    cell.Properties.DisplayValue.Add(string.Empty, "РћР»РµРі");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
+
+    cell = table.GetCell(1, 1);
+    cell.Properties.DisplayValue.Add(string.Empty, "РќР°Р·Р°СЂРµРЅРєРѕ");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
+
+    cell = table.GetCell(2, 1);
+    cell.Properties.DisplayValue.Add(string.Empty, "РЎРµСЂРіРµРµРІРёС‡");
+    cell.Style.VerticalAlignment = VerticalAlignment.Center;
+    cell.Style.HorizontalAlignment = HorizontalAlignment.Center;
+    cell.Style.Font = block.Fonts[fontAlias];
+    
     Content = new ReportViewModel(report);
   }
 
