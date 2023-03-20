@@ -3,6 +3,7 @@ using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using CitReport.Extensions;
 
 namespace ControlsSandbox.ViewModels;
 
@@ -65,25 +66,53 @@ public class TableViewModel : ViewModelBase, IBounds
   public double X
   {
     get => table.X;
-    set => table.X = value;
+    set
+    {
+      if (!table.X.AreEqual(value))
+      {
+        table.X = value;
+        this.RaisePropertyChanged();
+      }
+    }
   }
 
   public double Y
   {
     get => table.Y;
-    set => table.Y = value;
+    set
+    {
+      if (!table.Y.AreEqual(value))
+      {
+        table.Y = value;
+        this.RaisePropertyChanged();
+      }
+    }
   }
 
   public double Width
   {
     get => table.Width;
-    set => table.Width = value;
+    set
+    {
+      if (!table.Width.AreEqual(value))
+      {
+        table.Width = value;
+        this.RaisePropertyChanged();
+      }
+    }
   }
 
   public double Height
   {
     get => table.Height;
-    set => table.Height = value;
+    set
+    {
+      if (!table.Height.AreEqual(value))
+      {
+        table.Height = value;
+        this.RaisePropertyChanged();
+      }
+    }
   }
 
   public ReportSizeUnit SizeUnit => ReportSizeUnit.Millimeter;

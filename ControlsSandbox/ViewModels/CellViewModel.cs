@@ -47,7 +47,11 @@ public class CellViewModel : ViewModelBase, IBounds
 
   public int Column => cell.Column;
 
+  public bool LastColumn => Column == cell.Table.ColumnsCount - 1;
+
   public int Row => cell.Row;
+
+  public bool LastRow => Row == cell.Table.RowsCount - 1;
 
   public double X
   {

@@ -55,7 +55,7 @@ public sealed class ResizableCellBehavior<TRelativeTo> : ControlBehavior
 
     applySizeTimer = new DispatcherTimer
     {
-      Interval = TimeSpan.FromMilliseconds(1000)
+      Interval = TimeSpan.FromMilliseconds(10)
     };
 
     applySizeTimer.Tick += ApplySize;
@@ -68,27 +68,9 @@ public sealed class ResizableCellBehavior<TRelativeTo> : ControlBehavior
       return;
     }
 
-    viewModel = targetControl.DataContext as IBounds;
-    if (viewModel == null)
+    if (!Initialize())
     {
       return;
-    }
-
-    cell = viewModel as CellViewModel;
-    if (cell == null)
-    {
-      return;
-    }
-
-    relativeTo = FindAncestor();
-    if (relativeTo == null)
-    {
-      return;
-    }
-
-    if (viewModel.SizeUnit == ReportSizeUnit.Millimeter)
-    {
-      viewModel = new MillimetersToPixelsBoundsAdapter(viewModel);
     }
 
     targetOffset = new Point();
@@ -99,6 +81,34 @@ public sealed class ResizableCellBehavior<TRelativeTo> : ControlBehavior
     e.Handled = true;
 
     applySizeTimer.Start();
+  }
+
+  private bool Initialize()
+  {
+    viewModel = targetControl.DataContext as IBounds;
+    if (viewModel == null)
+    {
+      return false;
+    }
+
+    cell = viewModel as CellViewModel;
+    if (cell == null)
+    {
+      return false;
+    }
+
+    relativeTo = FindAncestor();
+    if (relativeTo == null)
+    {
+      return false;
+    }
+
+    if (viewModel.SizeUnit == ReportSizeUnit.Millimeter)
+    {
+      viewModel = new MillimetersToPixelsBoundsAdapter(viewModel);
+    }
+
+    return true;
   }
 
   private TRelativeTo FindAncestor()
@@ -124,9 +134,10 @@ public sealed class ResizableCellBehavior<TRelativeTo> : ControlBehavior
     }
 
     resizeDirection = GetDirection(e.GetPosition(targetControl));
-
-    return !(resizeDirection.Horizontal == HorizontalAlignment.Center
-             && resizeDirection.Vertical == VerticalAlignment.Center);
+      
+    return !SuppressResize(resizeDirection)
+           && !(resizeDirection.Horizontal == HorizontalAlignment.Center 
+                && resizeDirection.Vertical == VerticalAlignment.Center);
   }
 
   private bool CanResize(PointerEventArgs e) => e.GetCurrentPoint(targetControl).Properties.IsLeftButtonPressed;
@@ -165,12 +176,46 @@ public sealed class ResizableCellBehavior<TRelativeTo> : ControlBehavior
     }
     else if (e.KeyModifiers == activateWithModifiers)
     {
-      targetControl.Cursor = GetCursorForDirection(GetDirection(e.GetPosition(targetControl)));
+      var direction = GetDirection(e.GetPosition(targetControl));
+      if (!SuppressResize(direction))
+      {
+        targetControl.Cursor = GetCursorForDirection(direction);
+      }
     }
     else if (sizingCursors.Any(c => ReferenceEquals(c.Value, targetControl.Cursor)))
     {
       targetControl.Cursor = Cursor.Default;
     }
+  }
+
+  private bool SuppressResize((HorizontalAlignment Horizontal, VerticalAlignment Vertical) direction)
+  {
+    if (cell is null && !Initialize())
+    {
+      return false;
+    }
+    
+    if (direction.Horizontal == HorizontalAlignment.Left && cell.Column == 0)
+    {
+      return true;
+    }
+
+    if (direction.Vertical == VerticalAlignment.Top && cell.Row == 0)
+    {
+      return true;
+    }
+
+    if (direction.Horizontal == HorizontalAlignment.Right && cell.LastColumn)
+    {
+      return true;
+    }
+    
+    if (direction.Vertical == VerticalAlignment.Bottom && cell.LastRow)
+    {
+      return true;
+    }
+
+    return false;
   }
 
   private Cursor GetCursorForDirection((HorizontalAlignment Horizontal, VerticalAlignment Vertical) direction)
@@ -278,11 +323,7 @@ public sealed class ResizableCellBehavior<TRelativeTo> : ControlBehavior
       }
 
       viewModel.Y = newBounds.Y;
-      
-      if (cell.Row > 0)
-      {
-        viewModel.Height = newBounds.Height;
-      }
+      viewModel.Height = newBounds.Height;
     }
     else if (resizeDirection.Vertical == VerticalAlignment.Bottom)
     {

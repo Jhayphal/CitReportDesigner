@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using ControlsSandbox.Behaviors;
@@ -16,7 +17,8 @@ public partial class TableView : UserControl
 
     behaviors = new ControlBehavior[]
     {
-      new DraggableControlBehavior<Canvas>(this, KeyModifiers.Control)
+      new DraggableControlBehavior<Canvas>(this, KeyModifiers.Control),
+      new ResizableControlBehavior<Canvas>(this, KeyModifiers.Shift, new Size(20, 20))
     };
   }
 }
