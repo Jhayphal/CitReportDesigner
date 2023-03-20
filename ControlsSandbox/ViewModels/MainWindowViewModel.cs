@@ -55,7 +55,7 @@ public class MainWindowViewModel : ViewModelBase
 
     block.Metadata.Add(new Metadata { Value = "BlockHeaderColor:=227,197,186" });
 
-    var table = new Table(new double[] { 0, 50, 100, 150 }, new double[] { 0, 5, 10 });
+    var table = new Table(new double[] { 10, 50, 100, 150 }, new double[] { 3, 8, 13 });
     block.Tables.Add(table);
 
     var cell = table.GetCell(0, 0);
