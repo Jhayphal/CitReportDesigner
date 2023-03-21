@@ -7,11 +7,17 @@
   x:Class="ControlsSandbox.Views.MainWindow"
   Icon="../Assets/logo.ico"
   Title="Визуальный редактор отчётов"
-  Background="#FDFDFD"
+  Background="#F6F6F6"
   WindowState="Maximized">
   
   <DockPanel>
-    <Menu DockPanel.Dock="Top" BorderBrush="LightGray" BorderThickness="1">
+    <Menu DockPanel.Dock="Top">
+      <Menu.Styles>
+        <Style Selector="MenuItem">
+          <Setter Property="CornerRadius" Value="5"/>
+          <Setter Property="Margin" Value="2"/>
+        </Style>
+      </Menu.Styles>
       <MenuItem Header="_Отчёт">
         <MenuItem Header="Сохранить..."/>
         <MenuItem Header="Компиляция"/>
@@ -88,7 +94,7 @@
       </MenuItem>
     </Menu>
 
-    <Border DockPanel.Dock="Top" BorderBrush="LightGray" BorderThickness="1">
+    <Border DockPanel.Dock="Top" Background="#F2F2F2" BorderBrush="LightGray" BorderThickness="1">
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
         <StackPanel.Styles>
           <Style Selector="Button">
@@ -100,55 +106,86 @@
             <Setter Property="Height" Value="24"/>
           </Style>
         </StackPanel.Styles>
-        <Button ToolTip.Tip="Компилировать">
-          <Image Source="..\Assets\MainMenu\compile2.png"/>
-        </Button>
-        <Button ToolTip.Tip="Сохранить">
-          <Image Source="..\Assets\MainMenu\save.png"/>
-        </Button>
-        <Button ToolTip.Tip="Увеличить">
-          <Image Source="..\Assets\MainMenu\zoom_in2.png"/>
-        </Button>
-        <Button ToolTip.Tip="Уменьшить">
-          <Image Source="..\Assets\MainMenu\zoom_out2.png"/>
-        </Button>
-        <Button ToolTip.Tip="Натуральный размер">
-          <Image Source="..\Assets\MainMenu\zoom_native2.png"/>
-        </Button>
-        <Button ToolTip.Tip="Вставить блок">
-          <Image Source="..\Assets\MainMenu\insert_block.png"/>
-        </Button>
-        <Button ToolTip.Tip="Режим выделения">
-          <Image Source="..\Assets\MainMenu\use_cursor.png"/>
-        </Button>
-        <Button ToolTip.Tip="Вставить текст">
-          <Image Source="..\Assets\MainMenu\insert_text.png"/>
-        </Button>
-        <Button ToolTip.Tip="Вставить линию">
-          <Image Source="..\Assets\MainMenu\insert_line.png"/>
-        </Button>
-        <Button ToolTip.Tip="Вставить рисунок">
-          <Image Source="..\Assets\MainMenu\insert_image.png"/>
-        </Button>
-        <Button ToolTip.Tip="Вставить таблицу">
-          <Image Source="..\Assets\MainMenu\insert_table.png"/>
-        </Button>
-        <Button ToolTip.Tip="Параметры отчёта">
-          <Image Source="..\Assets\MainMenu\report_settings.png"/>
-        </Button>
-        <Button ToolTip.Tip="Параметры страницы">
-          <Image Source="..\Assets\MainMenu\page_settings2.png"/>
-        </Button>
-        <Button ToolTip.Tip="Просмотр текущего блока в виде RML">
-          <Image Source="..\Assets\MainMenu\show_block_code2.png"/>
-        </Button>
-        <Button ToolTip.Tip="Проверка ошибок">
-          <Image Source="..\Assets\MainMenu\show_errors.png"/>
-        </Button>
-        <Button ToolTip.Tip="Изменить язык отображения">
-          <Image Source="..\Assets\MainMenu\change_language.png"/>
-        </Button>
+        
+        <Border CornerRadius="5" BorderBrush="LightGray" BorderThickness="1" Margin="2">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button ToolTip.Tip="Компилировать">
+              <Image Source="..\Assets\MainMenu\compile2.png"/>
+            </Button>
+            <Button ToolTip.Tip="Сохранить">
+              <Image Source="..\Assets\MainMenu\save.png"/>
+            </Button>
+          </StackPanel>
+        </Border>
+
+        <Border CornerRadius="5" BorderBrush="LightGray" BorderThickness="1" Margin="2">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button ToolTip.Tip="Увеличить">
+              <Image Source="..\Assets\MainMenu\zoom_in2.png"/>
+            </Button>
+            <Button ToolTip.Tip="Уменьшить">
+              <Image Source="..\Assets\MainMenu\zoom_out2.png"/>
+            </Button>
+            <Button ToolTip.Tip="Натуральный размер">
+              <Image Source="..\Assets\MainMenu\zoom_native2.png"/>
+            </Button>
+          </StackPanel>
+        </Border>
+
+        <Border CornerRadius="5" BorderBrush="LightGray" BorderThickness="1" Margin="2">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button ToolTip.Tip="Вставить блок">
+              <Image Source="..\Assets\MainMenu\insert_block.png"/>
+            </Button>
+            <Button ToolTip.Tip="Режим выделения">
+              <Image Source="..\Assets\MainMenu\use_cursor.png"/>
+            </Button>
+            <Button ToolTip.Tip="Вставить текст">
+              <Image Source="..\Assets\MainMenu\insert_text.png"/>
+            </Button>
+            <Button ToolTip.Tip="Вставить линию">
+              <Image Source="..\Assets\MainMenu\insert_line.png"/>
+            </Button>
+            <Button ToolTip.Tip="Вставить рисунок">
+              <Image Source="..\Assets\MainMenu\insert_image.png"/>
+            </Button>
+            <Button ToolTip.Tip="Вставить таблицу">
+              <Image Source="..\Assets\MainMenu\insert_table.png"/>
+            </Button>
+          </StackPanel>
+        </Border>
+
+        <Border CornerRadius="5" BorderBrush="LightGray" BorderThickness="1" Margin="2">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button ToolTip.Tip="Параметры отчёта">
+              <Image Source="..\Assets\MainMenu\report_settings.png"/>
+            </Button>
+            <Button ToolTip.Tip="Параметры страницы">
+              <Image Source="..\Assets\MainMenu\page_settings2.png"/>
+            </Button>
+            <Button ToolTip.Tip="Просмотр текущего блока в виде RML">
+              <Image Source="..\Assets\MainMenu\show_block_code2.png"/>
+            </Button>
+          </StackPanel>
+        </Border>
+
+        <Border CornerRadius="5" BorderBrush="LightGray" BorderThickness="1" Margin="2">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button ToolTip.Tip="Проверка ошибок">
+              <Image Source="..\Assets\MainMenu\show_errors.png"/>
+            </Button>
+            <Button ToolTip.Tip="Изменить язык отображения">
+              <Image Source="..\Assets\MainMenu\change_language.png"/>
+            </Button>
+          </StackPanel>
+        </Border>
       </StackPanel>
+    </Border>
+    
+    <Border DockPanel.Dock="Right" BorderBrush="LightGray" BorderThickness="1">
+      <Grid Width="250" Background="#F2F2F2">
+        <Label VerticalAlignment="Center" HorizontalAlignment="Center">Опции отчета</Label>
+      </Grid>
     </Border>
     
     <ScrollViewer HorizontalScrollBarVisibility="Auto" Background="#F0F0F0">
