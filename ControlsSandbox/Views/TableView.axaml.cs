@@ -18,7 +18,7 @@ public partial class TableView : UserControl
     behaviors = new ControlBehavior[]
     {
       new DraggableControlBehavior<Canvas>(this, KeyModifiers.Control),
-      new ResizableControlBehavior<Canvas>(this, KeyModifiers.Shift, new Size(20, 20))
+      new ResizableControlBehavior<Canvas>(this, KeyModifiers.Alt, new Size(12, 12), findLastAncestor: true)
     };
   }
 }
