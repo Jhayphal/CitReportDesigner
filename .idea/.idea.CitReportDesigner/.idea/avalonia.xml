@@ -3,6 +3,7 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="ControlsSandbox/App.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
         <entry key="ControlsSandbox/Views/BlockView.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
         <entry key="ControlsSandbox/Views/CellView.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
         <entry key="ControlsSandbox/Views/MainWindow.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
