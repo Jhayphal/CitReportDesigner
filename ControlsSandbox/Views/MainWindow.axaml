@@ -8,12 +8,90 @@
   Icon="/Assets/avalonia-logo.ico"
   Title="ControlsSandbox"
   Background="#F0F0F0">
-
-  <ScrollViewer HorizontalScrollBarVisibility="Auto">
-    <ContentControl
-      Content="{Binding Content}"
-      VerticalAlignment="Top"
-      HorizontalAlignment="Left"/>
-  </ScrollViewer>
+  <DockPanel>
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Header="_Отчёт">
+        <MenuItem Header="Сохранить..."/>
+        <MenuItem Header="Компиляция"/>
+        <MenuItem Header="Резерв..."/>
+        <MenuItem Header="Сформировать из DBF..."/>
+        <Separator/>
+        <MenuItem Header="Просмотр в виде RML"/>
+        <MenuItem Header="Формирование"/>
+        <Separator/>
+        <MenuItem Header="Параметры отчета"/>
+        <Separator/>
+        <MenuItem Header="Выход"/>
+      </MenuItem>
+      <MenuItem Header="_Редактирование">
+        <MenuItem Header="Отменить"/>
+        <MenuItem Header="Вернуть"/>
+        <Separator/>
+        <MenuItem Header="Вырезать"/>
+        <MenuItem Header="Копировать"/>
+        <MenuItem Header="Вставить"/>
+        <MenuItem Header="Удалить"/>
+        <MenuItem Header="Удалить блок"/>
+        <Separator/>
+        <MenuItem Header="Дублировать блок"/>
+        <MenuItem Header="Сортировать объекты в блоке"/>
+        <MenuItem Header="Поднять блок вверх"/>
+        <MenuItem Header="Опустить блок вниз"/>
+        <Separator/>
+        <MenuItem Header="Выделить все"/>
+        <Separator/>
+        <MenuItem Header="Наверх"/>
+        <MenuItem Header="Вниз"/>
+        <MenuItem Header="Привязать к сетке"/>
+        <MenuItem Header="Автоматическая привязка к сетке"/>
+        <Separator/>
+        <MenuItem Header="Выравнять по левому краю"/>
+        <MenuItem Header="Выравнять по верхнему краю"/>
+        <MenuItem Header="Выравнять по правому краю"/>
+        <MenuItem Header="Выравнять по нижнему краю"/>
+        <Separator/>
+        <MenuItem Header="Сделать таблицу из выделенных полей"/>
+      </MenuItem>
+      <MenuItem Header="_Вид">
+        <MenuItem Header="Параметры страницы"/>
+        <Separator/>
+        <MenuItem Header="Увеличить"/>
+        <MenuItem Header="Уменьшить"/>
+        <MenuItem Header="Натуральный размер"/>
+        <Separator/>
+        <MenuItem Header="Обновить окно"/>
+        <Separator/>
+        <MenuItem Header="Настройка"/>
+      </MenuItem>
+      <MenuItem Header="В_ставка">
+        <MenuItem Header="Вставить блок"/>
+        <Separator/>
+        <MenuItem Header="Режим выделения"/>
+        <MenuItem Header="Вставить текст"/>
+        <MenuItem Header="Вставить линию"/>
+        <MenuItem Header="Вставить рисунок"/>
+        <MenuItem Header="Вставить таблицу"/>
+      </MenuItem>
+      <MenuItem Header="_Сервис">
+        <MenuItem Header="Статистика..."/>
+        <MenuItem Header="Проверка ошибок"/>
+        <MenuItem Header="Изменить язык отображения"/>
+        <MenuItem Header="Выполнить макрос..."/>
+      </MenuItem>
+      <MenuItem Header="C_правка">
+        <MenuItem Header="Вызов справки"/>
+        <MenuItem Header="Контекстная справка"/>
+        <Separator/>
+        <MenuItem Header="О программе"/>
+      </MenuItem>
+    </Menu>
+    
+    <ScrollViewer HorizontalScrollBarVisibility="Auto">
+      <ContentControl
+        Content="{Binding Content}"
+        VerticalAlignment="Top"
+        HorizontalAlignment="Center"/>
+    </ScrollViewer>
+  </DockPanel>
   
 </Window>
