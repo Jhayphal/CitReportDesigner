@@ -95,24 +95,24 @@
       </MenuItem>
     </Menu>
 
-    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Left" UseLayoutRounding="False">
+    <StackPanel DockPanel.Dock="Left" UseLayoutRounding="False">
       <StackPanel.Styles>
         <Style Selector="Button">
           <Setter Property="CornerRadius" Value="5"/>
-          <Setter Property="Width" Value="30"/>
-          <Setter Property="Height" Value="30"/>
+          <Setter Property="Width" Value="32"/>
+          <Setter Property="Height" Value="32"/>
         </Style>
       </StackPanel.Styles>
       
       <Border Margin="3">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+        <StackPanel>
           <Button ToolTip.Tip="Компилировать" Content="{materialIcons:MaterialIconExt Kind=TransitionMasked}"/>
           <Button ToolTip.Tip="Сохранить" Content="{materialIcons:MaterialIconExt Kind=ContentSave}"/>
         </StackPanel>
       </Border>
 
       <Border Margin="3">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+        <StackPanel>
           <Button ToolTip.Tip="Увеличить" Content="{materialIcons:MaterialIconExt Kind=ZoomIn}"/>
           <Button ToolTip.Tip="Уменьшить"  Content="{materialIcons:MaterialIconExt Kind=ZoomOut}"/>
           <Button ToolTip.Tip="Натуральный размер" Content="{materialIcons:MaterialIconExt Kind=AspectRatio}"/>
@@ -120,7 +120,7 @@
       </Border>
 
       <Border Margin="3">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+        <StackPanel>
           <Button ToolTip.Tip="Вставить блок" Content="{materialIcons:MaterialIconExt Kind=RectangleOutline}"/>
           <Button ToolTip.Tip="Режим выделения" Content="{materialIcons:MaterialIconExt Kind=CursorDefault}"/>
           <Button ToolTip.Tip="Вставить текст" Content="{materialIcons:MaterialIconExt Kind=FormatTextbox}"/>
@@ -131,7 +131,7 @@
       </Border>
 
       <Border Margin="3">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+        <StackPanel>
           <Button ToolTip.Tip="Параметры отчёта" Content="{materialIcons:MaterialIconExt Kind=Cod}"/>
           <Button ToolTip.Tip="Параметры страницы" Content="{materialIcons:MaterialIconExt Kind=FileCog}"/>
           <Button ToolTip.Tip="Просмотр текущего блока в виде RML" Content="{materialIcons:MaterialIconExt Kind=Xml}"/>
@@ -139,22 +139,24 @@
       </Border>
 
       <Border Margin="3">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+        <StackPanel>
           <Button ToolTip.Tip="Проверка ошибок" Content="{materialIcons:MaterialIconExt Kind=Bug}"/>
           <Button ToolTip.Tip="Изменить язык отображения" Content="{materialIcons:MaterialIconExt Kind=Translate}"/>
         </StackPanel>
       </Border>
     </StackPanel>
     
-    <Grid ColumnDefinitions="7*, 1, 2*">
-      <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto" Background="{DynamicResource ThemeControlMidBrush}">
+    <Grid ColumnDefinitions="7*, 4, 2*">
+      <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto" Background="{DynamicResource ThemeAccentColor4}">
         <ContentControl
           Content="{Binding Content}"
           VerticalAlignment="Top"
-          HorizontalAlignment="Center"/>
+          HorizontalAlignment="Center"
+          BorderBrush="LightGray"
+          BorderThickness="1"/>
       </ScrollViewer>
       
-      <GridSplitter Grid.Column="1" Background="{DynamicResource ThemeBorderHighBrush}" ResizeDirection="Columns"/>
+      <GridSplitter Grid.Column="1" Background="{DynamicResource ThemeAccentBrush}" ResizeDirection="Columns"/>
       
       <Grid Grid.Column="2">
         <Label VerticalAlignment="Center" HorizontalAlignment="Center">Опции отчета</Label>
