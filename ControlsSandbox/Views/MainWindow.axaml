@@ -7,7 +7,7 @@
   x:Class="ControlsSandbox.Views.MainWindow"
   Icon="../Assets/logo.ico"
   Title="Визуальный редактор отчётов"
-  Background="#F6F6F6"
+  Background="White"
   WindowState="Maximized">
   
   <DockPanel>
@@ -94,8 +94,8 @@
       </MenuItem>
     </Menu>
 
-    <Border DockPanel.Dock="Top" Background="#F2F2F2" BorderBrush="LightGray" BorderThickness="1">
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+    <Border DockPanel.Dock="Top" Background="#F6F6F6" BorderBrush="LightGray" BorderThickness="1">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" UseLayoutRounding="False">
         <StackPanel.Styles>
           <Style Selector="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -182,18 +182,20 @@
       </StackPanel>
     </Border>
     
-    <Border DockPanel.Dock="Right" BorderBrush="LightGray" BorderThickness="1">
-      <Grid Width="250" Background="#F2F2F2">
+    <Grid ColumnDefinitions="7*, 1, 2*">
+      <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto" Background="#F0F0F0">
+        <ContentControl
+          Content="{Binding Content}"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Center"/>
+      </ScrollViewer>
+      
+      <GridSplitter Grid.Column="1" Background="LightGray" ResizeDirection="Columns"/>
+      
+      <Grid Grid.Column="2" Background="#F2F2F2">
         <Label VerticalAlignment="Center" HorizontalAlignment="Center">Опции отчета</Label>
       </Grid>
-    </Border>
-    
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" Background="#F0F0F0">
-      <ContentControl
-        Content="{Binding Content}"
-        VerticalAlignment="Top"
-        HorizontalAlignment="Center"/>
-    </ScrollViewer>
+    </Grid>
   </DockPanel>
   
 </Window>
