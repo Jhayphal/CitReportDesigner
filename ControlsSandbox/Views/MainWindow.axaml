@@ -102,6 +102,11 @@
           <Setter Property="Width" Value="32"/>
           <Setter Property="Height" Value="32"/>
         </Style>
+        <Style Selector="ToggleButton">
+          <Setter Property="CornerRadius" Value="5"/>
+          <Setter Property="Width" Value="32"/>
+          <Setter Property="Height" Value="32"/>
+        </Style>
       </StackPanel.Styles>
       
       <Border Margin="3">
@@ -121,12 +126,12 @@
 
       <Border Margin="3">
         <StackPanel>
-          <Button ToolTip.Tip="Вставить блок" Content="{materialIcons:MaterialIconExt Kind=RectangleOutline}"/>
-          <Button ToolTip.Tip="Режим выделения" Content="{materialIcons:MaterialIconExt Kind=CursorDefault}"/>
-          <Button ToolTip.Tip="Вставить текст" Content="{materialIcons:MaterialIconExt Kind=FormatTextbox}"/>
-          <Button ToolTip.Tip="Вставить линию" Content="{materialIcons:MaterialIconExt Kind=VectorLine}"/>
-          <Button ToolTip.Tip="Вставить рисунок" Content="{materialIcons:MaterialIconExt Kind=ImageOutline}"/>
-          <Button ToolTip.Tip="Вставить таблицу" Content="{materialIcons:MaterialIconExt Kind=TableLarge}"/>
+          <ToggleButton ToolTip.Tip="Вставить блок" Content="{materialIcons:MaterialIconExt Kind=RectangleOutline}"/>
+          <ToggleButton ToolTip.Tip="Режим выделения" Content="{materialIcons:MaterialIconExt Kind=CursorDefault}" IsChecked="True"/>
+          <ToggleButton ToolTip.Tip="Вставить текст" Content="{materialIcons:MaterialIconExt Kind=FormatTextbox}"/>
+          <ToggleButton ToolTip.Tip="Вставить линию" Content="{materialIcons:MaterialIconExt Kind=VectorLine}"/>
+          <ToggleButton ToolTip.Tip="Вставить рисунок" Content="{materialIcons:MaterialIconExt Kind=ImageOutline}"/>
+          <ToggleButton ToolTip.Tip="Вставить таблицу" Content="{materialIcons:MaterialIconExt Kind=TableLarge}"/>
         </StackPanel>
       </Border>
 
