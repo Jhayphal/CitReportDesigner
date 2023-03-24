@@ -7,6 +7,7 @@
         <entry key="ControlsSandbox/Views/BlockView.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
         <entry key="ControlsSandbox/Views/CellView.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
         <entry key="ControlsSandbox/Views/MainWindow.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
+        <entry key="ControlsSandbox/Views/NumericUpDownView.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
         <entry key="ControlsSandbox/Views/ReportView.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
         <entry key="ControlsSandbox/Views/TableView.axaml" value="ControlsSandbox/ControlsSandbox.csproj" />
         <entry key="Sandbox/Views/AddItemView.axaml" value="Sandbox/Sandbox.csproj" />

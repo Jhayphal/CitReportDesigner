@@ -95,7 +95,10 @@ public class MainWindowViewModel : ViewModelBase
     cell.Style.Font = block.Fonts[fontAlias];
     
     Content = new ReportViewModel(report);
+    Properties = new NumericUpDownViewModel();
   }
 
   public ReportViewModel Content { get; set; }
+  
+  public NumericUpDownViewModel Properties { get; set; }
 }

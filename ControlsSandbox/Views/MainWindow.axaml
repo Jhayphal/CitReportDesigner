@@ -164,7 +164,7 @@
       <GridSplitter Grid.Column="1" Background="{DynamicResource ThemeAccentBrush}" ResizeDirection="Columns"/>
       
       <Grid Grid.Column="2">
-        <Label VerticalAlignment="Center" HorizontalAlignment="Center">Опции отчета</Label>
+        <ContentControl Content="{Binding Properties}"/>
       </Grid>
     </Grid>
   </DockPanel>
