@@ -1,6 +1,8 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 
@@ -8,7 +10,12 @@ namespace ControlsSandbox.Controls;
 
 public class LineControl : Control
 {
+  private readonly Cursor hoverPointCursor = new(StandardCursorType.Cross);
+  private readonly Cursor defaultCursor = Cursor.Default;
+  
   private Pen pen;
+  private bool inMoveA;
+  private bool inMoveB;
   
   static LineControl()
   {
@@ -18,6 +25,7 @@ public class LineControl : Control
     AffectsRender<LineControl>(Y2Property);
     AffectsRender<LineControl>(ColorProperty);
     AffectsRender<LineControl>(ThicknessProperty);
+    AffectsRender<LineControl>(SelectedProperty);
   }
 
   public LineControl()
@@ -26,6 +34,50 @@ public class LineControl : Control
     Thickness = 1;
     HorizontalAlignment = HorizontalAlignment.Left;
     VerticalAlignment = VerticalAlignment.Top;
+    
+    Tapped += (sender, e) => Selected = true;
+    PointerMoved += OnPointerMoved;
+    PointerPressed += OnPointerPressed;
+    PointerReleased += OnPointerReleased;
+  }
+
+  private void OnPointerReleased(object sender, PointerReleasedEventArgs e)
+  {
+    inMoveA = inMoveB = false;
+    Cursor = defaultCursor;
+  }
+
+  private void OnPointerPressed(object sender, PointerPressedEventArgs e)
+  {
+    var point = e.GetPosition(this);
+    inMoveA = ARect.Contains(point);
+    inMoveB = BRect.Contains(point);
+  }
+
+  private void OnPointerMoved(object sender, PointerEventArgs e)
+  {
+    if (!Selected)
+    {
+      return;
+    }
+
+    var point = e.GetPosition(this);
+    if (inMoveA)
+    {
+      X1 = point.X;
+      Y1 = point.Y;
+    }
+    else if (inMoveB)
+    {
+      X2 = point.X;
+      Y2 = point.Y;
+    }
+    else
+    {
+      Cursor = ARect.Contains(point) || BRect.Contains(point)
+        ? hoverPointCursor 
+        : defaultCursor;
+    }
   }
 
   public static readonly StyledProperty<double> X1Property = AvaloniaProperty.Register<LineControl, double>(nameof(X1));
@@ -34,6 +86,7 @@ public class LineControl : Control
   public static readonly StyledProperty<double> Y2Property = AvaloniaProperty.Register<LineControl, double>(nameof(Y2));
   public static readonly StyledProperty<IBrush> ColorProperty = AvaloniaProperty.Register<LineControl, IBrush>(nameof(Color));
   public static readonly StyledProperty<double> ThicknessProperty = AvaloniaProperty.Register<LineControl, double>(nameof(Thickness));
+  public static readonly StyledProperty<bool> SelectedProperty = AvaloniaProperty.Register<LineControl, bool>(nameof(Selected));
 
   public double X1
   {
@@ -53,7 +106,7 @@ public class LineControl : Control
     set
     {
       SetValue(X2Property, value);
-      Width = Math.Abs(X2 - X1);
+      Width = Math.Max(X2, X1);
     }
   }
 
@@ -63,7 +116,7 @@ public class LineControl : Control
     set
     {
       SetValue(Y2Property, value);
-      Height = Math.Abs(Y2 - Y1);
+      Height = Math.Max(Y2, Y1);
     }
   }
 
@@ -79,6 +132,16 @@ public class LineControl : Control
     set => SetValue(ThicknessProperty, value);
   }
 
+  public bool Selected
+  {
+    get => GetValue(SelectedProperty);
+    set => SetValue(SelectedProperty, value);
+  }
+
+  private Rect ARect => new(X1 - Thickness, Y1 - Thickness, Thickness + Thickness, Thickness + Thickness);
+
+  private Rect BRect => new(X2 - Thickness, Y2 - Thickness, Thickness + Thickness, Thickness + Thickness);
+  
   public override void Render(DrawingContext context)
   {
     if (!ReferenceEquals(pen?.Brush, Color))
@@ -87,5 +150,12 @@ public class LineControl : Control
     }
     
     context.DrawLine(pen, new Point(X1, Y1), new Point(X2, Y2));
+
+    if (Selected)
+    {
+      var size = Thickness * 2D;
+      context.DrawRectangle(Brushes.Blue, null, ARect);
+      context.DrawRectangle(Brushes.Red, null, BRect);
+    }
   }
 }
