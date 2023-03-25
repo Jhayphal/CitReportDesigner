@@ -4,6 +4,7 @@
   xmlns:vm="using:ControlsSandbox.ViewModels"
   xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
   xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+  xmlns:ctrl="using:ControlsSandbox.Controls"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   mc:Ignorable="d"
@@ -13,7 +14,7 @@
     <vm:BlockViewModel/>
   </Design.DataContext>
 
-  <Grid RowDefinitions="Auto,*" Background="White">
+  <Grid RowDefinitions="Auto,*,Auto" Background="White">
     <Border
       Background="White"
       BorderBrush="Gray"
@@ -78,7 +79,13 @@
           Content="{Binding HeightMillimetersText}"
           VerticalAlignment="Center"
           HorizontalAlignment="Center"
-          Padding="{Binding HeaderItemsPaddings, Converter={StaticResource mm}}"/>
+          Padding="{Binding HeaderItemsPaddings, Converter={StaticResource mm}}">
+          <i:Interaction.Behaviors>
+            <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeSelectedState}">
+              <ia:InvokeCommandAction Command="{Binding ChangeSelectedState}"/>
+            </ia:EventTriggerBehavior>
+          </i:Interaction.Behaviors>
+        </Label>
       </Grid>
     </Border>
     <ItemsControl
@@ -100,7 +107,13 @@
           <Setter Property="Canvas.Top" Value="{Binding Y, Converter={StaticResource mm}}" />
         </Style>
       </ItemsControl.Styles>
+      <i:Interaction.Behaviors>
+        <ia:EventTriggerBehavior EventName="Tapped" SourceObject="{Binding #ChangeSelectedState}">
+          <ia:InvokeCommandAction Command="{Binding ChangeSelectedState}"/>
+        </ia:EventTriggerBehavior>
+      </i:Interaction.Behaviors>
     </ItemsControl>
+    <ctrl:LineControl Grid.Row="2" X1="10" Y1="5" X2="100" Y2="50"/>
   </Grid>
   
 </UserControl>
