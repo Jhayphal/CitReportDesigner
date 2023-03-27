@@ -14,7 +14,7 @@
     <vm:BlockViewModel/>
   </Design.DataContext>
 
-  <Grid RowDefinitions="Auto,*,Auto" Background="White">
+  <Grid RowDefinitions="Auto,*" Background="White">
     <Border
       Background="White"
       BorderBrush="Gray"
@@ -113,7 +113,7 @@
         </ia:EventTriggerBehavior>
       </i:Interaction.Behaviors>
     </ItemsControl>
-    <ctrl:LineControl Grid.Row="2" X1="10" Y1="5" X2="100" Y2="50" Thickness="3"/>
+    <!-- <ctrl:LineControl Grid.Row="2" X1="10" Y1="5" X2="100" Y2="50" Thickness="3"/> -->
   </Grid>
   
 </UserControl>

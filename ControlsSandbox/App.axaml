@@ -4,18 +4,26 @@
   xmlns:c="using:ControlsSandbox.Converters"
   xmlns:local="using:ControlsSandbox"
   x:Class="ControlsSandbox.App">
+  <!-- xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles" -->
   
   <Application.DataTemplates>
     <local:ViewLocator/>
   </Application.DataTemplates>
 
-  <Application.Styles>
-    <FluentTheme Mode="Light"/>
-    <StyleInclude Source="avares://Material.Icons.Avalonia/App.xaml" />
-  </Application.Styles>
-
   <Application.Resources>
+    <!-- <themes:BundledTheme BaseTheme="Dark" PrimaryColor="Purple" SecondaryColor="Lime"/> -->
     <c:MillimetersValueConverter x:Key="mm"/>
   </Application.Resources>
+  
+  <Application.Styles>
+    <FluentTheme Mode="Dark" DensityStyle="Compact"/>
+    <!-- <StyleInclude Source="avares://Material.Avalonia/Material.Avalonia.Templates.xaml" /> -->
+    <!-- <StyleInclude Source="avares://Citrus.Avalonia/Citrus.xaml"/> -->
+    <!-- <StyleInclude Source="avares://Citrus.Avalonia/Sea.xaml"/> -->
+    <!-- <StyleInclude Source="avares://Citrus.Avalonia/Rust.xaml"/> -->
+    <!-- <StyleInclude Source="avares://Citrus.Avalonia/Candy.xaml"/> -->
+    <!-- <StyleInclude Source="avares://Citrus.Avalonia/Magma.xaml"/> -->
+    <StyleInclude Source="avares://Material.Icons.Avalonia/App.xaml"/>
+  </Application.Styles>
 
 </Application>

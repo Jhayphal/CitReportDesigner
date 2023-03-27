@@ -9,6 +9,7 @@
   x:Class="ControlsSandbox.Views.MainWindow"
   Icon="../Assets/logo.ico"
   Title="Визуальный редактор отчётов"
+  Background="#21252B"
   WindowState="Maximized">
   
   <DockPanel>
@@ -148,12 +149,17 @@
       <Border Margin="3">
         <StackPanel>
           <Button ToolTip.Tip="Проверка ошибок" Content="{materialIcons:MaterialIconExt Kind=Bug}"/>
-          <Button ToolTip.Tip="Изменить язык отображения" Content="{materialIcons:MaterialIconExt Kind=Translate}"/>
+          <ToggleButton ToolTip.Tip="Изменить язык отображения" Content="{materialIcons:MaterialIconExt Kind=Translate}"/>
         </StackPanel>
       </Border>
     </StackPanel>
     
-    <Grid ColumnDefinitions="7*, 4, 2*">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="7*"/>
+        <ColumnDefinition Width="1"/>
+        <ColumnDefinition Width="2*" MinWidth="250"/>
+      </Grid.ColumnDefinitions>
       <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Auto" Background="{DynamicResource ThemeAccentColor4}">
         <ContentControl
           Content="{Binding Content}"

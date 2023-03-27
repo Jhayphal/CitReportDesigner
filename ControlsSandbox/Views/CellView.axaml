@@ -21,6 +21,8 @@
       Text="{Binding Text}"
       HorizontalAlignment="{Binding HorizontalAlignment}"
       VerticalAlignment="{Binding VerticalAlignment}"
+      Foreground="{Binding ForegroundColor}"
+      Background="{Binding BackgroundColor}"
       Margin="0"/>
   </Border>
 

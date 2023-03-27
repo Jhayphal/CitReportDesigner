@@ -36,9 +36,9 @@ public static class MeasurementConverter
     ScaleFactor = window.RenderScaling;
   }
 
-  public static double MillimetersToPixels(double value) => value / MillimetersInInch * DPI / ScaleFactor;
+  public static double MillimetersToPixels(double value) => value * DPI / (MillimetersInInch * ScaleFactor);
 
-  public static double PixelsToMillimeters(double value) => value * MillimetersInInch / DPI * ScaleFactor;
+  public static double PixelsToMillimeters(double value) => value * MillimetersInInch * ScaleFactor / DPI;
 
   private static Vector GetCurrentDpi(IWindowImpl window)
   {

@@ -4,20 +4,38 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="100"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="100"
              x:Class="ControlsSandbox.Views.NumericUpDownView">
     
     <Design.DataContext>
         <vm:NumericUpDownViewModel/>
     </Design.DataContext>
     
-    <StackPanel Orientation="Vertical" Margin="0 0 5 0">
-        <Border BorderThickness="1" BorderBrush="Gray" CornerRadius="3">
-            <Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto" MinWidth="240">
-                <TextBlock Grid.Column="0" Text="Тип блока" VerticalAlignment="Center" HorizontalAlignment="Left" Padding="{Binding #Editor.Padding}"/>
-                <TextBox x:Name="Editor" Grid.Column="1" Text="{Binding Text, Mode=TwoWay}" BorderThickness="0"/>
-                <Button Grid.Column="2" Content="{materialIcons:MaterialIconExt Kind=Plus}" Command="{Binding Up}" Width="{Binding #Editor.Height}" Height="{Binding #Editor.Height}" Background="Transparent"/>
-                <Button Grid.Column="3" Content="{materialIcons:MaterialIconExt Kind=Minus}" Command="{Binding Down}" Width="{Binding #Editor.Height}" Height="{Binding #Editor.Height}" Background="Transparent"/>
+    <StackPanel Margin="3">
+        <Border BorderThickness="1" BorderBrush="Gray" CornerRadius="3" Padding="2" MinWidth="200">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto">
+                <TextBlock Grid.Column="0" 
+                           Text="Тип блока" 
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Left" 
+                           Padding="{Binding #Editor.Padding}"/>
+                <TextBox x:Name="Editor" Grid.Column="1" 
+                         Text="{Binding Text, Mode=TwoWay}" 
+                         BorderThickness="0" 
+                         VerticalContentAlignment="Center" 
+                         MinWidth="0"/>
+                <Button Grid.Column="2" 
+                        Content="{materialIcons:MaterialIconExt Kind=Plus}" 
+                        Command="{Binding Up}" 
+                        Width="{Binding #Editor.Height}" 
+                        Height="{Binding #Editor.Height}" 
+                        Background="Transparent"/>
+                <Button Grid.Column="3" 
+                        Content="{materialIcons:MaterialIconExt Kind=Minus}" 
+                        Command="{Binding Down}" 
+                        Width="{Binding #Editor.Height}" 
+                        Height="{Binding #Editor.Height}" 
+                        Background="Transparent"/>
             </Grid>
         </Border>
     </StackPanel>
