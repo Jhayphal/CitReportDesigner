@@ -103,5 +103,5 @@ public class TextBlockViewModel : ViewModelBase, IBounds
 
   public IBrush ForegroundColor { get; set; } = Brushes.Black;
 
-  public IBrush BackgroundColor { get; set; } = Brushes.White;
+  public IBrush BackgroundColor { get; set; } = Brushes.Transparent;
 }

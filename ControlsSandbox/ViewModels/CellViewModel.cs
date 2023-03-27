@@ -85,7 +85,7 @@ public class CellViewModel : ViewModelBase, IBounds
 
   public IBrush ForegroundColor { get; set; } = Brushes.Black;
 
-  public IBrush BackgroundColor { get; set; } = Brushes.White;
+  public IBrush BackgroundColor { get; set; } = Brushes.Transparent;
 
   public bool Equals(CitReport.Cell cell) => cell == this.cell;
 
